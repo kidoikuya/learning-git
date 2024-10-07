@@ -1,0 +1,159 @@
+■ローカルリポジトリ作成
+・GitBush起動(VSCODEのターミナルから＋をクリックしてGitBushを選択)
+・Gitを適用したいフォルダに移動（Cドライブ→Dドライブの場合はcd /dで移動できる）
+・git initでローカルリポジトリ作成(これでフォルダ内に隠しファイルの.gitが作成される。)
+・ls -aで.gitファイルが作成された事を確認。
+
+■コミットの作成
+・touch sample.txtでテスト用ファイル作成
+・git statusでブランチやコミットやステージングの状態を確認。
+・git add sample.txtでステージング。（Untracked files → Changes to be committedに変化）
+・git commit sample.txtでコミット、エディタが自動起動されるのでコミットコメントを記載後に保存して閉じる。
+・git lolでブランチの状態確認。　→　* e858bfb (HEAD -> master) 自宅テスト用の初コミット
+
+■SSH鍵作成（秘密鍵と公開鍵のペア）
+・GitBushを管理者起動、ユーザのホームディレクトリにいる状態
+・ls ~/.sshで既にSSH鍵が存在していないか確認。
+・ssh-keygen -C moke0198ki@gmail.comを実行。
+・鍵の名前は空エンターでed25519になる、Enter passphraseは任意のパスワードを設定。
+・鍵が出来ているか確認。↓
+　$ ls ~/.ssh
+　id_ed25519　　　←秘密鍵
+　id_ed25519.pub　←公開鍵
+
+■GitHubへ公開鍵登録
+・GitHub右上のアイコン→setting→左メニューのSSH and GPG keys
+・NewSSH Keyボタンを押下、Titleに鍵名を入力
+・clip < ~/.ssh/id_ed25519.pubでクリップボードに公開鍵をコピー
+・Keyの欄に貼り付け
+・ADD SSH KEYボタンを押下、これで登録完了
+
+■GitHubへssh接続
+・ユーザー権限で、ディレクトリはどこからでも良い。
+・ssh -T git@github.comでyesとパスフレーズを入力。（ディレクトリはどこからでも実行可能、管理者の必要も無し）
+　Hi kidoikuya! You've successfully authenticated, but GitHub does not provide shell access.が表示されたら成功。
+・SSH接続を楽にしてくれるcongifファイル作成しておく
+　ユーザフォルダ＞sshフォルダ＞configを新規作成してメモ帳で下記を入力して保存
+Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+・ssh github　ちゃんと設定出来ていればこのコマンドでも接続が出来る。
+
+■SSH-agent起動＆agentに秘密鍵を登録
+（GitHubへssh接続をサポート、無くても接続可だが秘密鍵を手動指定、毎回パスフレーズ入力等の手間が増える）
+・ユーザー権限で、ディレクトリはどこからでも良い。
+・eval "$(ssh-agent -s)" 　　　SSH-agent起動。
+　pidが表示される、pidは状態確認コマンド「ps -p <PID>」や停止コマンド「kill <PID>」で使用する。
+　$ ps -p 845
+      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
+      845       1     845       3244  ?         197609 19:20:26 /usr/bin/ssh-agent
+・ssh-add ~/.ssh/id_ed25519　SSH-agentに秘密鍵を設定(SSH-agentはまだ何も知らない状態なので鍵を教えてあげる) 
+　Enter passphrase for /c/Users/tw225/.ssh/id_ed25519: 
+　Identity added: /c/Users/tw225/.ssh/id_ed25519 (moke0198ki@gmail.com) 指定した秘密鍵がSSHエージェントに正常に追加されたことを示す。
+・ssh-add -l　SSHエージェントに現在追加されている鍵の情報を確認
+　256 SHA256:R+cLuqPo4A3EZv7CzVv1fo2MeavQh1sZ+S4K5Z3eVGM moke0198ki@gmail.com (ED25519)
+
+■ssh-agentの自動起動設定（やっていいか先生に要確認）
+シェルの設定ファイルを利用: ~/.bashrc や ~/.bash_profile などにSSH-agentを自動起動するスクリプトを追加することで
+ターミナルを開くたびに自動的にSSH-agentが起動します。以下のコードを追加してみてください。
+隠しファイルが無い場合は作成してからコードを追加する。
+$ touch ~/.bashrc　で作成して下記コードをコピペ
+# Start SSH agent if not already running
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_ed25519  # 必要な秘密鍵を追加
+fi
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+$ touch ~/.bash_profile　で作成して下記コードをコピペ
+# ~/.bashrc を読み込む
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+■リモートリポジトリ作成
+・GitHubにログインし、右上の + アイコンをクリックして「New repository」を選択
+・リポジトリ名（練習用でlearning-git）を入力
+・Description (optional)に説明文を記載
+・「Create repository」ボタンをクリックして作成。
+・SSHボタンを押下して、SSH接続で使用するためのURLをコピーする。
+　git@github.com:kidoikuya/learning-git.git
+
+■リモートリポジトリのリンク設定
+・git remote add origin git@github.com:kidoikuya/learning-git.git　リモートリポジトリの設定
+　origin(任意名だけど一般的にoriginにする)という名前のリモートリポジトリにリンクが通る。
+　リンクは保存されるので再度入力する必要は無い。
+・git remote -v　でリンク状態の確認が取れる。
+　origin  git@github.com:kidoikuya/learning-git.git (fetch)
+　origin  git@github.com:kidoikuya/learning-git.git (push)
+　※(fetch): リモートリポジトリからデータを取得する際に使われるURL
+　　これは、git pull や git fetch などのコマンドで使用されます。
+　※(push): ローカルリポジトリからリモートリポジトリにデータを送信する際に使われるURL
+　　これは、git push コマンドで使用されます。
+　※origin はローカルリポジトリに登録されたリモートリポジトリのエイリアス（別名）であり
+　　元は、git@github.com:kidoikuya/learning-git.gitというリモートリポジトリに対応している。
+
+■GitHubのリモートリポジトリへpush
+・ローカルのブランチ名をmasterからmainに変更（理由は先生に聞く
+　git branch -m master main
+・mainブランチをリモートリポジトリにpush
+　git push -u origin main
+　※-uまたは--set-upstreamでローカルブランチをリモートのmainブランチにリンク(追跡)させる。
+　　このリンクで以後のpushやpullで毎回リモートブランチ名を指定する必要がなくなる。
+　※originはリモートリポジトリのデフォルト名で
+　　git remote add origin <リポジトリのURL> で設定されたリモートリポジトリを指します。
+----------------------------------------------------------------------------------------------------------
+$ git lol
+* e858bfb (HEAD -> main) 自宅テスト用の初コミット
+
+↓↓↓↓↓↓↓　origin/mainも追加される　↓↓↓↓↓↓↓↓↓↓↓
+
+$ git lol
+* e858bfb (HEAD -> main, origin/main) 自宅テスト用の初コミット
+----------------------------------------------------------------------------------------------------------
+成功すると下記のログが流れる
+$ git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 245 bytes | 245.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To github.com:kidoikuya/learning-git.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+-----------------------------------------------------------------------------------------------------------
+
+■授業終わりで行っていた課題「適当なファイル作ってリモートリポジトリにpushしてみよう」
+・vscode＞ファイル＞フォルダを開く＞.gitが入っているフォルダを指定(ローカルリポジトリを開くという意味)
+・GitBushでローカルリポジトリのディレクトリ移動してからファイル作成「touch test.txt」とか
+・ソース管理開くと状態がU(監視対象外)のファイルがあるのでカーソルを合わせ、出てきた＋でステージング。
+・メッセージ欄にコミットコメントを記入し、コミットボタンを押下。
+・変更の同期でリモートリポジトリへpush
+
+※ステージングエリアの状態を示す記号
+A (Added): 新しいファイルがステージングエリアに追加された。
+M (Modified): 既存のファイルが変更され、ステージングエリアに追加されたが、まだコミットされていない。
+D (Deleted): 既存のファイルが削除され、その変更がステージングエリアに追加された。
+R (Renamed): ファイルがリネームされ、変更がステージングエリアに追加された。リネームは新ファイルとしても扱われる。
+C (Copied): ファイルがコピーされ、その変更がステージングエリアに追加された。
+U (Unmerged): マージの際に競合が発生したファイル。手動で解決する必要があります。
+?? (Untracked): Gitによって追跡されていないファイル。これは新たに作成されたファイルで、ステージングエリアにも追加されていない状態を示します。
+
+■リモートリポジトリからclone→ファイル追加→push
+・ローカルリポジトリ側で受け取るディレクトリに移動。
+・GitHubで欲しいリモートリポジトリを開く
+・緑色のcodeボタンを押下、SSHのURLをコピー
+・git clone リポジトリURL
+-例------------------------------------------------------------------------------------------------------
+$ git clone git@github.com:kidoikuya/clock-app.git
+Cloning into 'clock-app'...
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (13/13), done.
+remote: Total 15 (delta 2), reused 12 (delta 1), pack-reused 0 (from 0)
+Receiving objects: 100% (15/15), 4.61 KiB | 363.00 KiB/s, done.
+Resolving deltas: 100% (2/2), done.
+----------------------------------------------------------------------------------------------------------
+・clone後はUntracked filesに入る。※この時点でローカルリポジトリにデータがコピー出来てる。
+・VSCODEのソース管理にcloneした物が表示されなかった←ファイル＞フォルダを開き直したら表示された。
+・cloneしたファイルのディレクトリに移動してファイル作成
+・ソース管理からステージング→コミット→リモートリポジトリへ同期
