@@ -1,0 +1,29 @@
+■イメージ取得
+docker image pull mysql:latest
+
+■コンテナ作成＆起動
+docker container create --name mysql001 -e MYSQL_ROOT_PASSWORD=1234 -p 3307:3306 mysql
+docker container start mysql001
+docker container exec -i -t mysql001 mysql -u root -p
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

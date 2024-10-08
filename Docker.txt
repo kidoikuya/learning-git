@@ -1,0 +1,52 @@
+■dockerバージョン確認
+https://shk-education-docker.netlify.app/docs/Docker%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9%E3%82%92%E5%AD%A6%E3%81%B6/docker-text-1
+・dockerとPowerShellを起動
+・docker --version　※dockerが立ち上がっていないと反応しない。
+　Docker version 27.2.0, build 3ab4256
+
+■コンテナにApach HTTP Serverを作成する。
+・httpdのDL
+　docker image pull httpd:latest
+　latestは最新版という意味、省略してもデフォルトでlatestになる。
+　ローカルのtarから取り込む場合、docker load --input [tarファイル名]
+・docker image lsで取得済イメージの確認
+　REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+　httpd        latest    5daf6a4bfe74   2 months ago   148MB
+
+■イメージの削除方法
+・IMAGE IDを確認
+　docker image
+・IMAGE ID を指定して削除
+　docker rmi e57d3fdd2d7e
+・イメージ名:タグを指定して削除
+　docker rmi httpd:latest
+
+■コンテナ作成と起動
+・docker container create --name apache001 -p 8081:80 httpd
+　runにしない理由はコンテナ作成後に起動させないため。
+　ホストの番号8081→80のhttpdサーバコンテナのポート番号を意味する。
+・コンテナの起動
+　docker container start apache001
+・docker container ls
+　起動中のコンテナを表示。※-aオプションで停止中のコンテナも表示できる。
+
+■コンテナに接続
+・ローカルホスト内のApachサーバ(8081)にアクセスするURL↓
+　http://localhost:8081/index.html
+
+■コンテナ上のApachにHTMLファイルをコピーする。
+・docker container cp コピー元ファイルパス コンテナ名:コピー先のディレクトリパス
+htmlを作成してパスをコピー 
+Apache HTTP Serverで配信するファイルは /user/local/apache2/htdocs/
+docker container cp C:\Users\SHK007\Desktop\top.html apache001:/usr/local/apache2/htdocs/
+
+■ローカルネットワーク上の自分自身のPC上で動いているApachサーバにアクセス
+ipconfigで自分のアドレス見てアクセスしてみる。
+http://192.168.3.211:8081/top.html
+
+■コンテナの停止
+docker container stop apache001
+docker container ls -a ※Exitedなら停止中
+
+■コンテナの削除 ※停止中じゃないと削除出来ない
+docker container stop apache001
