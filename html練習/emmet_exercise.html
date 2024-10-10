@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Emmet簡易入力演習</title>
+</head>
+<body>
+    <!-- #1 div*3 -->
+    <div></div>
+    <div></div>
+    <div></div>
+    <!-- #2 div>p -->
+    <div>
+        <p></p>
+    </div>
+    <!-- #3 nav>ul>li*2 -->
+    <nav>
+        <ul>
+            <li></li>
+            <li></li>
+        </ul>
+    </nav>
+    <!-- #4 div>a[href=""] -->
+    <div><a href=""></a></div>
+    <!-- #5 ul>li*3 -->
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <!-- #6 (div>a[href=""])*3 -->
+    <div><a href=""></a></div>
+    <div><a href=""></a></div>
+    <div><a href=""></a></div>
+    <!-- #7 h1+p -->
+    <h1></h1>
+    <p></p>
+    <!-- #8 div>(h1+p)^ul>li*3 -->
+    <div>
+        <h1></h1>
+        <p></p>
+    </div>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <!-- #9 div+div>p>span+em^blockquote -->
+    <div></div>
+    <div>
+        <p><span></span><em></em></p>
+        <blockquote></blockquote>
+    </div>
+    <!-- #10 div+(div>p>span+em)^blockquote -->
+    <div></div>
+    <div>
+        <p><span></span><em></em></p>
+    </div>
+    <blockquote></blockquote>
+    <!-- #11 div#content -->
+    <div id="content"></div>
+    <!-- #12 div.content -->
+    #12 <div class="content"></div>
+    <!-- #13 div.content.header -->
+    <div class="content header"></div>
+    <!-- #14 ul>li.class -->
+    <ul>
+        <li class="class"></li>
+    </ul>
+    <!-- #15 ul>li.class$*2 -->
+    <ul>
+        <li class="class1"></li>
+        <li class="class2"></li>
+    </ul>
+    <!-- #16 (div>h1+p)+(ul>li)*3 -->
+    <div>
+        <h1></h1>
+        <p></p>
+    </div>
+    <ul>
+        <li></li>
+    </ul>
+    <ul>
+        <li></li>
+    </ul>
+    <ul>
+        <li></li>
+    </ul>
+    <!-- #17 div>header>(ul>(li>a[hrf=""])*2)^footer>p -->
+    <div>
+        <header>
+            <ul>
+                <li><a href="" hrf=""></a></li>
+                <li><a href="" hrf=""></a></li>
+            </ul>
+        </header>
+        <footer>
+            <p></p>
+        </footer>
+    </div>
+    <!-- #18 div>(dl>(dt+dd)*3)^footer>p -->
+    <!-- #18 (div>dl>(dt+dd)*3)+footer>p -->
+    <div>
+        <dl>
+            <dt></dt>
+            <dd></dd>
+            <dt></dt>
+            <dd></dd>
+            <dt></dt>
+            <dd></dd>
+        </dl>
+    </div>
+    <footer>
+        <p></p>
+    </footer>
+    <!-- #19 table>tr.row>td.col -->
+    <table>
+        <tr class="row">
+            <td class="col"></td>
+        </tr>
+    </table>
+    <!-- #20 div.item$*3 -->
+    <div class="item1"></div>
+    <div class="item2"></div>
+    <div class="item3"></div>
+    <!-- #21 div.item-$$$*3 -->
+    <div class="item-001"></div>
+    <div class="item-002"></div>
+    <div class="item-003"></div>
+    <!-- #22 ul>li.item$*5 -->
+    <ul>
+        <li class="item1"></li>
+        <li class="item2"></li>
+        <li class="item3"></li>
+        <li class="item4"></li>
+        <li class="item5"></li>
+    </ul>
+    <!-- #23 h$[title=item$]{Header $}*3 -->
+    <h1 title="item1">Header 1</h1>
+    <h2 title="item2">Header 2</h2>
+    <h3 title="item3">Header 3</h3>
+    <!-- #24 ul>li.item$$$*5 -->
+    <ul>
+        <li class="item001"></li>
+        <li class="item002"></li>
+        <li class="item003"></li>
+        <li class="item004"></li>
+        <li class="item005"></li>
+    </ul>
+    <!-- #25 ul>li.item$@-1*5 -->
+    <ul>
+        <li class="item5"></li>
+        <li class="item4"></li>
+        <li class="item3"></li>
+        <li class="item2"></li>
+        <li class="item1"></li>
+    </ul>
+    <!-- #26 ul>.item$@3*5 -->
+    <ul>
+        <li class="item3"></li>
+        <li class="item4"></li>
+        <li class="item5"></li>
+        <li class="item6"></li>
+        <li class="item7"></li>
+    </ul>
+    <!-- #27 img[src=""][alt="image"][title="sample"] -->
+    <!-- #27 img[alt="image"][title="sample"] -->
+    <img src="" alt="image" title="sample">
+    <!-- #28 p{テキスト} -->
+    <p>テキスト</p>
+    <!-- #29 a[href=""]{リンク} -->
+    <!-- #29 a{リンク} -->
+    <a href="">リンク</a>
+    <!-- #30 p{Click}>a[href=""]{here}{to continue} -->
+    <p>Click<a href="">here</a>to continue</p>
+    <!-- #31 div.cls>p.txt${Text$}*4 -->
+    <div class="cls">
+        <p class="txt1">Text1</p>
+        <p class="txt2">Text2</p>
+        <p class="txt3">Text3</p>
+        <p class="txt4">Text4</p>
+    </div>
+    <!-- #32 table>tbody>(tr>th+td*2)*3 -->
+    <table>
+        <tbody>
+            <tr>
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- #33 table>(thead>tr>th*3)+tbody>(tr>td*3)*2 -->
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- table[border="1"]>(tr>th*3)+(tr>td*3)*4 -->
+    <table border="1">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <!-- header.header>h1#title+nav.gnav>ul>(li>a)*5 -->
+    <header class="header">
+        <h1 id="title"></h1>
+        <nav class="gnav">
+            <ul>
+                <li><a href=""></a></li>
+                <li><a href=""></a></li>
+                <li><a href=""></a></li>
+                <li><a href=""></a></li>
+                <li><a href=""></a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>

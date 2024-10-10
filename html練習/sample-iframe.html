@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>インラインフレーム表示</title>
+    <style>
+        body{
+            padding: 0px 20px;
+        }
+        iframe{
+            width: 850px;
+            height: 500px;
+            background-color: #CCCCCC;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>国立美術館の紹介</h1>
+    <p>日本には、5つの国立美術館があります。<br>
+        以下のリンクをクリックすると、美術館のWebサイトをインラインフレーム内に表示できます</p>
+    <ul>
+  	    <li><a href="https://www.momat.go.jp/" target="f1">東京国立近代美術館</a></li>
+  	    <li><a href="https://www.momak.go.jp/" target="f1">京都国立近代美術館</a></li>
+  	    <li><a href="https://www.nmwa.go.jp/" target="f1">国立西洋美術館</a></li>
+  	    <li><a href="https://www.nmao.go.jp/" target="f1">国立国際美術館</a></li>
+  	    <li><a href="https://www.nact.jp/" target="f1">国立新美術館</a></li>
+    </ul>
+    <iframe name="f1"></iframe>   
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d103992.46136785323!2d139.3039268!3d35.460626299999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601900dfd25bc081%3A0x7e3c3fa82c238e60!2z56We5aWI5bed55yM5Y6a5pyo5biC!5e0!3m2!1sja!2sjp!4v1728541426527!5m2!1sja!2sjp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</body>
+</html>
