@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Form</title>
+</head>
+<body>
+    <form action="http://localhost:8080/tom10/echo" method="get">
+    <!-- <form action="http://localhost:8080//uRes" method="post"> -->
+        <h3>ラジオボタン</h3>
+        <input type="radio" name="radioBtn1" value="BtnA" checked>A
+        <input type="radio" name="radioBtn1" value="BtnB">B
+        <input type="radio" name="radioBtn1" value="BtnC">C <br><br>
+        <!-- label付 -->
+        <label><input type="radio" name="radioBtn2" value="BtnA">A</label>
+        <label><input type="radio" name="radioBtn2" value="BtnB">B</label>
+        <label><input type="radio" name="radioBtn2" value="BtnC" checked>C</label><br>
+        <!--  -->
+        <br><button type="submit">送信</button>
+        <button type="reset">クリア</button>
+    </form>   
+</body>
+</html>

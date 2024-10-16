@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pseudo Class selector</title>
+    <style>
+        /* 最初の兄弟要素 */
+        /* p:first-child {color:red} */
+        /* 最後の兄弟要素 */
+        /* p:last-child {color:red} */
+        /* n番目の兄弟要素 */
+        /* p:nth-child(4) {color:red} */
+        /* 最初の子要素 */
+        /* p:first-of-type {color:red} */
+        /* 最後の子要素 */
+        /* p:last-of-type {color:red} */
+        /* n番目の子要素 */
+        /* p:nth-of-type(2) {color:red} */
+        /* 奇数の子要素 */
+        /* p:nth-of-type(odd) {color:red} */
+        /* 偶数の子要素 */
+        /* p:nth-of-type(even) {color:red} */
+        /* 倍数の子要素 */
+        p:nth-of-type(2n) {color:red}
+    </style>
+</head>
+<body>
+    <div>
+        <p>テキストテキストテキスト1</p>
+        <p>テキストテキストテキスト2</p>
+        <p>テキストテキストテキスト3</p>
+    </div>
+    <div>
+        <h2>見出し</h2>
+        <p>テキストテキストテキスト4</p>
+        <h3>見出し</h3>
+        <p>テキストテキストテキスト5</p>
+        <p>テキストテキストテキスト6</p>
+    </div>
+</body>
+</html>

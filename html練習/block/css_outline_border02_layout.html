@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .container{
+            padding: 50px 20px;
+            width: 300px;
+            height: 150px;
+            outline: 5px solid #21ec65; /* ←上下左右全部に適用 */
+            /* outline-top: ;     ←指定不可 */
+            /* outline-right: ;   ←指定不可 */
+            /* outline-bottom: ;  ←指定不可 */
+            /* outline-left: ;    ←指定不可 */
+            border-top: 5px solid blue;
+            border-right: 5px dashed blue ;
+            border-bottom: 5px solid blue;
+            border-left: 5px dashed blue;
+            /* background-color: yellow; */
+        }
+        h1{
+            background-color: lightblue;
+            text-align: center;
+            font-size: 25px;
+        }
+        #outline:hover{
+            outline: 10px solid red;
+        }
+        #border:hover{
+            border: 10px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p id="outline">outline</p>
+        <p id="border">border</p>
+        <h1>outlineとborderの違い</h1>
+    </div>
+</body>
+</html>

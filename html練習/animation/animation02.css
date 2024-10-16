@@ -1,0 +1,54 @@
+@charset "utf-8";
+/*全体的なスタイル*/
+.box{
+    animation-name: animation;
+    animation-duration:3s;
+    text-align: center;
+    width: 30%;
+    height: 30px;
+    margin-bottom: 20px;
+    background: gray;
+    color:white;
+}
+div:hover{      /* 有効にするには.box側を無効に */
+    animation-name: animation;
+    animation-duration:3s;
+}
+@keyframes animation{
+    0%{
+        width: 20%;
+    }
+    100%{
+        width: 100%;
+    }
+}
+
+/*進行度の指定*/
+.ease{
+    /* 開始時と終了時の動きをなめらかにする*/
+    animation-timing-function:ease;
+}
+.ease-in{
+    /*開始時だけなめらかにする*/
+    animation-timing-function:ease-in;  
+}
+.ease-out{
+    /*終了時だけなめらかにする*/
+    animation-timing-function:ease-out; 
+}
+.ease-in-out{
+    /*easeよりもゆっくり変化させる*/
+    animation-timing-function:ease-in-out;  
+}
+.linear{
+    /* 一定の速度で変化させる*/
+    animation-timing-function:linear;   
+}
+.steps{
+    /* コマ送りのように変化させる*/
+    animation-timing-function:steps(4, end);    
+}
+.cubic-bezier{
+    /*変化の度合いをX軸・Y軸で変化させる*/
+    animation-timing-function:cubic-bezier(0.25,0.1,0.25,0.1);  
+}

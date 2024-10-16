@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>擬似要素セレクタの種類</title>
+    <style>
+        p.example1::first-letter{
+            color:red;
+        }
+        p.example2::first-line{
+            color:red;
+        }
+        p.example3::before{
+            content: "要素の直前にコンテンツを追加";
+            color:red;
+        }
+        p.example4::after{
+            content: "要素の直後にコンテンツを追加";
+            color:red;
+        }
+    </style>
+</head>
+<body>
+    <p class="example1">
+        テキスト<br>
+        テキスト
+    </p>
+    <p class="example2">
+        テキスト<br>
+        テキスト
+    </p>
+    <p class="example3">
+        テキスト<br>
+        テキスト
+    </p>
+    <p class="example4">
+        テキスト<br>
+        テキスト
+    </p>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .parent {
+            position: relative; /*親要素はrelativeに*/
+            background-color:beige;
+            padding: 20px;
+        }
+        p{
+            background-color:bisque;
+        }
+        #absolute {
+            position: absolute;
+            background-color:azure;
+            top: 50px;
+            left: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <p>要素①</p>
+        <p id="absolute">要素②</p>
+    </div>
+</body>
+</html>

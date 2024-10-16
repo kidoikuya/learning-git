@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>position:absolute</title>
+    <style>
+        .ancester{
+            background-color: yellow;
+            text-align:center;
+            width: 300px;
+            height: 300px;
+            padding-top: 100px;
+        }
+        .div1{
+            background-color: greenyellow;
+            text-align:center;
+            width: 200px;
+            height: 100px;
+        }
+        .div2{
+            background-color:aqua;
+            text-align:center;
+            width: 250px;
+            height: 100px;
+        }
+        .absolute{
+            position:fixed;
+            background-color: orange;
+            width: 400px;
+            height: 50px;
+            top: 20px;
+            left: 50px;
+        }        
+    </style>
+</head>
+<body>
+    <div class="ancester">
+        <div class="parent">
+            position:relative
+            <div class="div1">
+                div1
+            </div>
+            <div class="absolute">
+                position:absolute
+            </div>
+            <div class="div2">
+                div2
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

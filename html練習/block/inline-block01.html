@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メニューバー</title>
+    <style>
+        *{
+            outline:1px solid black;
+        }
+        /* ↓id="nav"の中のulに対してCSSを適用*/
+        #nav ul {
+            list-style-type: none;  /*箇条書きのポッチを消す*/
+            text-align:center       /*左右中央寄せは親要素に対して指定*/
+        }
+        /* ↓id="nav"の中のulの中のliに対してCSSを適用*/
+        #nav ul li { 
+            display: inline-block;  /*inline-blockに設定*/
+
+            width: 150px;            /*幅も指定できる*/
+
+            padding: 10px 0;        /*余白も指定できる*/
+            margin: 10px 0;         /*余白も指定できる*/
+            vertical-align: middle; /*縦の表示位置も指定できる*/
+            background: skyblue;  /*背景を水色に*/
+            font-weight: bold;      /*文字を太字に*/
+            color:white;          /*文字色を白に*/
+        }        
+    </style>
+</head>
+<body>
+    <div id="nav">
+        <ul>
+            <li>HOME</li>
+            <li>HTML</li>
+            <li>CSS</li>
+        </ul>
+      </div>    
+</body>
+</html>

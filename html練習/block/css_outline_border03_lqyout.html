@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        /*ホバー無し状態のスタイル*/
+        .btn {
+            box-sizing: content-box;
+  	        display: inline-block;
+            height: 100px;
+            width: 100px;
+            margin: 30px;
+            background-color:green;
+            color: white;
+            font-size: 18pt;
+  	        border: solid 0px aqua;
+        }
+        /*ホバー無し状態のスタイル＿ここまで*/
+
+        /*ホバー有り状態のスタイル*/
+        .btn.outline:hover {
+            outline: solid aqua 20px;
+        }
+        .btn.border:hover {
+            border-width: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>outlineとborderのhoverの違い</h1>
+    <button type="button" class="btn outline">outline</button>
+    <button type="button" class="btn border">border</button>
+</body>
+</html>

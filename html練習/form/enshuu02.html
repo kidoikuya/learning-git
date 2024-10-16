@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <h1>会員登録</h1>
+        <p>以下の情報を入力し、送信ボタンをクリックしてください。</p>
+    </section>
+    
+    <form action="http://192.168.3.224:8080/tom10/echo" method="get">
+        <fieldset>
+            <legend>基本情報</legend>
+                <label for="">お名前:</label><input type="text" name="text" size="30" maxlength="28" value="" required><br>
+                <label for="">メールアドレス:</label><input type="email" name="text" size="30" maxlength="28" value="" required><br>
+                <label for="">パスワード:</label><input type="password" name="text" size="30" maxlength="28" value="" required>
+        </fieldset>
+
+         <fieldset>
+            <legend>性別</legend>
+                <label><input type="radio" name="radioBtn2" value="BtnA">男</label>
+                <label><input type="radio" name="radioBtn2" value="BtnC" checked>女</label><br>        
+         </fieldset>
+
+         <fieldset>
+            <legend>生年月日</legend>
+               <input type="date" id="start" name="trip-start" 
+               value="2024-10-15" 
+               min="1980-01-01" max="2024-12-31" />
+        </fieldset>
+
+        <fieldset>
+            <legend>会員種別</legend>
+            <label for="">待遇</label><select name="" id="" required>
+                <option value="" selected>選択してくださいa</option>
+                <option value="1">vip</option>
+                <option value="2">normal</option>
+            </select>
+
+            <label for="">期間</label><select name="" id="" required>
+                <option value="" selected>選択してください</option>
+                <option value="1">1日間</option>
+                <option value="2">2日間</option>
+                <option value="2">3日間</option>
+            </select>
+
+        </fieldset>
+        
+        <fieldset>
+            <legend>希望メールマガジン</legend>
+                <label><input type="checkbox" name="checkBtn2" value="BtnA">デザイナ向け</label>
+                <label><input type="checkbox" name="checkBtn2" value="BtnB">プログラマ向け</label>
+                <label><input type="checkbox" name="checkBtn2" value="BtnC" checked>コンサル向け</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>その他</legend>
+                <label for="">その他ご希望の内容：</label><br>
+                <textarea name="txt_area" rows="5" cols="30" placeholder="任意の文字列">複数行入力</textarea>
+                <br><button type="submit">送信</button>
+                <button type="reset">入力クリア</button>
+        </fieldset>
+
+
+    </form>   
+</body>
+</html>
