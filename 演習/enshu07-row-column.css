@@ -1,0 +1,64 @@
+.container {
+  display: grid; /* グリッドレイアウトを使用 */
+  grid-template-rows: 80px auto 100px; /* 行の高さを指定（80px, 自動, 100px） */
+  grid-template-columns: auto 200px; /* 列の幅を指定（自動, 200px） */
+  grid-gap: 10px; /* 各グリッドアイテムの間に10pxのギャップ */
+}
+
+.header {
+  grid-row: 1 / 2; /* 1行目から2行目にかけて配置 */
+  grid-column: 1 / 3; /* 1列目から2列目にかけて配置 */
+  background-color: #4CAF50; /* 背景色を緑に設定 */
+  color: white; /* 文字色を白に設定 */
+  text-align: center; /* 文字を中央揃えに設定 */
+}
+
+.main {
+  grid-row: 2 / 3; /* 2行目から3行目にかけて配置 */
+  grid-column: 1 / 3; /* 1列目から2列目にかけて配置 */
+  background-color: #f1f1f1; /* 背景色を薄いグレーに設定 */
+}
+
+.sidebar {
+  grid-row: 2 / 3; /* 2行目から3行目にかけて配置 */
+  grid-column: 2 / 3; /* 2列目に配置 */
+  background-color: #2196F3; /* 背景色を青に設定 */
+  color: white; /* 文字色を白に設定 */
+}
+
+.footer {
+  grid-row: 3 / 4; /* 3行目から4行目にかけて配置 */
+  grid-column: 1 / 3; /* 1列目から2列目にかけて配置 */
+  background-color: #333; /* 背景色を濃い灰色に設定 */
+  color: white; /* 文字色を白に設定 */
+  text-align: center; /* 文字を中央揃えに設定 */
+}
+
+/* 576px以下の画面幅に対するメディアクエリ */
+@media screen and (max-width: 576px) {
+  .container {
+    grid-template-rows: 80px auto auto 100px; /* 行の高さを指定 */
+    grid-template-columns: auto; /* 1列構成に変更 */
+    gap: 10px; /* 各グリッドアイテムの間に10pxのギャップ */
+  }
+
+  .header {
+    grid-row: 1; /* 1行目に配置 */
+    grid-column: 1; /* 1列目に配置 */
+  }
+
+  .main {
+    grid-row: 2; /* 2行目に配置 */
+    grid-column: 1; /* 1列目に配置 */
+  }
+
+  .sidebar {
+    grid-row: 3; /* 3行目に配置 */
+    grid-column: 1; /* 1列目に配置 */
+  }
+
+  .footer {
+    grid-row: 4; /* 4行目に配置 */
+    grid-column: 1; /* 1列目に配置 */
+  }
+}
