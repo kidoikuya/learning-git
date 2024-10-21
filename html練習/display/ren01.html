@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox Example</title>
+    <style>
+        /* すべての要素に余白とパディングをゼロにし、box-sizingをborder-boxに設定 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* bodyにフレックスボックスを適用し、コンテンツを画面の中央に配置 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center; /* 水平方向に中央揃え */
+            align-items: center; /* 垂直方向に中央揃え */
+            height: 100vh; /* 画面全体の高さを指定 */
+        }
+
+        /* フレックスボックスのコンテナを作成 */
+        .container {
+            display: flex; /* 子要素をフレックスアイテムとして扱う */
+            justify-content: space-around; /* アイテム間に等間隔のスペースを確保 */
+            align-items: center; /* アイテムを上下中央に配置 */
+            width: 80%; /* コンテナの横幅を画面の80%に設定 */
+            background-color: #fff; /* 背景色を白に設定 */
+            padding: 20px; /* 内側に20pxの余白を追加 */
+            border-radius: 10px; /* 角を丸くする */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ボックスに影を追加 */
+        }
+
+        /* 各フレックスアイテム（ボックス）のスタイル */
+        .item {
+            background-color: #4CAF50; /* 背景色を緑に設定 */
+            color: white; /* 文字色を白に設定 */
+            padding: 20px; /* 内側に20pxの余白を追加 */
+            border-radius: 5px; /* 角を丸くする */
+            text-align: center; /* テキストを中央に揃える */
+            flex: 1; /* 各アイテムが均等に幅を取るように、フレックスグロースを1に設定 */
+            margin: 0 10px; /* 左右に10pxのマージンを追加して、アイテム間にスペースを確保 */
+        }
+
+        /* 最初のアイテムの左側に余白を追加しない */
+        .item:first-child {
+            margin-left: 0;
+        }
+
+        /* 最後のアイテムの右側に余白を追加しない */
+        .item:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- フレックスボックスのコンテナ -->
+    <div class="container">
+        <!-- フレックスアイテム -->
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+    </div>
+</body>
+</html>

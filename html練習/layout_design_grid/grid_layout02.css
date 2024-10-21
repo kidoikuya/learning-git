@@ -1,0 +1,12 @@
+@charset "UTF-8";
+.container{
+    display: grid;
+    grid-template-columns: 120px 120px 120px;
+    gap: 10px;  /* paddingとは異なる */
+    border: 1px solid;
+}
+.item{
+    background: #0bd;
+    color: #fff;
+    padding: 10px;
+}

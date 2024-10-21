@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>flex-shrink</title>
+    <style>
+        ul.sample_menu{
+            display:flex;
+            width:100%;
+            list-style-type:none;
+            margin:0; padding:0;
+
+        }
+        ul.sample_menu li{
+            margin:2px; padding:10px; font-size:10px;
+            background-color:#66cc99; color:#ffffff;
+            text-align:center;
+            flex-basis:300Px;
+        }
+        .shrink1{
+            flex-shrink:1;
+        }
+        .shrink2{
+            flex-shrink:2;
+        }
+        .shrink3{
+            flex-shrink:3;
+        }
+        .shrink4{
+            flex-shrink:4;
+        }
+
+    </style>
+</head>
+<body>
+    <div>各アイテムのbasisは300pxに指定</div>
+    <ul class="sample_menu">
+        <li class="shrink1">メニュー1<br>shrink=1</li>
+        <li class="shrink2">メニュー2<br>shrink=2</li>
+        <li class="shrink3">メニュー3<br>shrink=3</li>
+        <li class="shrink4">メニュー4<br>shrink=4</li>
+    </ul>
+</body>
+</html>

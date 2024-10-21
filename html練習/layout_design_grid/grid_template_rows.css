@@ -1,0 +1,30 @@
+@charset "utf-8";
+.grid {
+	display: grid;
+	grid-template-columns: [left] 1fr [main] 8fr [main-end] 1fr [right];
+	grid-template-rows: [top] 50px [nav] auto [content] minmax(100px, auto) [foot] 40px [bottom];
+}
+.header {
+	grid-column-start: left;
+	grid-column-end: right;
+	grid-row-start: top;
+	background: rgba(0,139,202,0.5);
+}
+.nav {
+	grid-column-start: left;
+	grid-column-end: right;
+	grid-row-start: nav;
+	background: rgba(254,235,91,0.5);
+}
+.main {
+	grid-column-start: main;
+	grid-column-end: main-end;
+	grid-row-start: content;
+	background: rgba(242,125,74,0.5);
+}
+.footer {
+	grid-column-start: left;
+	grid-column-end: right;
+	grid-row-start: foot;
+	background: rgba(224,48,90,0.5);
+}

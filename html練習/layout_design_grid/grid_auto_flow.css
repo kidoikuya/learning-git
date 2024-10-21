@@ -1,0 +1,53 @@
+@charset "utf-8";
+.container {
+	display: grid;
+	grid-template: auto 200px / 80px auto 100px;
+	grid-template-areas: 
+		"header header header"
+		"main main sidebar"
+		"footer footer footer"; /* 名前付き領域を定義 */
+	gap: 10px; /* 各グリッドアイテムの間に10pxのギャップ */
+}
+
+.header {
+	grid-area: header; /* header 領域に配置 */
+	background-color: #4CAF50;
+	color: white;
+	text-align: center;
+	padding: 20px;
+}
+
+.sidebar {
+	grid-area: sidebar; /* sidebar 領域に配置 */
+	background-color: #2196F3;
+	color: white;
+	padding: 20px;
+}
+
+.main {
+	grid-area: main; /* main 領域に配置 */
+	background-color: #f1f1f1;
+	padding: 20px;
+}
+
+.footer {
+	grid-area: footer; /* footer 領域に配置 */
+	background-color: #333;
+	color: white;
+	text-align: center;
+	padding: 10px;
+}
+
+/* 576px以下の画面幅に対するメディアクエリ */
+@media (max-width: 576px) {
+	.container {
+		grid-template-rows:80px auto auto 100px;
+		grid-template-columns: auto; /* 1列構成に変更 */
+		grid-template-areas: 
+			"header"
+			"main"
+			"sidebar"
+			"footer"; /* 各エリアが縦に並ぶように */
+			grid-gap:10px;
+	}
+}

@@ -1,0 +1,10 @@
+@charset "utf-8";
+.container{
+    display:grid;
+    grid-template-columns: 20px repeat(5, 1fr) 30px;
+    column-gap:10px;
+}
+.container div{
+    background-color: aqua;
+    text-align: center;
+}

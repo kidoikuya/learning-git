@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暗黙のトラックサイズ指定</title>
+    <style>
+        .grid-container{
+            display:grid;
+            grid-template: 200px 200px / 200px 200px;
+            grid-auto-rows: 100px 300px;
+        }
+        .grid-container div{
+            background-color: blue;
+            color:white;
+            outline: 1px solid white;
+            padding:10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <div>セルA</div><div>セルB</div>
+        <div>セルC</div><div>セルD</div>
+        <div>セルE</div><div>セルF</div>
+        <div>セルG</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>flex-grow</title>
+    <style>
+        ul.sample_menu{
+            display:flex;
+            width:100%;
+            list-style-type:none;
+            margin:0; padding:0;
+
+        }
+        ul.sample_menu li{
+            margin:2px; padding:10px; font-size:10px;
+            background-color:#66cc99; color:#ffffff;
+            text-align:center;
+            flex-basis:100px;
+        }
+        .grow1{
+            flex-grow:1;
+        }
+        .grow2{
+            flex-grow:2;
+        }
+        .grow3{
+            flex-grow:3;
+        }
+        .grow4{
+            flex-grow:4;
+        }
+
+    </style>
+</head>
+<body>
+    <div>各アイテムのbasisは100pxに設定</div>
+    <ul class="sample_menu">
+        <li class="grow1">メニュー1<br>grow=1</li>
+        <li class="grow2">メニュー2<br>grow=2</li>
+        <li class="grow3">メニュー3<br>grow=3</li>
+        <li class="grow4">メニュー4<br>grow=4</li>
+    </ul>
+    
+</body>
+</html>

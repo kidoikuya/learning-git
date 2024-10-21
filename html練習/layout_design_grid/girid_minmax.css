@@ -1,0 +1,14 @@
+@charset "utf-8";
+.container1{
+    display:grid;
+    grid-template-columns: minmax(100px,300px) 100px 75px 50px;
+    column-gap:20px;
+}
+.container2{
+    display:grid;
+    grid-template-columns: minmax(100px,1fr) 100px 75px 50px;
+    column-gap:20px;
+}
+.container1 div,.container2 div{
+    background-color: aqua;
+}

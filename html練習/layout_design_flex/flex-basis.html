@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>flex-basis</title>
+    <style>
+        ul.sample_menu{
+            display:flex;
+            width:100%;
+            list-style-type:none;
+            margin:0; padding:0;
+
+        }
+        ul.sample_menu li{
+            margin:2px; padding:10px; font-size:10px;
+            background-color:#66cc99; color:#ffffff;
+            text-align:center;
+        }
+
+    </style>
+</head>
+<body>
+    <div>数値指定に矛盾がない場合</div>
+    <ul class="sample_menu">
+        <li style="flex-basis:50%;">メニュー1</li>
+        <li style="flex-basis:20%;">メニュー2</li>
+        <li style="flex-basis:20%;">メニュー3</li>
+        <li style="flex-basis:10%;">メニュー4</li>
+    </ul>
+    <div>数値指定に矛盾はあるが、親要素内におさまる</div>
+    <ul class="sample_menu">
+        <li style="flex-basis:50%;">メニュー1</li>
+        <li style="flex-basis:50%;">メニュー2</li>
+        <li style="flex-basis:50%;">メニュー3</li>
+        <li style="flex-basis:10%;">メニュー4</li>
+    </ul>
+    <div>大きな値を指定しても、親要素内におさまる</div>
+    <ul class="sample_menu">
+        <li style="flex-basis:800px;">メニュー1</li>
+        <li style="flex-basis:600px;">メニュー2</li>
+        <li style="flex-basis:400px;">メニュー3</li>
+        <li style="flex-basis:100px;">メニュー4</li>
+    </ul>
+    
+</body>
+</html>

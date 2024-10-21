@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .grid-parent {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 100px 100px;
+            grid-gap: 10px;
+        }
+        .child1, .child2, .child3, .child4, .child5, .child6 {
+            background-color: #7fffd4;
+            border: dotted 1px #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-parent">
+        <div class="child1">アイテム1</div>
+        <div class="child2">アイテム2</div>
+        <div class="child3">アイテム3</div>
+        <div class="child4">アイテム4</div>
+        <div class="child5">アイテム5</div>
+        <div class="child6">アイテム6</div>
+    </div>
+</body>
+</html>

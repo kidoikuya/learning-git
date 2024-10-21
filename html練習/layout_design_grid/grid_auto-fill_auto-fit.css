@@ -1,0 +1,25 @@
+@charset "utf-8";
+.container1{
+    display:grid;
+    /* grid-template-columns: repeat(3,100px); */
+    grid-template-columns: repeat(auto-fill,100px);
+    column-gap:20px;
+}
+.container2{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    column-gap:20px;
+}
+.container1,.container2{
+    outline:auto;
+}
+.container1 div{
+    outline:auto;
+    margin: 10px;
+    padding:10px;
+}
+.container2 div{
+    outline:auto;
+    margin: 10px;
+    padding:10px;
+}

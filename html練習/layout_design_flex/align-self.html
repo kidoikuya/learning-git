@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>align-self確認</title>
+    <style>
+        .flexbox{
+            display: flex; /* フレックスボックスを有効にして子要素をフレックスアイテムに */
+            text-align: center; /* テキストを中央揃え */
+            align-items: center; /* 全フレックスアイテムを垂直方向に中央揃え */
+            height: 100px; /* フレックスコンテナの高さを100pxに指定 */
+        }
+
+        .flex-item{
+            color: #fff; /* テキストの色を白に設定 */
+            width: 30%; /* 各アイテムの幅をコンテナの30%に設定 */
+        }
+
+        .item01{
+            background-color: red; /* 1番目のアイテムの背景色を赤に設定 */
+        }
+
+        .item02{
+            background-color: blue; /* 2番目のアイテムの背景色を青に設定 */
+            /* align-selfを複数指定しているが、最終的には stretch が適用される */
+            align-self: auto; /* デフォルトの配置 */
+            align-self: flex-start; /* 上端に揃える */
+            align-self: flex-end; /* 下端に揃える */
+            align-self: center; /* 垂直方向の中央に揃える */
+            align-self: baseline; /* テキストのベースラインに揃える */
+            align-self: stretch; /* コンテナの高さいっぱいに伸ばす */
+        }
+
+        .item03{
+            background-color: green; /* 3番目のアイテムの背景色を緑に設定 */
+        }
+    </style>
+</head>
+<body>
+    <div class="flexbox">
+        <div class="flex-item item01">No.1</div> <!-- 赤背景のアイテム -->
+        <div class="flex-item item02">No.2</div> <!-- 青背景のアイテム。align-selfが適用される -->
+        <div class="flex-item item03">No.3</div> <!-- 緑背景のアイテム -->
+    </div>
+</body>
+</html>

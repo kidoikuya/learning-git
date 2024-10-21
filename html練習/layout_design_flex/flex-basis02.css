@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.flexbox{
+    display: flex;
+    text-align: center;
+}
+  
+.flex-item{
+   color: #fff;
+   width: 100%;
+}
+  
+.item01{
+   background-color: red;
+   flex-basis:auto;
+   flex-basis:200px;
+   flex-basis:45%;
+}
+  
+.item02{
+   background-color: blue;
+   flex-basis: auto;
+   flex-basis: 400px;
+   flex-basis: 30%;
+}
+  
+.item03{
+   background-color: green;
+   flex-basis: auto;
+   flex-basis: 500px;
+   flex-basis: 25%;
+}
