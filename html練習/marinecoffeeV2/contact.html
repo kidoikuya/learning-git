@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Marine Coffee</title>
+    <link rel="icon" href="images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="contact.css" />
+    <link rel="stylesheet" type="text/css" href="common.css" />
+    <link rel="stylesheet" type="text/css" href="responsive.css" />
+	</head>
+	<body>
+		<header class="header container">
+			<div class="header-left">
+				<img class="header-logo" src="images/logo.png" alt="Marine Coffee">
+			</div>
+
+			<div class="header-right">
+				<a href="index.html">トップ</a>
+				<a href="menu.html">メニュー</a>
+				<a href="acsess.html">アクセス</a>
+				<a href="contact.html">お問い合わせ</a>
+			</div>
+		</header>
+    <section>
+      <div class="container">
+        <form>
+          <h1>お問い合わせ</h1>
+          <p>氏名</p>
+          <input type="text" name="name">
+          <p>メールアドレス</p>
+          <input type="email" name="mail">
+          <p>種類</p>
+          <select name="value">
+            <option value="store">お店に関して</option>
+            <option value="recruit">採用に関して</option>
+            <option value="other">その他</option>
+          </select>
+          <p>内容</p>
+          <textarea name="naiyo" rows="4"></textarea>
+          <input class="button" type="submit" name="submit" value="送信">
+        </form>
+      </div>
+    </section>
+		<footer class="footer container">
+			<div class="footer-left">
+				<p>このサイトをシェアする。</p>
+				<a href="https://twitter.com/share?ref_s=twsrc%5Etfw" 
+					class="twitter-share-button" 
+					data-text="入力したWebサイトの名前" 
+					data-url="入力したWebサイトのURL" 
+					data-show-count="false">Tweet
+				</a>
+				<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+			</div>
+			<div class="footer-right">
+				&copy; 2024 Shounan Marine Coffee.
+			</div>
+		</footer>
+	</body>
+</html>

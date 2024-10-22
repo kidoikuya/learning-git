@@ -1,0 +1,96 @@
+@charset "utf-8";
+
+/*---CSS共通部---*/
+*{
+    /* outline:1px solid #ff0000;*/
+    /* デフォルトのマージンリセット*/
+    margin:0px;
+    padding:0px;
+    list-style:none;
+}
+
+.container{
+    /*画面中央表示*/
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body{
+    font-family:sans-serif;
+    color:#5a5c5f;
+    min-width: 500px; /* 横幅の最小サイズを設定 */
+}
+
+.header{
+    height:56px;
+    width:100%;
+    box-shadow:0 0 10px #dddddd;
+    background-color:white;
+    /*ヘッダー位置固定*/
+    position:fixed;
+    top:0;
+    /*ロゴとメニューを左右に配置*/
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-logo{
+    height: 40px;
+    margin-top: 8px;
+}
+
+.header-right{
+    padding-right: 70px;
+}
+
+.header a{
+    line-height: 56px;
+    color:brown;
+    margin-left: 5px;
+    font-size: 16px;
+    padding:16px 5px;
+}
+
+.header a:hover{
+    background-color: brown;
+    color: white;
+    transition:background-color 1s;
+}
+
+/*レスポンシブ対応：幅が狭い場合にロゴを非表示にする*/
+.header-logo{
+    display: none;
+}
+
+section h1{
+    padding-top: 50px;
+    margin-top: 20px;
+}
+
+.footer{
+    height: 80px;
+    background-color: #2f3a44;
+    color:#e8e8e8;
+    margin: 15px 0px;
+    padding-top: 5px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left{
+    margin-top: 5px;
+}
+
+.footer-left p{
+    margin-bottom: 5px;
+}
+
+.twitter-share-button{
+    text-align: left;
+}
+
+.footer-right{
+    margin-top:20px;
+}

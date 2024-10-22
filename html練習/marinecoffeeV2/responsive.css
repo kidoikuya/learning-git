@@ -1,0 +1,25 @@
+@media screen and (min-width: 517px) {
+	.main-visual {
+		height: 410px;
+	}
+}
+
+@media screen and (min-width: 671px) {
+	.header-logo {
+		display: block;
+		float: left;
+		padding-top: 8px;
+	}
+
+	.map {
+		width: 600px;
+    }
+  
+    input,textarea {
+	width: 410px;
+    }
+
+    .button {
+        width: 80px;
+    }
+}

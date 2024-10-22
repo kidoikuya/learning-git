@@ -1,0 +1,12 @@
+a {
+  color: red;
+}
+a:hover {
+  filter: opacity(0.8);
+}
+a:focus {
+  text-decoration: line-through;
+}
+a span {
+  font-weight: bold;
+}/*# sourceMappingURL=sass-sample.css.map */

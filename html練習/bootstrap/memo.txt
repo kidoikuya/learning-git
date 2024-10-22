@@ -1,0 +1,137 @@
+■参考URL
+https://getbootstrap.jp/docs/5.3/layout/breakpoints/
+
+■Webpackは
+JavaScriptアプリケーションのモジュールバンドラーです。
+これにより、複数のファイルやリソースを1つのファイルまたは複数の最適化されたファイルにまとめ
+ブラウザに配信することができます。
+Webpackは、JavaScript、CSS、画像などのアセットを効率的に処理し、
+開発中にホットリローディングやトランスパイリングなどの機能も提供します。
+モダンなフロントエンド開発において広く使用されています。
+
+■parcelとは
+Parcelは、ウェブアプリケーションのモジュールバンドラーで、
+簡単な設定で使用できることが特徴です。
+JavaScript、CSS、画像などのアセットを処理し、効率的にバンドルします。
+Parcelは、デフォルトでホットリローディングやトランスパイリングをサポートし、
+パフォーマンスを最適化します。設定ファイルが不要なため、迅速な開発が可能です。
+モダンなフロントエンド開発に便利なツールです。
+
+■Viteは、モダンなフロントエンド開発のためのビルドツールおよび開発サーバーです。
+高速なホットモジュールリプレースメント（HMR）機能を備えており、
+素早く変更を反映できます。Viteは、ESモジュールを使用しており、
+ビルドプロセスが非常に効率的です。
+これにより、開発者はシンプルな設定で迅速にアプリケーションを構築し、
+テストできます。主にReactやVue.jsなどのフレームワークと組み合わせて使用されます。
+
+■拡張機能 Live Sass Compiler（cssを管理しやすい。入れ子構造が使える）
+・拡張子はscssでcssを入れ子で記述。html練習>bootstrap>
+・vscodeの下バーの右下にあるのをクリック
+・同フォルダ内にcssファイルが作成される。
+
+■ダウンロードしたファイル
+・全部入り：bootstrap.css
+・全部入り圧縮：bootstrap.min.css ※超読みにくいがサイズは少し小さい
+
+■機能ざっくり説明
+・Box-sizing：デザインで使う
+・Reboot：CSSリセットみたいなもの
+・Breakpointsは6サイズ。例<576px ※576px未満が最小。
+  モバイルファーストの考え方なので最小サイズがデフォルト。
+
+■Containers
+・コンテナ：基本レイアウトの最上位概念。この中にコンテンツを入れていく。
+  グリッドシステムを使用する１次元のFLEXBOX(cssのグリッドとは違うので注意)
+・コンテナにはクラス名が用意されている。.container-〇〇って感じ。
+  smとかmdとかは頭文字。ブレークポイントの境目で頭文字が切り替わる。
+  fluidはいかなる場合でも親100％のサイズ。
+
+■Grid
+cssのグリッドレイアウトではないので注意。
+1行作り列領域を12個に分割し、その領域を何個分使うかを定義する。
+例だと3colに分けているので1col=4つの領域
+  <body>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col">
+          Column
+        </div>
+        <div class="col">
+          Column
+        </div>
+        <div class="col">
+          Column
+        </div>
+      </div>
+    </div>
+  </body>
+  ---------------------------------------------
+  ※さらに分割も出来る。OUTLINE消えるのでdivタグにcss付ける。
+    <body>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-8">
+          Column
+        </div>
+        <div class="col-4">
+          Column
+        </div>
+        <div class="col-6">
+          Column
+        </div>
+      </div>
+    </div>
+  </body>
+  ------------------------------------------------
+  ※1行いっぱいに表示される。※col-12と同じ意味。
+    <body>
+    <div class="container text-center">
+      <div class="row">
+        <div class="">
+          Column
+        </div>
+        <div class="">
+          Column
+        </div>
+        <div class="">
+          Column
+        </div>
+      </div>
+    </div>
+  </body>
+----------------------------------------------------
+※ミドルサイズで6個、ラージサイズで4個
+※モバイルファーストなので小さいサイズから指定
+  <body>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-6 col-lg-4">
+          Column
+        </div>
+        <div class="col-md-6 col-lg-4">
+          Column
+        </div>
+        <div class="col-md-6 col-lg-4">
+          Column
+        </div>
+      </div>
+    </div>
+  </body>
+
+■まとめ
+・class=".container"を作成する。
+  行はコンテナ幅いっぱいになり、行内を12列に分割。
+  ※class=".container-fluid"だけは100％なので注意
+・ネスト可能
+
+■Columns 縦方向の整列(FLEXBOXまんまの考え方)
+・垂直方向
+div class="row align-items-center"
+・水平方向
+justify-content-
+・オフセット
+左寄せしたいなぁ、左に3個スペースを入れたいなぁ(これがオフセット)
+.col-md-3 .offset-md-3
+
+■Card
+コンポーネント(部品)単位でクラスが用意されているので簡単に実装できる。

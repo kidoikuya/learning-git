@@ -1,0 +1,42 @@
+@charset "utf-8";
+
+/* メインビジュアル */
+.main-visual{
+    padding-top: 140px;
+    padding-bottom: 100px;
+    background-image: url("images/main.png");
+    /* 背景画像を要素のサイズに合わせて表示 */
+    /* background-size: cover; */
+    color: whitesmoke;
+    text-align: center;
+}
+.top-title{
+    font-size: 64px;
+    margin-bottom: 10px;
+}
+.top-subtitle{
+    font-size: 24px;
+    margin-bottom: 60px;
+}
+.top-text{
+    opacity: 0.9;  /* 不透明度 */
+}
+
+/* メイン */
+.main{
+    padding: 40px 0;
+    color: #5a5c5f;
+    text-align: center;
+}
+.main h2{
+    margin-bottom: 25px;
+}
+.main-image{
+    width: 450px;
+    margin-bottom: 25px;
+    box-shadow: 2px 2px 4px #b7b7b7;    /* 影付け */
+    border-radius: 5px;                 /* 角丸 */
+}
+.main h3{
+    margin-bottom: 30px;
+}

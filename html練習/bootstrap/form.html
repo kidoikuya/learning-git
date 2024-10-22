@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header class="border-bottom border-1 bg-light py-3">
+        <h1 class="h2 text-center">お問い合わせ</h1>
+        <p class="text-center m-0">お問い合わせはこちらのフォームをご利用ください。</p>
+</header>
+
+<main class="py-5">
+    <div class="container">
+        <h2 class="h3 my-3">お問い合わせフォーム</h2>
+        <from action="#" method="post">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <label class="form-label" for="name">
+                        お名前
+                        <span class="badge bg-danger text-white ms-1">必須</span>
+                    </label>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label" for="email">
+                            メールアドレス
+                            <span class="badge bg-danger text-white ms-1">必須</span>
+                        </label>
+                    </div>
+                    <div class="col-md-9">
+                        <input class="form-control" type="email" id="email" name="email">
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-mb-3">
+                        <span id="trigger">
+                            きっかけ
+                            <span class="badge bg-danger text-white ms-1">必須</span>
+                        </span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="input-group" aria-labelledby="trigger">
+                            <div class="form-check me-2">
+                                <input type="radio" id="radio1" name="trigger"
+                                    class="form-check-input" value="口コミ">
+                                <label for="radio1" class="form-check-label me-2">口コミ</label>
+                            </div>
+                            <div class="form-check" me-2>
+                                <input type="radio" id="radio2" name="trigger"
+                                    class="form-check-input" value="検索エンジン">
+                                <label for="radio2" class="form-check-label me-2">検索エンジン</label>
+                            </div>
+                            <div class="form-check me-2">
+                                <input type="radio" id="radio3" name="trigger"
+                                    class="form-check-input" value="その他">
+                                <label for="radio3" class="form-check-label me-2">その他</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <label for="kinds" class="form-label">種別</label>
+                    <span class="badge bg-danger text-white ms-1">必須</span>
+                </div>
+                <div class="col-md-9">
+                    <select id="kinds" name="select" class="form-select">
+                        <option value="" selected hidden>選択してください</option>
+                        <option value="advertisement">広告・宣伝について</option>
+                        <option value="product">商品について</option>
+                        <option value="appoint">アポイントについて</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-mb-3">
+                    <label for="content" class="form-label">内容</label>
+                    <span></span>
+                </div>
+            </div>
+        </from>
+    </div>
+</main>
+
+</body>
+</html>

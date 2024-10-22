@@ -1,0 +1,28 @@
+#menus {
+	text-align: center;
+	display: grid;
+	gap: 40px;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	margin: 35px 20px;
+}
+
+.menu-box {
+	background-color: #dbe0e4;
+	border-radius: 8px;
+	box-shadow: 1px 1px 4px #d2d4d6;
+	padding: 25px 30px;
+}
+
+.menu-box img {
+	border-radius: 5px;
+}
+
+.menu-box h2 {
+	padding-top: 20px;
+	font-size: 19px;
+}
+
+.menu-box p {
+	padding-top: 8px;
+	font-size: 14px;
+}
