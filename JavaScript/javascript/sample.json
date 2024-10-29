@@ -1,0 +1,10 @@
+{
+    "num": 1,
+    "str": "aaa",
+    "empty": null,
+    "bool": true,
+    "obj": {
+        "key": "value"
+    },
+    "arr": [1, "a", null, true, {"key": "value"}]
+}

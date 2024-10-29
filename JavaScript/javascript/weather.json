@@ -1,0 +1,13 @@
+{
+    "location": {
+        "name": "浅草",
+        "region": "東京",
+        "country": "日本",
+        "tz_id": "Asia/Tokyo",
+        "localtime": "2023-12-12 5:44"
+    },
+    "current": {
+        "temp": 11,
+        "condition": "曇り"
+    }
+}
