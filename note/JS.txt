@@ -129,10 +129,42 @@ console.logを叩いてもundefrinedすら表示されない。
 WebpackはJSで書かれているのでnode.jsが必要。
 似たような機能を使える10倍速いvite(ヴィート)がある。
 
+■JSON
+JSのオブジェクト表現
 
+■モジュール
+※https://www.tohoho-web.com/ex/npm.html
+node_modulesフォルダに必要ファイルが格納される。
+関連しているパッケージが多いので重たい。
+だから、githubで公開されているプログラムはnode_modulesが入ってない？
+cloneした後に、自分でインストールコマンド(依存関係を一括対応してくれる)を入れる。
+$ ls -l
+-rw-rw-r--.  1 taro taro   265 Jan 18 01:41 package.json
+$ npm install
 
+node.jsが提供するパッケージインストールコマンド
+・npm install パッケージ --オプション
+--no-save
+package.json に書き込まない場合に指定します。npm4 までは package.json に書き込まないのがデフォルトでしたが、npm5 からは --save がデフォルトとなりました。
+--save
+依存パッケージの場合に指定します。package.json の dependencies に記録されます。このパッケージを誰かが npm install したときに依存パッケージとしてインストールされます。
+--save-optional
+依存はするけれど必須ではないパッケージの場合に指定します。package.json の optionalDependencies に記録されます。npm install でインストールされますが、インストールに失敗してもスルーされます。
+--save-dev
+テストツールなど、開発者が使用するパッケージの場合に指定します。package.json の devDependencies に記録されます。このパッケージを npm install しても、インストールされません。ただし、パッケージを Git から clone して npm install した場合は開発者とみなされ、インストールされます。
+package.json に記述されたパッケージを再度インストールするには、package.json が存在するディレクトリで下記を実行します。
 
+■ライブラリとフレームワークの違い
+ライブラリ:
+特定の機能やタスクを実行するための再利用可能なコードの集まり。
+開発者が必要に応じてライブラリの機能を呼び出して利用します。
+例: jQuery、Lodash、Apache Commons など。
 
+フレームワーク:
+アプリケーションの構造や設計を提供する骨組みです。
+開発者はフレームワークが定めたルールやガイドラインに従ってアプリケーションを構築します。
+堅牢な開発が出来るので、大規模開発でよく利用される。
+例: Spring、Django、Ruby on Rails など。
 
 
 
