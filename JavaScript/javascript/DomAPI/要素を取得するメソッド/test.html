@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>querySelectorサンプル</title>
+</head>
+
+<body>
+    <h1>querySelectorサンプル</h1>
+    <article>
+        <section>
+            <h2 class="star">第１章</h2>
+            <p class="heart">この章の文章です</p>
+        </section>
+        <section>
+            <h2 class="star">第２章</h2>
+            <p>この章の文章です</p>
+        </section>
+        <section>
+            <h2 class="heart">第３章</h2>
+            <p class="heart">この章の文章です</p>
+        </section>
+    </article>
+    <footer>
+        <p class="heart">記事外の文章</p>
+    </footer>
+    <script>
+        // ▼ querySelector の戻り値は最初に文書内で見つかったElement
+        const starElement = document.querySelector("article .star");
+        // テキストの先頭に★を付与する
+        starElement.textContent = `★ ${starElement.textContent}`;
+        // ▼ querySelectorAll の戻り値は NodeList
+        const heartList = document.querySelectorAll("article .heart");
+        for (const element of heartList) {
+            // テキストの先頭に♡を付与する
+            element.textContent = `♡ ${element.textContent}`;
+        }
+    </script>
+</body>
+
+</html>

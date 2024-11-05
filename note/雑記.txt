@@ -23,7 +23,7 @@ shift+alt+Fでインデント整形
 見出しは6段階H6まである
 ul>li*6
 
-
-■1009
-Markdownでコードの色分けやグラフを簡単に作成出来て驚きました。
-UMLを学び、今後の開発で活用していきたいと思います。
+■JS要素を取得して扱う
+const li = document.createElement
+li.textContent
+li.className
