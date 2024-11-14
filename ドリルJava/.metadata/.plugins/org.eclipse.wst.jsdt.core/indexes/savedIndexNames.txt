@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2520373480.index
+2822510520.index
+1152121273.index
+2485878017.index
+2269742104.index
+2842855883.index

@@ -1,0 +1,18 @@
+package drill;
+
+import java.util.function.Function;
+
+public class function {
+
+    public static void main(String[] args) {        
+        Function<String, String> kido = ori('o');
+        System.out.println(kido.apply("kido"));
+        
+    }    
+    
+    public static Function<String,String> ori(char num){
+    	return (String str) ->{
+    		return "test".concat(String.valueOf(num));
+    	};
+    }    
+}

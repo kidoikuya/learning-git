@@ -1,0 +1,17 @@
+package test;
+
+import dao.AccountsDAO;
+import model.Account;
+import model.Login;
+
+public class AccountsDAOTest {
+	public static void main(String[] args) {
+		testFindByLoginOK(); // ユーザが見つかる場合のテスト
+		testFindByloginNG(); // ユーザが見つからない場合のテスト
+	}
+	public static void testFidnByLoginOK() {
+		Login login = new Login("minato","1234");
+		AccountsDAO dao =new AccountsDAO();
+		Account result = dao.findByLogin(login);
+	}
+}

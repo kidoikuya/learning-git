@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+  <server auto-publish-setting="2" auto-publish-time="1" configuration-id="/Servers/Tomcat10_Java21-config" deployDir="wtpwebapps" hostname="localhost" id="Tomcat10_Java21" name="Tomcat10_Java21" runtime-id="Tomcat10 (Java21)" server-type="org.eclipse.jst.server.tomcat.101" server-type-id="org.eclipse.jst.server.tomcat.101" start-timeout="60" stop-timeout="15" testEnvironment="true" timestamp="4">
+    <list key="modules" value0="example::org.eclipse.jst.jee.server:example::jst.web::6.0" value1="dokoTsubu::org.eclipse.jst.jee.server:dokoTsubu::jst.web::6.0" value2="daoDrill1::org.eclipse.jst.jee.server:daoDrill1::jst.web::6.0" value3="sukkiriShop::org.eclipse.jst.jee.server:sukkiriShop::jst.web::6.0"/>
+  </server>
+</servers>

@@ -1,0 +1,16 @@
+INDEX VERSION 1.134+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jdt.core
+2033301624.index
+2485878017.index
+3909674010.index
+1057638289.index
+2269742104.index
+968314029.index
+3735281515.index
+4168688876.index
+670036074.index
+3413833293.index
+1152121273.index
+1865797976.index
+2822510520.index
+2842855883.index
+3328407730.index

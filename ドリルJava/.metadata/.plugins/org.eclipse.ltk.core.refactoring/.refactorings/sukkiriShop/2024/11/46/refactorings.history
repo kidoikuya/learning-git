@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="リソース名 &apos;sukkiriShop/src/main/java/dao/AccountDAO.java&apos; を &apos;AccountsDAO.java&apos; に変更します" description="リソース &apos;AccountDAO.java&apos; の名前変更" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/java/dao/AccountDAO.java" name="AccountsDAO.java" stamp="1731546561479" updateReferences="true"/>&#x0A;<refactoring comment="&apos;jsp&apos; を &apos;WEB-INF&apos; に移動" description="&apos;jsp&apos; を &apos;WEB-INF&apos; に移動" destination="src/main/webapp/WEB-INF" element1="src/main/java/jsp" flags="7" id="org.eclipse.ltk.core.refactoring.move.resources" resources="1" stamp="1731548370716" updateReferences="true"/>
+</session>

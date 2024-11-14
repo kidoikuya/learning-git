@@ -1,0 +1,7 @@
+package test;
+
+public class LoginLogicTest {
+	public static void main(String[] args) {
+		
+	}
+}

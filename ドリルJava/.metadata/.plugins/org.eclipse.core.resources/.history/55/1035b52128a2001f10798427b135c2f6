@@ -1,0 +1,8 @@
+package test;
+
+public class LoginLogicTest {
+	public static void main(String[] args) {
+		testExecuteOK(); // ログイン成功のテスト
+		testExecuteNG(); // ログイン失敗のテスト
+	}
+}

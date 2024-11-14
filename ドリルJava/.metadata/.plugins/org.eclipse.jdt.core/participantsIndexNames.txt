@@ -1,0 +1,15 @@
+INDEX VERSION 1.134
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2401940221.index
+\example\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2203993171.index
+\example\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\247534473.index
+\dokoTsubu\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3654725714.index
+\sukkiriShop\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3483276203.index
+\dokoTsubu\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\178279785.index
+\dokoTsubu\src\main\java
+C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2520373480.index
+\ExerciseServlet\src\main\java
