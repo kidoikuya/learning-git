@@ -7,12 +7,8 @@
 </head>
 <body>
     <form action="Login.action" method="post">
-        LOGIN ID 
-        <input type="text" name="loginId" required><br>
-        
-        PASSWORD
-        <input type="password" name="password" required><br>
-        
+        LOGIN ID <input type="text" name="loginId" required><br>
+        PASSWORD <input type="password" name="password" required><br>
         <input type="submit" value="LOGIN">
     </form>
 </body>
