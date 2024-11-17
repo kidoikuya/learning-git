@@ -1,10 +1,34 @@
-■イメージ取得
-docker image pull mysql:latest
+操作              : コマンド例
+------------------:------------------------------------------------------
+データベース操作    :
+  データベース作成   : CREATE DATABASE database_name;
+  データベース選択   : USE database_name;
+  データベース一覧   : SHOW DATABASES;
+  データベース削除   : DROP DATABASE database_name;
+  
+テーブル操作        :
+  テーブル作成      : CREATE TABLE table_name (column1 datatype, ...);
+  テーブル一覧表示  : SHOW TABLES;
+  テーブル構造表示  : DESCRIBE table_name;
+  テーブル削除      : DROP TABLE table_name;
+  テーブル変更      : ALTER TABLE table_name ADD column_name datatype;
+  テーブル名変更    : RENAME TABLE old_name TO new_name;
 
-■コンテナ作成＆起動
-docker container create --name mysql001 -e MYSQL_ROOT_PASSWORD=1234 -p 3307:3306 mysql
-docker container start mysql001
-docker container exec -i -t mysql001 mysql -u root -p
+データ操作 (CRUD)    :
+  データ挿入        : INSERT INTO table_name (col1, col2) VALUES (val1, val2);
+  データ取得        : SELECT column1, column2 FROM table_name;
+  条件付きデータ取得: SELECT * FROM table_name WHERE condition;
+  データ更新        : UPDATE table_name SET column1 = value WHERE condition;
+  データ削除        : DELETE FROM table_name WHERE condition;
+
+その他の操作         :
+  データ全削除      : TRUNCATE TABLE table_name;
+  インデックス作成  : CREATE INDEX index_name ON table_name (column_name);
+  インデックス削除  : DROP INDEX index_name ON table_name;
+  ユーザー作成      : CREATE USER 'username'@'host' IDENTIFIED BY 'password';
+  ユーザー権限付与  : GRANT ALL PRIVILEGES ON database_name.* TO 'username'@'host';
+  権限削除          : REVOKE ALL PRIVILEGES ON database_name.* FROM 'username'@'host';
+
 
 
 

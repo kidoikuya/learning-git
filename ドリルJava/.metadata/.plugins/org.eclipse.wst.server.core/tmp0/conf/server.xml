@@ -140,10 +140,16 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      <Context docBase="C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\ROOT" path="" reloadable="false"/><Context docBase="C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\example" path="/example" reloadable="false" source="org.eclipse.jst.jee.server:example"/><Context docBase="C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\dokoTsubu" path="/dokoTsubu" reloadable="false" source="org.eclipse.jst.jee.server:dokoTsubu"/><Context docBase="C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\daoDrill1" path="/daoDrill1" reloadable="false" source="org.eclipse.jst.jee.server:daoDrill1">
+      <Context docBase="example" path="/example" reloadable="false" source="org.eclipse.jst.jee.server:example"/><Context docBase="dokoTsubu" path="/dokoTsubu" reloadable="false" source="org.eclipse.jst.jee.server:dokoTsubu"/><Context docBase="daoDrill1" path="/daoDrill1" reloadable="false" source="org.eclipse.jst.jee.server:daoDrill1">
     <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" name="jdbc_sample" password="1234" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/jdbc_sample" username="root">
     </Resource>
-</Context><Context docBase="C:\Users\SHK007\Desktop\インストーラ\10_サーバサイドJava演習\ドリルJava\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\sukkiriShop" path="/sukkiriShop" reloadable="false" source="org.eclipse.jst.jee.server:sukkiriShop"/></Host>
+</Context><Context docBase="sukkiriShop" path="/sukkiriShop" reloadable="false" source="org.eclipse.jst.jee.server:sukkiriShop"/><Context docBase="ExerciseServlet" path="/ExerciseServlet" reloadable="false" source="org.eclipse.jst.jee.server:ExerciseServlet"> 
+    <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" name="jdbc/myproject" password="1234" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/myproject" username="root"> 
+    </Resource> 
+</Context><Context docBase="ExerciseServlet01" path="/ExerciseServlet" reloadable="false" source="org.eclipse.jst.jee.server:ExerciseServlet01"> 
+    <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" name="jdbc/myproject" password="1234" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/myproject" username="root"> 
+    </Resource> 
+</Context></Host>
     </Engine>
   </Service>
 </Server>
