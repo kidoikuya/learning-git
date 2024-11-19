@@ -1,9 +1,0 @@
-package jdbcDrill;
-
-public class JdbcTest2 {
-
-	public static void main(String[] args) {
-
-	}
-
-}

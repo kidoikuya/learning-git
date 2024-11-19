@@ -1,9 +1,0 @@
-package listener;
-
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
-
-@WebListener
-public class CounterListener implements ServletContextListener{
-
-}

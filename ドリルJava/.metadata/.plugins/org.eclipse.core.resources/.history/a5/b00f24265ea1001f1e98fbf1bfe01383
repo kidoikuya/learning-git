@@ -1,6 +1,0 @@
-package listener;
-
-@WebListener
-public class CounterListener {
-
-}

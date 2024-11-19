@@ -1,7 +1,0 @@
-package model;
-
-public class LoginLogic {
-	public boolean execute(Login login) {
-		
-	}
-}

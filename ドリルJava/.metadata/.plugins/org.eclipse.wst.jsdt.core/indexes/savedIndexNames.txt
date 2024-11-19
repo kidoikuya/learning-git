@@ -1,8 +1,0 @@
-INDEX VERSION 1.4+D:\Programming\git\test0198\ドリルJava\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-207679440.index
-2842855883.index
-2485878017.index
-2269742104.index
-1152121273.index
-2822510520.index
-1042759636.index
