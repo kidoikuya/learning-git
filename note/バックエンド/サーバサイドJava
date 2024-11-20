@@ -1,0 +1,80 @@
+■ポート
+Apach 80 静的プログラム
+Apach Tomcat 8009 動的プログラム(JSPやサーブレット)
+※Apach TomcatはPleiadesに入ってる無償機能。
+
+■エクリプス操作
+・ウィンドウ＞パースペクティブ＞サーバ
+・パッケージエクスプローラが非表示になるのでビューの表示から表示させる。
+・新規＞動的プロジェクト
+・サーバ起動やHTMLファイル作成
+https://sukkiri.jp/books/sukkiri_servlet4/sukkiri_servlet4_appendix
+・webapp
+
+■総合演習で学んだこと
+request.setAttribute("errorMessage", "board update error. The contents characters have to be in 50 characters.");
+
+"errorMessage"
+属性名です。
+リクエストオブジェクトに保存されるデータを識別するためのキーのような役割を果たします。この場合、"errorMessage" はエラーメッセージを表すために使われます。
+
+"board update error. The contents characters have to be in 50 characters.":
+属性値です。
+属性値は、指定した属性名に関連付けるデータです。
+ここでは、エラーメッセージとして表示される文字列が値として設定されています。
+
+■アノテーション
+@WebServlet(urlPatterns = ("*.action"))
+@WebServletがアノテーション、Javaクラス内でServletの設定を行うことでXMLの設定が不要になる。
+urlPatternsは、どのURLパターンに対してこのServletをマッピングするか指定する属性。
+"*.action" という風にURLパターンに「*」を使ってマッピングする事も可能。
+Webアプリケーション内(動的プロジェクト内)で特定のURLパターンが呼び出されたら対応したサーブレットを動かす。
+総合演習ではサーブレット1つのみを定義しコントローラーとする一元管理のモデル、MVCが採用されていた。
+
+
+-- 総合演習内でのメモ ----------------------------------------------------------------------------------------------------------
+
+■セッションスコープにいつcustomer2が登録された？
+・index.jspからFrontcontroller経由でLoginActionが呼び出される。
+・ログインIDとパスワードが CustomerDAO の search メソッドを使ってデータベースに照会される。
+※ここがわかりにくいポイント
+  searchメソッド前にCustomer2 customer2 = (Customer2) session.getAttribute("customer2");が入力されている！？
+  これは取得しようとしているが、初ログイン時にはnullが返るので、この段階ではセッションスコープは空状態。
+  この時、すでにログイン済みの場合のみセッションスコープが返り、login-out.jspに遷移させる。
+・データベースに一致するユーザー情報が見つかった場合、その情報を使って Customer2 オブジェクトが生成されcustomer2 変数に格納される。
+・customer2 が null でない（つまり、ユーザー情報が正常に取得できた）場合、次にセッションに customer2 を登録します。
+  ここでようやく、session.setAttribute("customer2", customer2); が呼び出され、customer2 オブジェクトがセッションスコープに保存されます。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
