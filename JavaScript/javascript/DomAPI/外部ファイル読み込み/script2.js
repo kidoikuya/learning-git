@@ -1,1 +1,0 @@
-console.log("script2.jsを読み込んで実行しました。");
