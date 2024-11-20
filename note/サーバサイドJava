@@ -17,8 +17,17 @@ https://sukkiri.jp/books/sukkiri_servlet4/sukkiri_servlet4_appendix
 ・doGet,doPostメソッドをオーバーライド
 
 
-■スッキリわかるが終わった後～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+■総合演習で学んだこと
+request.setAttribute("errorMessage", "board update error. The contents characters have to be in 50 characters.");
 
+"errorMessage"
+属性名です。
+リクエストオブジェクトに保存されるデータを識別するためのキーのような役割を果たします。この場合、"errorMessage" はエラーメッセージを表すために使われます。
+
+"board update error. The contents characters have to be in 50 characters.":
+属性値です。
+属性値は、指定した属性名に関連付けるデータです。
+ここでは、エラーメッセージとして表示される文字列が値として設定されています。
 
 
 
