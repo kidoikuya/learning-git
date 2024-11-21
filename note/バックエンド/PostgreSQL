@@ -1,0 +1,56 @@
+- 起動とログイン ----------------------------------------------------------------------------------------------------
+①SQL Shell(psql)から起動
+  パスワードが出るまでエンター（pass:pg1234）
+  ----------------------------------------------------------
+  Server [localhost]:
+  Database [postgres]: 
+  Port [5432]:
+  Username [postgres]:
+  ----------------------------------------------------------
+②コマンドプロンプトから起動
+  ※環境変数の設定が必要(システム>システムの詳細設定>PATH)
+  C:\Program Files\PostgreSQL\16\bin
+  psql -U myuser -d mydatabase -h localhost -p 5432
+  例：psql -U postgres -d test -h localhost -p 5432 ※databaseはデフォルト以外でも可
+
+- データベース操作 ----------------------------------------------------------------------------------------------------
+・データベース一覧表示
+  \l
+
+・データベース接続 (接続中のデータベース名=#と表示される)
+  \c データベース名
+
+・データベース作成
+  create database データベース名;
+
+・データベース削除
+  DROP DATABASE データベース名;
+  DROP DATABASE IF EXISTS データベース名;
+
+- テーブル操作(データベース接続してから) --------------------------------------------------------------------------------
+・テーブル一覧表示 (リレーション一覧表示)
+  \dt
+
+・テーブル作成
+  CREATE TABLE テーブル名(); ※別途カラムを追加する必要がある
+  CREATE TABLE 家計簿 (  日付 DATE, 費目 VARCHAR(20), メモ VARCHAR(100), 入金額 INTEGER, 出金額 INTEGER  ); 
+
+・カラム追加
+  ALTER TABLE テーブル名 ADD COLUMN "日付" DATE;
+  ALTER TABLE テーブル名 ADD COLUMN "費目" VARCHAR(50);
+
+・テーブル削除
+  drop table テーブル名1, テーブル名2, テーブル名3;
+  drop table if exists 家計簿;   ※if existsを付けるとテーブルが存在しない場合にエラー回避
+
+・レコード追加
+  INSERT INTO tetete ("日付", "費目") VALUES ('2024-08-20', '食費');
+  INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-03','食費','コーヒーを購入',0,380 );
+
+・レコード削除
+  DELETE FROM テーブル名 WHERE username = 'ユーザ名';
+  例：DELETE FROM users WHERE created_at < '2024-01-01';
+
+・レコード全削除
+  DELETE FROM テーブル名;
+  TRUNCATE TABLE テーブル名;

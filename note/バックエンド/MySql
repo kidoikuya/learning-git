@@ -1,0 +1,162 @@
+操作              : コマンド例
+------------------:------------------------------------------------------
+データベース操作    :
+  データベース作成   : CREATE DATABASE database_name;
+  データベース選択   : USE database_name;
+  データベース一覧   : SHOW DATABASES;
+  データベース削除   : DROP DATABASE database_name;
+
+テーブル操作        :
+  テーブル作成      : CREATE TABLE table_name (column1 datatype, ...);
+  テーブル一覧表示  : SHOW TABLES;
+  テーブル構造表示  : DESCRIBE table_name;
+  テーブル削除      : DROP TABLE table_name;
+  テーブル変更      : ALTER TABLE table_name ADD column_name datatype;
+  テーブル名変更    : RENAME TABLE old_name TO new_name;
+
+データ操作 (CRUD)    :
+  データ挿入        : INSERT INTO table_name (col1, col2) VALUES (val1, val2);
+  データ取得        : SELECT column1, column2 FROM table_name;
+  条件付きデータ取得: SELECT * FROM table_name WHERE condition;
+  データ更新        : UPDATE table_name SET column1 = value WHERE condition;
+  データ削除        : DELETE FROM table_name WHERE condition;
+
+その他の操作         :
+  データ全削除      : TRUNCATE TABLE table_name;
+  インデックス作成  : CREATE INDEX index_name ON table_name (column_name);
+  インデックス削除  : DROP INDEX index_name ON table_name;
+  ユーザー作成      : CREATE USER 'username'@'host' IDENTIFIED BY 'password';
+  ユーザー権限付与  : GRANT ALL PRIVILEGES ON database_name.* TO 'username'@'host';
+  権限削除          : REVOKE ALL PRIVILEGES ON database_name.* FROM 'username'@'host';
+---------------------------------------------------------------------------------------
+
+■テーブルにカラムとレコードを同時追加
+※わざわざカラムだけ設定しなくてもよいから楽。
+INSERT INTO board (login_id, contents, clear)
+VALUES
+('user123', 'First post content', 'http://example.com/clear1'),
+('user456', 'Second post content', 'http://example.com/clear2');
+mysql> select * from board;
++----+---------------------+----------+------------------------+---------------------+
+| id | mydate              | login_id | contents               | clear               |
++----+---------------------+----------+------------------------+---------------------+
+|  1 | 2024-11-20 12:34:56 | user123  | First post content     | http://example.com/clear1 |
+|  2 | 2024-11-20 12:35:12 | user456  | Second post content    | http://example.com/clear2 |
++----+---------------------+----------+------------------------+---------------------+
+2 rows in set (0.00 sec)
+
+■テーブル構造表示
+mysql> DESCRIBE board;
++----------+--------------+------+-----+-------------------+-------------------+
+| Field    | Type         | Null | Key | Default           | Extra             |
++----------+--------------+------+-----+-------------------+-------------------+
+| id       | int          | NO   | PRI | NULL              | auto_increment    |
+| mydate   | datetime     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| login_id | varchar(100) | NO   |     | NULL              |                   |
+| contents | varchar(100) | NO   |     | NULL              |                   |
++----------+--------------+------+-----+-------------------+-------------------+
+Field    : テーブル内のカラム名（列名）。
+Type     : カラムのデータ型 MySQLでのデータ型なので注意（varchar→String,datetime→Timestamp等）
+Null     : カラムが NULL を許可するかどうか（YES または NO）。
+Key      : カラムがキー（主キーやインデックスなど）として設定されているか。
+Default  : カラムにデータが指定されなかった場合に適用されるデフォルト値。
+Extra    : カラムに適用されている追加情報（例: auto_increment, DEFAULT_GENERATED など）。
+------------------------------------------------------------------------------------------
+id       : テーブルの一意な識別子（主キー）。
+mydate   : 日時を格納するカラム。
+login_id : ログインIDを格納するカラム。
+contents : 何らかの内容（例: メッセージや情報）を格納するカラム。
++-------------------+--------------------------------------------------------------+
+| Extra             | 説明                                                         |
++-------------------+--------------------------------------------------------------+
+| auto_increment    | 自動的に1ずつ増加するユニークな値を生成。                    |
+| DEFAULT_GENERATED | デフォルト値が生成されるカラムを示す。                       |
+| STORED GENERATED  | 永続的に保存される生成カラム（計算値）。                     |
+| VIRTUAL GENERATED | 計算値が必要なときに動的に生成されるカラム。                 |
+| on update CURRENT_TIMESTAMP | レコード更新時に現在のタイムスタンプに更新される。 |
++-------------------+--------------------------------------------------------------+
++-------------------+---------------------+----------------------------------------+
+| MySQL データ型    | Java データ型       | 説明                                   |
++-------------------+---------------------+----------------------------------------+
+| INT               | int                 | 整数型（32ビット）。                   |
+| BIGINT            | long                | 長い整数型（64ビット）。               |
+| FLOAT, DOUBLE     | float, double       | 小数点を含む数値型。                   |
+| DECIMAL           | java.math.BigDecimal| 精度が高い小数点数値型。               |
+| CHAR(n)           | String              | 固定長文字列（n文字）。                |
+| VARCHAR(n)        | String              | 可変長文字列（最大n文字）。            |
+| TEXT              | String              | 長いテキスト用。                       |
+| DATE              | java.sql.Date       | 日付型（年-月-日）。                   |
+| DATETIME          | java.sql.Timestamp  | 日付と時刻型（年-月-日 時:分:秒）。    |
+| TIMESTAMP         | java.sql.Timestamp  | 日付と時刻型（UNIXタイムスタンプ）。   |
+| TIME              | java.sql.Time       | 時刻型（時:分:秒）。                   |
+| BOOLEAN, TINYINT  | boolean             | 真偽値（0: false, 1: true）。          |
++-------------------+---------------------+----------------------------------------+
+
+■プレースホルダー(?)とtry-with-resources構文
++----------+--------------+------+-----+-------------------+-------------------+
+| Field    | Type         | Null | Key | Default           | Extra             |
++----------+--------------+------+-----+-------------------+-------------------+
+| id       | int          | NO   | PRI | NULL              | auto_increment    | <自動採番
+| mydate   | datetime     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED | <自動日付
+| login_id | varchar(100) | NO   |     | NULL              |                   |
+| contents | varchar(100) | NO   |     | NULL              |                   |
++----------+--------------+------+-----+-------------------+-------------------+
+String sql = "INSERT INTO board (login_id, contents) VALUES (?, ?)"; //idとmydateは指定不要。
+try (Connection conn = getConnection(); //リソース間は「;」で区切る必要がある。
+     PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+    stmt.setString(1, loginId);
+    stmt.setString(2, contents);
+    stmt.executeUpdate();
+}
+-------------------------------------------------------------------------------------
+
+■Connectionインタフェース
+データベース接続を管理するメソッド(接続確立・SQLクエリ実行・トランザクション管理)等を提供。
+getConnection()：JDBC ドライバを使い接続情報（データベースURL、ユーザー名、パスワード等）を基にデータベースとの接続を確立。
+引数無しで使われている場合？
+メソッド内のフィールドor他所から接続情報を取得して接続を行っている。
+総合演習では下記のような「context.xml」の情報が使われていた。
+<?xml version="1.0" encoding="UTF-8" ?>
+<Context>
+    <Resource name = "jdbc/myproject"
+              auth = "Container"
+              type = "javax.sql.DataSource"
+              driverClassName = "com.mysql.cj.jdbc.Driver"
+              url      = "jdbc:mysql://localhost:3306/myproject"
+              username = "root"
+              password = "1234">
+    </Resource>
+</Context>
+その他のメソッド
+------------------------------------------------------------------------------------
+| 操作                   | メソッド                                                |
+|------------------------|---------------------------------------------------------|
+| SQL 文の実行           | `executeQuery(String sql)` (SELECT)                     |
+|                        | `executeUpdate(String sql)` (INSERT, UPDATE, DELETE)    |
+|                        | `execute(String sql)` (任意のSQL)                       |
+| プレースホルダ使用     | `prepareStatement(String sql)`                          |
+| トランザクション管理   | `setAutoCommit(boolean autoCommit)`                     |
+|                        | `commit()` (コミット)                                   |
+|                        | `rollback()` (ロールバック)                             |
+| トランザクション隔離   | `setTransactionIsolation(int level)`                    |
+|                        | `getTransactionIsolation()` (隔離レベル取得)            |
+| 接続状態の確認         | `isClosed()` (接続が閉じられたか確認)                   |
+| メタデータ取得         | `getMetaData()` (接続のメタデータを取得)                |
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

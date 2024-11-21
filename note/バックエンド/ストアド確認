@@ -1,0 +1,56 @@
+■ストアドプロシージャの登録状況確認方法
+ROUTINE_SCHEMA,
+ROUTINE_NAME,
+ROUTINE_TYPE
+from information_schema.ROUTINES
+where
+ROUTINE_SCHEMA='myproject' and
+ROUTINE_TYPE='PROCEDURE';
+
+
+■登録内容の確認方法
+mysql> show create procedure makeKAKEIBO \G;
+*************************** 1. row ***************************
+           Procedure: makeKAKEIBO
+            sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+    Create Procedure: CREATE DEFINER=`root`@`localhost` PROCEDURE `makeKAKEIBO`()
+begin
+drop table if exists 家計簿;
+drop table if exists 家計簿アーカイブ;
+drop table if exists 家計簿集計;
+CREATE TABLE 家計簿 (  日付 DATE, 費目 VARCHAR(20), メモ VARCHAR(100), 入金額 INTEGER, 出 金額 INTEGER  );
+CREATE TABLE 家計簿アーカイブ (  日付 DATE, 費目 VARCHAR(20), メモ VARCHAR(100), 入金額 INTEGER, 出金額 INTEGER  );
+CREATE TABLE 家計簿集計 (  費目 VARCHAR(20), 合計 INTEGER, 平均 INTEGER, 最大 INTEGER, 最 小 INTEGER, 回数 INTEGER  );
+INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-03','食費','コーヒーを購入',0,380 );
+INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-10','給料','1月の給 料',280000,0 );
+INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-11','教養娯楽費','書籍を購入',0,2800 );
+INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-14','交際費','同期会の会費',0,5000 );
+INSERT INTO 家計簿 ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-02-18','水道光熱費','1 月の電気代',0,7560 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2023-12-10','給料','11月の給料',280000,0 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2023-12-18','水道 光熱費','水道代',0,4200 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2023-12-24','食費','レストランみやび',0,5000 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2023-12-25','居住 費','1月の家賃支払い',0,80000 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-01-10','給料','12月の給料',280000,0 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-01-13','教養 娯楽費','スッキリシネマズ',0,1800 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-01-13','食費','新年会',0,5000 );
+INSERT INTO 家計簿アーカイブ ( 日付,費目,メモ,入金額,出金額 ) VALUES ( '2024-01-25','居住 費','2月の家賃支払い',0,80000 );
+INSERT INTO 家計簿集計 ( 費目,合計,平均,最大,最小,回数 ) VALUES ( '居住費',240000,80000,80000,80000,3 );
+INSERT INTO 家計簿集計 ( 費目,合計,平均,最大,最小,回数 ) VALUES ( '水道光熱費',11760,5880,7560,4200,2 );
+INSERT INTO 家計簿集計 ( 費目,合計,平均,最大,最小,回数 ) VALUES ( '食費',10380,3460,5000,380,3 );
+INSERT INTO 家計簿集計 ( 費目,合計,平均,最大,最小,回数 ) VALUES ( '教養娯楽費',4600,2300,2800,1800,2 );
+INSERT INTO 家計簿集計 ( 費目,合計,平均,最大,最小,回数 ) VALUES ( '給料',840000,280000,280000,280000,3 );
+end
+character_set_client: cp932
+collation_connection: cp932_japanese_ci
+  Database Collation: utf8mb4_0900_ai_ci
+1 row in set (0.00 sec)
+
+ERROR:
+No query specified
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+この場合、エラーメッセージ ERROR: No query specified は、MySQLシェルで \G を使用した際の一般的なメッセージです。SHOW CREATE PROCEDURE makeKAKEIBO \G; コマンド自体は正常に実行されていますが、\G オプションを使用すると、結果が垂直に表示されます。このエラーメッセージは、通常無視して構いません。
+
+ただし、ストアドプロシージャの内容やコマンドに問題があるわけではないので、エラー原因について特に気にする必要はありません。このメッセージは単に結果がうまく表示されない場合に表示されるもので、結果が表示された後に余計に出てしまうメッセージのようなものです。
+
+SHOW CREATE PROCEDURE コマンドで表示された内容自体にはエラーはないので、ストアドプロシージャの内容に問題がないかを確認し、実際に問題がないことを確認できれば、エラーは無視しても大丈夫です。
