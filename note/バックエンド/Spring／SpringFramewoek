@@ -1,6 +1,6 @@
 https://gihyo.jp/book/2024/978-4-297-14049-6/support
 
-- 1 spring概要 ----------------------------------------------------------------------------------------------------
+- 1.概要 ----------------------------------------------------------------------------------------------------
 ■Spring
 フレームワークの集合体。
 含まれているフレームワークは
@@ -18,4 +18,409 @@ https://gihyo.jp/book/2024/978-4-297-14049-6/support
   ・DI：依存性注入の機能。
   ・AOP：アスペクト指向プログラミングの機能。
 
-- 2 基礎知識 ----------------------------------------------------------------------------------------------------
+- 2.基礎知識 ----------------------------------------------------------------------------------------------------
+■Springスタータープロジェクトで「Lombok」使用手順
+・パッケージワークスペース＞新規＞Springスタータープロジェクト
+・任意の名前を指定したら＞次へ＞使用可能科目で「Lomblk」＞完了。
+・Src/main/javaフォルダ下のcom.examle.demoフォルダを右クリ＞新規＞クラス
+・クラス名は任意で、作成。
+
+■「Getter,Setter」作成。
+・クラス外にアノテーション@Getterと@Setterを入力。
+・「Ctrl+Shift+O」でインポート編成 ※import文を自動生成してくれる。Ctrl+Sでも行ける。
+・「Ctrl+O」でクイックアウトラインを表示。※Lombokでメソッドが作成された事が確認出来る。
+
+■「Getter,Setter,equals(),hashCode(),toString()」作成。
+・クラス外にアノテーション@Dataを入力。
+※equals()はオブジェクト比較,hashCode()オブジェクトのハッシュコード取得,toString()はオブジェクトの文字列表現を返す。
+
+■コンストラクタ作成
+・クラス外にアノテーション「@AllArgsConstructor」と「@NoArgsConstructor」※全引数有りか無しか。
+
+■Gradle(グレードル)
+・ライブラリやフレームワークのバージョン管理が容易に行える。
+・必要なライブラリを自動的にDLしてプロジェクトに組み込む事が出来る。
+・プラグインアーキテクチャ、プラグイン利で追加機能やテスクを簡単に組み込める。
+・ビルドファイル「build.gradle」に設定を記述することで必要なライブラリをDL(依存関係の管理)
+
+- 3.Spring Frameworkのコア機能 ----------------------------------------------------------------------------------------------------
+■Spring Frameworkのコア機能
+・DI（依存性の注入）
+  ・DIコンテナ：インスタンス化機能
+・AOP（アスペクト思考プログラミング） ※アスペクト＝横断的関心事
+  ・中心的関心事：実現すべき機能を表すプログラム
+  ・横断的関心事：本質的ではない品質や保守/運用の観点で必ず必要な機能を表すプログラム。
+    →例外処理、ログ情報の画面やファイルなどへの出力、DBのトランザクション制御など。
+
+■DIコンテナについて
+・インタフェースを利用
+・インスタンスを明示的に生成しない、つまりnew不使用 ※Spring Frameworkで生成させる。
+・利用される側のクラスと利用する側クラスにアノテーションを付与。
+・Spring Framework起動時に対象プロジェクトのパッケージを全スキャンする(コンポーネントスキャン機能)
+→スキャン後、インスタンス生成アノテーションが付与されているクラス抽出→インスタンス化。
+
+■利用される側のインスタンス生成アノテーションは4種類
+・「@Component」 ：レイヤに属さず、特定の役割を持たない場合に使用。
+・「@Controller」：アプリケーション層に属し、Webリクエストのハンドラとして業務処理(ビジネスロジック)を呼び出し、レスポンスを返すクラスに付与。
+・「@Service」   ：ドメイン層に属し、ビジネスロジックやトランザクション境界(開始と終了)を持つクラスに付与。よく@Transactionalと組み合わされて使用される。
+・「@Repository」：インフラストラクチャ層に属し、データベースアクセス処理を行うリポジトリクラスに付与。
+
+■利用側のクラス
+・「@Autowired」：インスタンスの参照を受け取るフィールドを宣言＆フィールドにアノテーションを書く。
+  読み方は「オートワイアード」
+
+■DIを利用したプロジェクト作成
+・パッケージワークスペース＞新規＞Springスタータープロジェクト
+・任意の名前を指定したら＞次へ＞使用可能科目で「SpringBootDevTools」＞完了。
+※SpringBootDevTools：ソースコードに変更があった場合、アプリケーションを自動的に再起動する等の機能を提供。
+・Src/main/javaフォルダ下のcom.examle.demoフォルダを右クリ＞新規＞クラス
+・クラス名は任意で、作成。
+※Springスタータープロジェクトでは自動でプロジェクト名＋Applicationのクラスが作成される。
+  このクラスの「@SpringBootApplication」アノテーションがSpringBootの起点クラスを意味する。
+
+- Bean関係 ----------------------------------------------------------------------------------------------------
+■概要
+・設定クラス: @Configuration + @Bean
+・Beanの自動注入: @Autowired
+・複数の候補から選択: @Qualifier
+
+■「@Configuration」
+・クラスに追加することで設定クラスである事を示す。
+・@Configurationを使うべき理由
+  可読性: Bean定義がクラス内にまとまり、管理が容易。
+  柔軟性: コンストラクタやメソッドの引数で他のBeanを簡単に注入可能。
+  保守性: XMLに比べて変更が簡単で、Javaの型安全性も活用できる。
+・@Configurationが不要な場合
+  @Componentなどを使い、クラス自体に直接アノテーションを付与している場合。
+  XMLで全ての設定を行っている場合。
+  プログラム的にBeanを手動で登録している場合。
+
+■@Bean
+・メソッドに「@Bean」を付与すると、その返り値をクラスインスタンスとしてDIコンテナに登録。
+  登録名はデフォルトでメソッド名が使用される。
+  この例では、BeanはDIコンテナにkidoという名前で登録される。
+  DIコンテナに置いてあるBeanは依存性注入（DI）を通じて他クラスに注入できる。
+  ------------------------------------------------------------------------------------------------------------------
+  @Configuration
+  public class AppConfig {
+    
+    @Bean
+    public MyService test() {  // Bean名はメソッド名testで登録される。
+        return new クラスA();  // クラスAというインスタンスを返す。
+    }
+  ------------------------------------------------------------------------------------------------------------------
+
+■@Bean(name = "kido")
+・name属性を使用すると、メソッド名ではなく任意の名前を設定できる。
+  ※name属性で明示的に指定しないと、デフォルトでメソッド名で登録される。
+	------------------------------------------------------------------------------------------------------------------
+	@Bean(name = "kido")
+	public MyService serviceA() {
+		return new ServiceA();  // ServiceAのインスタンスを返す
+	}
+	------------------------------------------------------------------------------------------------------------------
+
+■@Qualifier("test")
+・依存性注入を行う際、複数の候補が存在する場合に特定のBeanを選択するためのアノテーション。
+・@Qualifier("bean名") の形式で使用、どのBeanを注入するかを明示的に指定します。
+  ------------------------------------------------------------------------------------------------------------------
+	@Configuration
+	public class AppConfig {
+		@Bean(name = "test")
+		public BusinessLogic dataLogic() {
+			return new TestLogicImpl();
+		}
+		@Bean(name = "sample")
+		public BusinessLogic viewLogic() {
+			return new SampleLogicImpl();
+		}
+	}
+	------------------------------------------------------------------------------------------------------------------
+	@SpringBootApplication
+	public class JavaConfigSampleApplication {
+		
+		/** 起動メソッド */
+		public static void main(String[] args) {
+			SpringApplication.run(JavaConfigSampleApplication.class, args)
+					.getBean(JavaConfigSampleApplication.class).exe();
+		}
+
+		/** DI */
+		@Autowired
+		@Qualifier("test")
+		private BusinessLogic business1; // TestLogicImplのインスタンス
+		
+		/** DI */
+		@Autowired
+		@Qualifier("sample")
+		private BusinessLogic business2; // SampleLogicImplのインスタンス
+
+		/** 実行メソッド */
+		public void exe() {
+			business1.doLigic();
+			business2.doLigic();
+		}
+	}
+	------------------------------------------------------------------------------------------------------------------
+
+■インジェクション
+・フィールドインジェクション (コードが完結だが非推奨)P98
+	@Autowired
+	private SomeService someService; //final指定不可
+・セッターインジェクション
+	@Autowired
+	public void setSomeService(SomeService someService) {
+		this.someService = someService;
+・コンストラクタインジェクション
+	@Autowired
+	public ConstructorInjectionExample(SomeService someService) {
+		this.someService = someService;
+・コンストラクタインジェクション (@Autowired省略)
+    //コンストラクタが１つだけの場合は「@Autowired」を省略可
+	public ConstructorInjectionExample(SomeService someService) {
+		this.someService = someService;
+・コンストラクタインジェクション (@Autowired＆Lombok利用)
+	@RequiredArgsConstructor //Lombokのアノテーション
+	public class ConstructorInjectionOmitLombokExample implements Example {
+		/** フィールド */
+		private final SomeService someService;
+		// ①コンストラクタはLombokで生成している＝コンストラクタ定義省略
+		// ②Lombokで生成するコンストラクタは1個＝@Autowired省略
+		// →この合わせ技でコンストラクタを完全省略できる。
+※コンストラクタインジェクションが推奨される理由
+・クラスの依存関係をコンストラクタの引数として明示的に定義するため
+・依存関係がコンストラクタに直接示されるため、コードの可読性と保守性が向上する。
+・依存関係を簡単にモックやスタブする事ができ、ユニットテストが容易になる。
+・循環依存を容認せずエラーにする(AがBに、BもAに依存している場合は循環依存になる)
+オマケ：SOLIDの原則、時間あったらちゃんと覚えておくと良いかも。
+---------------------------------------------------------------------------
+	※@RequiredArgsConstructor
+	finalフィールドや@NonNullアノテーションが付けられたフィールドに対しのみ
+	必要な引数を持つコンストラクタを自動的に生成
+	※@NonNull
+	フィールドが**nullでないことを保証するためのもの**であり
+	Lombokはそのフィールドにコンストラクタを生成して、nullを防ぐために引数を要求します。
+
+------------------------------------------------------------------------------------------------------------------
+
+■起動プログラムの読み方
+package com.example.demo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.example.demo.example.Example;
+
+@SpringBootApplication
+public class InjectionSampleApplication {
+	/** 起動 */
+	public static void main(String[] args) {
+		SpringApplication.run(InjectionSampleApplication.class, args)
+				.getBean(InjectionSampleApplication.class).exe();
+	}
+	/** DI */
+	@Autowired
+	private Example example;
+
+	/** 実行 */
+	private void exe() {
+		example.run();
+	}
+}
+
+@SpringBootApplication
+※この名前は固有の物ではなく「プロジェクト名＋Application」で設定される。
+・Spring Bootアプリケーションのエントリーポイントを示すアノテーション。
+  中身は下記３つを組み合わせた物。
+  ①@Configuration
+    Springの設定クラスを示すアノテーション、Bean定義を提供するクラスとして認識される。
+	このクラス内で@Beanを付与して、コンテナに登録したいBeanを定義する。
+	SingletonパターンのBean定義が標準で行われる。※戻り値は1回だけインスタンス化される。
+  ②@EnableAutoConfiguration
+    Spring Bootの自動設定を有効にするためのアノテーション。
+	アプリケーション起動時、必要な設定を自動的に行うようにする。
+	クラスパスの設定やプロパティファイルをもとに自動的に必要な設定行う。
+	例えば、データベース接続、メッセージング、Webサーバーなどに関する設定など。
+    ぶっちゃけ開発者が直接使う事は少ない。
+  ③@ComponentScan
+  指定されたパッケージ内のクラスをスキャンして
+  @Componentでマークされたクラス（@Component、@Service、@Repositoryなど）をコンテナに登録。
+
+SpringApplication.run(InjectionSampleApplication.class, args)
+・アプリケーションコンテキストを起動し、指定されたクラスを基にSpringBootアプリを実行する。
+ 「対象クラス名.class」で対象クラスのオブジェクトを取得している。
+
+------------------------------------------------------------------------------------------------------------------
+
+■リフレクション・Classについて
+・Javaのリフレクション（反射）機能に関連するクラスです。
+・全てのクラスはそのクラスのClassオブジェクトを持っている。
+  オブジェクトの中身はメタデータと呼ぶ「クラス名・コンストラクタ・メソッド・フィールド等」
+・オブジェクトを通じてメタデータにアクセスしたり、インスタンスを動的に生成したりできる。
+
+①クラスオブジェクトを取得
+  Class<?> clazz = InjectionSampleApplication.class;  // クラスオブジェクトを取得
+  System.out.println("クラス名: " + clazz.getName());  // クラス名を表示
+
+②クラス名の取得
+  Class<?> clazz = SomeClass.class;
+  String className = clazz.getName();  // クラス名を取得
+  System.out.println("クラス名: " + className);
+
+③コンストラクタの取得
+  Class<?> clazz = SomeClass.class;
+  Constructor<?> constructor = clazz.getConstructor(String.class);  // 引数にStringを取るコンストラクタ
+  // SomeClassのStringを引数に取るコンストラクタを取得する。
+
+④フィールドへのアクセス
+  Class<?> clazz = SomeClass.class;
+  Field field = clazz.getDeclaredField("someField");  // フィールドの取得
+  field.setAccessible(true);  // 非公開フィールドにアクセスする場合
+  Object value = field.get(someObject);  // フィールドの値を取得
+  field.set(someObject, newValue);  // フィールドの値を変更
+
+⑤メソッドの取得と呼び出し
+  Class<?> clazz = SomeClass.class;
+  Method method = clazz.getMethod("someMethod", String.class);  // 引数にStringを取るメソッド
+  method.invoke(someObject, "Hello");  // メソッドを呼び出す
+
+⑥取得したコンストラクタを使いインスタンスを生成
+  Class<?> clazz = SomeClass.class;
+  Object instance = clazz.getDeclaredConstructor().newInstance();  // 引数なしのコンストラクタでインスタンス生成
+
+//リフレクションの実装例
+import java.lang.reflect.*;
+
+public class ReflectionExample {
+
+    public static class Person {
+        private String name;
+        private int age;
+
+        public Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public void sayHello() {
+            System.out.println("Hello, my name is " + name + " and I am " + age + " years old.");
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        // Personクラスのクラスオブジェクトを取得
+        Class<?> clazz = Person.class;
+
+        // コンストラクタを取得
+        Constructor<?> constructor = clazz.getConstructor(String.class, int.class);
+
+        // インスタンスを動的に生成
+        Object personInstance = constructor.newInstance("John", 30);
+
+        // メソッドsayHelloを呼び出す
+        Method method = clazz.getMethod("sayHello");
+        method.invoke(personInstance);  // 動的にメソッドを呼び出し
+    }
+}
+
+- 4.AOP（アスペクト思考プログラミング） ----------------------------------------------------------------------------------------------------
+この章は難しすぎるので後で読み直す P99～P114
+■中心的関心事
+■横断的関心事
+■CRUD
+■ロギング
+
+- 5.MVCモデル ----------------------------------------------------------------------------------------------------
+■Spring MVC
+・DispatcherServlet
+  フロントコントローラ(全リクエストを最初に受け取る)
+・コントローラ
+  リクエストに応じて適切な処理を行う。
+・ビュー
+  画面表示処理を行う。
+・Model
+  コントローラからビューに渡す表示データを格納するオブジェクト。
+  HttpServletRequestやHttpSessionと同等の機能を提供する。
+・ビジネスロジック
+  データベースへのアクセス、データの取得、加工などを行う。
+  この部分は開発者が設計と実装を行う。※Spring MVCとは直接関係なし。
+
+・Value属性
+  マッピングするURLパスを指定。
+  @RequestMapping(value = "/hello")
+  @RequestMapping("hello") ※最初の「/」は省略可、URLパスのみならValueも省略可。
+・method属性
+  複数のHTTPメソッド「GETやPOSTなど」を指定。
+  GETを指定： @RequestMapping(method = RequestMethod.GET)を使用。
+  POSTを指定： @RequestMapping(method = RequestMethod.POST)を使用。
+  ※クラスに@RequestMappingを付与時は指定しない。？？？
+  ※method属性の省略
+  @GetMapping ：@RequestMappingのGETリクエスト用のアノテーション、method属性無し。
+  @POSTMapping：@RequestMappingのPOSTリクエスト用のアノテーション、method属性無し。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
