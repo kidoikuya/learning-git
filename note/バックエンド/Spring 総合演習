@@ -1,0 +1,610 @@
+■総合演習１ ～RestController  ～
+・@RestController
+  @Controller アノテーションと @ResponseBody アノテーションを組み合わせたもの
+  @ResponseBodyとは、メソッドが返す値をHTTPレスポンスのボディとして直接書き込むことを示す。
+  RESTful URLを制御するためのコントローラーを定義します。
+  RESTful URL とは、REST（Representational State Transfer）アーキテクチャに基づいて設計されたURLパターン。
+  本来はJSONやXMLなどを返すものですが、この場合はレスポンスとして文字列をそのままブラウザへ返します。
+
+
+
+
+
+
+
+
+
+
+■総合演習２ ～ クエリ文字列とURLパス変数 ～
+・クエリ文字列をGETで受ける記述
+  http://localhost:8080/greet1?name=ishii&language=japanese 
+	@GetMapping("/greet1")
+	public String sayGreet1(@RequestParam("name") String nameA,
+                    			@RequestParam("language") String languageA) {
+
+・URLパス変数をGETで受ける記述
+  http://localhost:8080/greet2/ishii/japanese
+  @GetMapping("/greet2/{name}/{language}")
+	public String sayGreet2(@PathVariable("name") String nameA,
+	                    		@PathVariable("language") String languageA) {
+
+・POSTの時は？
+  POSTはリクエストボディにデータが含まれる事が多いため
+  クエリ文字列やURLパスは補助的に扱われるらしい？
+  formで送られる例は総合演習３を参照。
+
+・先頭を大文字、2文字目以降を小文字に変換。switchで切り分け。
+  nameA = nameA.substring(0, 1).toUpperCase()
+      + nameA.substring(1).toLowerCase();
+  languageA = languageA.substring(0, 1).toUpperCase()
+      + languageA.substring(1).toLowerCase();
+
+  switch (languageA) {
+  case "Japanese":
+    return nameA + "さん、こんにちは！";
+
+  case "English":
+    return "Hi, " + nameA + ". Good afternoon.";
+  default:
+    return "Hi, " + nameA + ". I don't know about " + languageA + ".";
+  }
+
+
+
+
+
+
+
+
+
+
+
+■総合演習３ ～ 静的コンテンツと動的コンテンツ ～
+・静的コンテンツ(HTML, CSS, JS, 画像など固定の内容)の配置場所
+  src/main/resources/static
+  ファイル名に直接アクセス。
+  ※Eclipse は resources フォルダの内容を target/classes フォルダの配下に自動コピーし
+  プロジェクト実行時は target フォルダ配下のファイルを参照する。
+  Eclipse の不具合で自動コピーをミスる場合、手動でstaticフォルダ事コピーする。
+
+・動的コンテンツ(動的に生成されるHTML)の配置場所
+  src/main/resources/templates
+  コントローラ経由でアクセス。
+
+・formからPOSTを受け取る例
+  <form action="/greet3" method="post">
+    <input type="text" name="name属性名" placeholder="案内用文字列">
+    <input type="submit" value="送信">
+  </form>
+  ----------------------------------------------------------------
+  @PostMapping("/greet3") 
+  public String sayGreet(@RequestParam("name属性名") String nameA) { 
+    return nameA + "さん、こんにちは！"; 
+  } 
+  入力フィールドが空の時はplaceholderの値が薄く表示され視覚的にわかりやすい。
+  ※placeholderはテキスト入力を伴うtypeなら殆ど使える。
+
+
+
+
+
+
+
+
+
+
+■総合演習４ ～ ModelとModelAndView ～
+・ThymeleafのURI (おまじない的な物)
+  <html xmlns:th="http://www.thymeleaf.org"> 
+  これは実際にアクセスするための物ではなく、Thymeleafの名前空間のURIである。
+  HTMLやXMLテンプレート内でThymeleaf専用の属性（例: th:text, th:if）を使用する際
+  HTML属性と混同されずにThymeleafのテンプレートエンジンが正しく解釈できるようなる。
+
+・大前提の知識
+  ModelやModelAndViewにデータペアを格納するのはビューで利用するため。
+
+・ModelAndView
+  Model(データペア)とビュー名の両方を1つのオブジェクトに格納して戻り値で返す。
+  @Controller
+  public class GreetController {
+	  @PostMapping("/greet4")
+	  public ModelAndView sayGreet(@RequestParam("name") String name,ModelAndView modelAndView) {
+  	    modelAndView.setViewName("greet_thymeleaf"); //ビュー名を指定
+		    modelAndView.addObject("name", name); //データペアは ("キー" , 値) で設定。
+		  return modelAndView;//ビュー名とデータペアを格納したオブジェクトを返す。
+    }
+  }
+  いきなり出てきた引数「ModelAndView modelAndView」は送り元のFormに記載されていない値。
+  この引数の記述をトリガーにSpringが内部的にインスタンス生成しメソッドに渡している。
+  だから引数にいきなり記述してもちゃんと受け取る事が出来る。
+  Spring は「ビューリゾルバ」という仕組みを使用しビュー名（greeting）を
+  テンプレートファイル（例:greeting.html や greeting.jsp）に変換する。
+  つまり、このビュー名に対応するファイルを作成する必要がある。
+  作成したビューファイルに対してModelAndViewのデータペアが渡される。
+  @PostMapping("/greet4")
+  public ModelAndView sayGreet(@RequestParam("name") String name) {
+      ModelAndView modelAndView = new ModelAndView("greet_thymeleaf"); //ビュー名指定。
+      modelAndView.addObject("name", name); //データペアは ("キー" , 値) で設定。
+      return modelAndView; //ビュー名とデータペアを格納したオブジェクトを返す。
+  }
+  引数に記述しなければインスタンスは自動生成されない。
+  戻り値型をModelAndViewにして、メソッド内で手動でインスタンス生成も可能。
+  同じ結果になるが、Springを知らない人からしたら可読性はこちらの方が高い。
+
+・Model
+  ModelAndViewとは違い、データペア(キー&値)をModelに格納し、ビュー名は戻り値で返す。
+  public String sayGreet(@RequestParam("name") String name, Model model) {
+    model.addAttribute("キー名", name);//データペアは ("キー" , 値) で設定。
+    return "greeting"; //戻り値でビュー名を指定
+  }
+  このビュー名はModelAndViewの時と同じようにビューリゾルバでhtmlやjspに変換される。 
+  つまり、このビュー名に対応するファイルを作成する必要がある。
+  作成したビューファイルに対してModelのデータペアが渡される。
+
+・テンプレートファイル
+  サーバサイドの処理データが埋め込まれる事で完成するファイルのこと。
+  Thymeleafエンジンが「プレースホルダーの${name}」や「th:text」を解釈しHTML/JSPに埋め込む。
+  HTMLファイルを「次で開く→Webブラウザ」とした場合はエンジンを返さないでアクセスする。
+  下記の記述だと、th:text="${name}"が解釈されないため、通常のHTML部分のみが表示される。
+  <span style="color:red" th:text="${name}">通常のHTMLで表示される領域</span>
+  ※解釈された際は上書きされるため「通常のHTMLで表示される領域」は表示されない。
+  
+・テンプレートファイルの引継ぎ(ビューリゾルブ)
+  @RestController
+  これは@Controllerと@ResponseBodyを組み合わせたアノテーション。
+  @ResponseBodyによりメソッドの戻り値は直接「HTTPレスポンスのボディ」に返される。
+  そのため、ビューリゾルブ(テンプレート検索・HTML/jspへの変換)が発動しない。
+  主に RESTful API を構築する際に使用するらしい。
+  ---------------------------------------
+  @RestController
+  public class GreetController {
+      @GetMapping("/greet")
+      public String greet() {
+          return "こんにちは、世界！";
+      }
+  }
+  ---------------------------------------
+  例：「こんにちは、世界！」は greetのレスポンスボディに書かれる。
+  
+・レスポンスボディ
+  HTTPレスポンスの一部でサーバーがクライアントに返すデータの本体部分のこと。
+  混同しやすいが、「HTMLの<body>タグとは異なる」ので注意。
+  APIを使ってJSONデータを返す場合や、HTMLページを返す場合などにこの部分が利用される。
+  ・APIレスポンス: サーバーがJSONデータを返す場合
+    レスポンスボディには、JSON形式のデータ（例えば、{"name": "John", "age": 30}）が入る。
+  ・HTMLレスポンス: サーバーがHTMLページを返す場合
+    レスポンスボディには、HTML全体（<html>...</body>）が入る。
+
+  @Controller
+  ビューリゾルブ(テンプレート検索・HTML/jspへの変換)が発動して
+  メソッドの戻り値として指定されたビュー名（たとえば greeting）を基に
+  テンプレートエンジンがテンプレートファイル（greeting.htmlなど）を検索し
+  レンダリング(解釈を注入してビューを生成)する。
+  Spring Boot などの標準設定では、ThymeleafやJSPのビューリゾルバが自動的に設定されるが
+  @Controllerを使う場合、ビューリゾルバが適切に設定されていないとビュー解決できない。
+  Thymeleafの場合「spring-boot-starter-thymeleaf」を依存関係に含めることで自動的に設定される。
+  ※Spring Bootの自動設定機能でMavenやGradleを選択後にプロジェクト作成すると追加される。
+  
+・Maven(メイヴン)で「spring-boot-starter-thymeleaf」が設定されているか確認。
+  ルートディレクトリのpom.xml に以下が追加されていること。
+  <dependency> //デペンデンシー：依存関係
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+  </dependency>
+
+・Gradle(グラドル)で「spring-boot-starter-thymeleaf」が設定されているか確認。
+  ルートディレクトリのbuild.gradle に以下が追加されていること。
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+・MavenとGradleはビルドツール
+  ソフトウェアの開発において作業を効率的に行うためのツール。
+  下記の作業が自動化され、手動よりもエラーを減らし効率を高める。
+  ・依存関係の管理
+    外部ライブラリやフレームワークをプロジェクトに追加する際
+    その依存関係を自動でダウンロード・管理します。
+    Maven：~/.m2/repository  に依存関係を格納し、プロジェクトごとに個別のライブラリが保存される。
+    Gradle：~/.gradle/caches に依存関係をキャッシュし、他のプロジェクトでも共通して使えるようにする。
+    ※~はローカルのユーザフォルダ。
+  ・コンパイル
+    ソースコードをコンパイルしてバイナリ形式（例えば、.classファイルや.JARファイル）に変換。
+  ・テストの実行
+    単体テストや統合テストを自動で実行し、テスト結果をレポートとして出力する。
+  ・パッケージ化
+    完成したコードをJAR、WARなどの形式でパッケージ化する。
+    これにより、プロジェクトを他のシステムにデプロイしやすくなる。
+  ・デプロイ
+    完成したソフトウェアを指定したサーバーや環境に自動的にデプロイ（配置）します。
+
+・MavenとGradleの違い
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | 特徴              | Maven                                     | Gradle                                     |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | 設定ファイル       | `pom.xml`（XML形式）                     | `build.gradle`（GroovyまたはKotlin DSL）   |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | 依存関係管理       | リモートリポジトリから依存関係を管理     | 同様にリモートリポジトリから依存関係を管理 |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | パフォーマンス     | 比較的遅い（ビルドキャッシュなし）       | 高速（インクリメンタルビルドや並列処理）   |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | カスタマイズ性     | 制約がある（宣言的）                     | 高い（プログラム的なカスタマイズが可能）   |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | 学習曲線           | 初心者でも比較的簡単に始められる         | 少し学習曲線がある（特にカスタマイズ時）   |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+  | ビルドスクリプト   | 宣言的（XMLによる設定）                  | プログラム的（GroovyやKotlinによる設定）   |
+  +-------------------+-------------------------------------------+--------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+■総合演習５ ～ タイムリーフ ～
+input.htmlのform→コントローラ→result.htmlにタイムリーフでデータを埋め込んでいる。
+table border="1"はテーブル定義＆薄い罫線を引くという意味。
+trは1行、tdは行の1セルを示している。
+th:text="${language}"でタイムリーフによってlanguage属性の値を表示する。
+----------------------------------------------------------------------
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org"> 
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+<table border="1"> 
+        <tr> 
+                <td>言語</td> 
+                <td> 
+                        <span th:text="${language}"></span> 
+                </td> 
+        </tr>
+</table> 
+----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+■総合演習６ ～ バインドとバリデーション ～
+・コントローラ
+  HTTPリクエストを受け取り、必要なデータをModelオブジェクトに格納する。
+  その後、ビュー名（例えば、Thymeleafテンプレートの名前）を返す。
+
+・model
+  コントローラからビューに渡されるデータをModelオブジェクト追加することで後にビューでデータを使用できる。
+  このModelを一時的に保存しておくのがリクエストスコープ。
+  GETやPOSTリクエストで引数としてModelのデータをメソッドに渡し、メソッド終了後にリクエストスコープは破棄される。
+
+・ビュー
+  コントローラから渡されたModelのデータをタイムリーフで参照しHTMLを動的に生成、表示する。
+
+・バインド
+  フォームの入力値とBeanのプロパティをリンクさせる仕組み。
+  入力値をサーバーサイドのオブジェクトに簡単に格納できるし
+  オブジェクトの値をフォームの初期値として表示できる。
+  後にやるバリデーションを行うのにも必要。
+
+・フォームバッキングオブジェクト
+  簡単に言えば、フォームバッキングオブジェクトはフォーム操作に特化したBeanのこと。
+  バッキングとはバックエンドの支援や支持という意味がある。
+
+・バインドの流れ
+  formからのHTTPリクエストをコントローラで受ける。
+  コントローラがBeanオブジェクトをインスタンス化しModelに格納、そのビューをブラウザに返す。
+  --------------------------------------------------------------------------------------
+  // フロントサイド、form内でのバインド
+  <form th:object="${user}" th:action="@{/updateUser}" method="post">
+    <input type="text" th:field="*{username}">
+    <button type="submit">Update</button>
+  </form>
+  // ※この処理ではFormの入力値をBeanのプロパティにバインドさせる「準備」を行う。
+  // 入力値がBeanのプロパティに反映されるのはサーバサイドで行うので注意。
+  // th:object は、フォーム全体を特定のbeanにバインドするために使用。
+  // th:field は、個別のフォーム要素を、th:objectでバインドしたbeanの特定のプロパティにバインドするために使用。
+  // *{}にはbeanのプロパティを指定、プロパティ名のみでよいのはth:objectでフォーム全体をバインドしているから。
+  // th:objectとth:fieldは「input,select,option,textarea」のタグ内に付与できる。
+  --------------------------------------------------------------------------------------
+  // サーバサイド、コントローラでバインド(@ModelAttribute使用)
+  @PostMapping("/updateUser")
+  public String updateUser(@ModelAttribute("user") User user) { //@Modelではバインドできない。
+      // from→Userにバインドされた情報を使って処理を行う
+      System.out.println("Updated Username: " + user.getUsername());
+      // 処理後にリダイレクトや別のページに遷移
+      return "redirect:/userProfile"; // 更新後にユーザープロファイルページへリダイレクト
+  }
+  // 2行目の@ModelAttribute("user")でバインド情報とbeanインスタンスuserをUser userで受取っている。
+  // @ModelAttributeが動作するタイミング(メソッド呼び出し前)にフォーム入力値がbeanプロパティに代入される。
+  // この仕組みをfom-backing-beanという。
+  ---------------------------------------------------------------------------------------
+
+・バリデーションが完了するまでの流れ
+  ・formからPOST(この時点でフロント側の入力チェックは後回しにされる)
+  ・コントローラでデータバインディング(form入力値とBeanのプロパティがリンクされる)
+  ・Bean内のバリデーションでエラーが見つかったら、BindingResultに格納(バックエンド側の入力チェック)
+  ・Thymeleafによるエラーメッセージの表示(フロント側の入力チェック)
+   (バリデーションの結果、エラーが存在する場合に、Thymeleafテンプレートが動的にエラーメッセージを表示)
+   ※この例に限らず、基本Thymeleafは最後に処理される。
+ 
+・コントローラの処理
+  @PostMapping("/register") 
+  public ModelAndView registerGreet( 
+        @ModelAttribute @Validated GreetForm greetForm, //第１引数 バインド済のBeanを受け取る。
+        BindingResult result,                           //第２引数 エラー格納用のresultが自動生成される。
+        ModelAndView modelAndView                       //第３引数 modelAndViewが自動生成される。
+        ) {
+        //  入力されたデータのバリデーションエラーチェック 
+        if (result.hasErrors()) {  //エラー有無を判定するBindingResultのメソッド
+          modelAndView.setViewName("input"); //エラー有りならmodelにinputビューをセット。
+          return modelAndView; //オブジェクトを返し、beanとresultのリクエストスコープを破棄。
+        }
+  }
+  -@ModelAttributeのクラス名省略----------------------------------------------------------------------------
+  // まず、第１引数で「@ModelAttribute("greetForm")」が省略され、「@ModelAttribute」になっている点に注意。
+  // Springは引数のオブジェクトのクラス名（最初の文字を小文字に変えたもの）をデフォルトの名前として使用。
+  // つまり、省略すると自動的にGreetForm→greetFormが使われる。わかりにくい！！！
+  -@Validated-----------------------------------------------------------------------------------------------
+  // @Validatedは受け取ったバインド済Bean(GreetFormクラス)の入力データの検証を有効するアノテーション。
+  // Bean内にバリデーション処理が記述されている場合、このアノテーションがトリガーとなる。
+  // 付与し忘れても構文エラーにはならないが、バリデーションが起動せずにBindingResultは空のままになる。
+  // 第2引数 BindingResultは検証結果を受け取るためのオブジェクトで検証エラー情報が格納される。
+  // このオブジェクトは引数に設定したら自動的にオブジェクトが生成される。
+  // ※BindingResult引数は@Validated引数の次に定義しなければいけない。 
+  // 検証エラーの有無は BindingResult オブジェクトの”hasErrors()”メソッドで判定。 
+  ----------------------------------------------------------------------------------------------------------
+
+・beanのエラーチェック、messageとデフォルトエラーメッセージ（バックエンド側の入力チェック）
+  ------------------------------------------------------------------------------------
+	@NotNull
+	@Size(min = 1, max = 20, message = "言語は１文字以上２０文字以下で指定してください")
+	private String language;
+  // アノテーションは複数付与できるが、カスタムメッセージ(message)はアノテーション毎に設定。
+  // @NotNullだけだと、message未設定のためデフォルトのエラーメッセージが発生するらしいが確認できず。
+  // @Sizeのmessageを削除したらデフォルトエラーメッセージの発生を確認出来た。
+  ------------------------------------------------------------------------------------
+
+・バリデーションアノテーションについて
+  beanに記述するアノテーション、ここでバインドした意味が出てくる。
+  formから入力した値がbeanのフィールドに代入される時に
+  下記のアノテーションによって入力値がチェックされる。
+  異常値の場合はエラーメッセージを発生させたり出来る。
+  +-----+---------------------------+---------------------------------+
+  | No. | 検証項目                  | アノテーション                  |
+  +-----+---------------------------+---------------------------------+
+  | 1   | 必須フィールドのチェック  | @NotNull, @NotEmpty, @NotBlank  |
+  | 2   | 最小値と最大値のチェック  | @Min, @Max                      |
+  | 3   | 文字列の長さのチェック    | @Size                           |
+  | 4   | 正規表現のチェック        | @Pattern                        |
+  | 5   | 日付の妥当性のチェック    | @Past, @Future                  |
+  | 6   | 配列などのサイズチェック  | @Size                           |
+  +-----+---------------------------+---------------------------------+
+
+・formのtd内でエラーチェック。（フロント側での入力チェック）
+    コントローラでバインドされたデータがビューに渡される時、BindingResultのエラー情報も渡される。
+    BindingResult に格納されたエラー情報を基にThymeleafテンプレート内でエラーメッセージを表示する。
+    つまり、バックエンド側でのエラーチェック後にフロント側のエラーチェックが流れるということ。
+    ------------------------------------------------------------------------------------
+    <td><input type="text" name="language" th:field="*{language}"</td>
+    <td  th:if="${#fields.hasErrors('language')}" th:errors="*{language}" style="color : red"></td>
+    // th:fieldを使用すると、Thymeleaf は自動的に#fieldsオブジェクトを生成する。
+    // #fieldsのhasErrorsでlanguageプロパティにエラーがあるか判定。※
+    // エラーならth:errors="*{language}"でlanguageプロパティに対するエラーメッセージを表示。
+    ------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+■総合演習７ ～ フィールドインジェクションによるDI (Spring未使用) ～
+----------------------------------------------------------------------------
+try {
+    Field field = GreetController.class.getDeclaredField("greetService");
+    field.setAccessible(true);
+    field.set(greetController, greetServiceJapanese);
+
+    //	日本語の挨拶
+    System.out.println("*****  日本語サービスを注入します  ****");
+    System.out.println("朝の挨拶：" + greetController.sayOnMorning());
+    System.out.println("昼の挨拶：" + greetController.sayOnNoon());
+    System.out.println("夕方の挨拶：" +	greetController.sayOnEvening());
+    System.out.println("夜の挨拶：" + greetController.sayOnNight());
+    
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+    e.printStackTrace();
+}
+------------------------------------------------------------------------------------------
+Field field = GreetController.class.getDeclaredField("greetService")
+・Field
+  「java.lang.reflect.Field」をインポートすると使用できるクラス。
+    リフレクションで取得したクラスのフィールドのメタ情報を格納しアクセス修飾子無視で操作するクラス。
+・getDeclaredField("フィールド名")
+    classのメソッドでこれもアクセス修飾子無視でクラスフィールドのメタ情報を取得。
+    例では、GreetControllerクラスのprivateフィールド「greetService」を取得している。
+・field.setAccessible(true)
+    fieldに格納されたフィールドの値は、アクセス修飾子が有効なのでこのままだと他クラスがアクセス不可。
+    だから、field.setAccessible(true) でアクセスを制限を解除している。
+・間違えやすいポイント
+  ※「取得したのはクラスのフィールドのメタ情報」で「実際のインスタンスのフィールドの値」ではない。
+  ※実際にインスタンスのフィールドの値を操作するには、field.set(インスタンス名,値)を使用する。
+------------------------------------------------------------------------------------------
+
+■リフレクション・Classについて
+・Javaのリフレクション（反射）機能に関連するクラスです。
+・全てのクラスはそのクラスのClassオブジェクトを持っている。
+  オブジェクトの中身はメタデータと呼ぶ「クラス名・コンストラクタ・メソッド・フィールド等」
+・オブジェクトを通じてメタデータにアクセスしたり、インスタンスを動的に生成したりできる。
+
+①クラスオブジェクトを取得
+  Class<?> clazz = InjectionSampleApplication.class;  // クラスオブジェクトを取得
+
+②クラス名の取得
+  Class<?> clazz = SomeClass.class;
+  String className = clazz.getName();  // クラス名を取得
+  System.out.println("クラス名: " + className);// クラス名を表示
+
+③コンストラクタの取得
+  Class<?> clazz = SomeClass.class;
+  Constructor<?> constructor = clazz.getConstructor(String.class);  // 引数にStringを取るコンストラクタ
+  // SomeClassのStringを引数に取るコンストラクタを取得する。
+
+④フィールドへのアクセス
+  Class<?> clazz = SomeClass.class;
+  Field field = clazz.getDeclaredField("someField");  // フィールドの取得
+  field.setAccessible(true);  // 非公開フィールドにアクセスする場合
+  Object value = field.get(someObject);  // フィールドの値を取得
+  field.set(someObject, newValue);  // フィールドの値を変更
+
+⑤メソッドの取得と呼び出し
+  Class<?> clazz = SomeClass.class;
+  Method method = clazz.getMethod("someMethod", String.class);  // 引数にStringを取るメソッド
+  method.invoke(someObject, "Hello");  // メソッドを呼び出す
+
+⑥取得したコンストラクタを使いインスタンスを生成
+  Class<?> clazz = SomeClass.class;
+  Object instance = clazz.getDeclaredConstructor().newInstance();  // 引数なしのコンストラクタでインスタンス生成
+
+■Fieldクラスのメソッド
++-----------------------------------+----------------------------------------------------+
+| メソッド                          | 説明                                               |
++-----------------------------------+----------------------------------------------------+
+| getName()                         | フィールドの名前を取得                             |
+| getType()                         | フィールドの型を取得                               |
+| getDeclaringClass()               | フィールドが属するクラスを取得                     |
+| getModifiers()                    | フィールドの修飾子（アクセスレベルなど）を取得     |
+| setAccessible(boolean flag)       | アクセス制限を解除（privateやprotectedフィールド） |
+| get(Object obj)                   | 指定したオブジェクトのフィールドの値を取得         |
+| set(Object obj, Object value)     | 指定したオブジェクトのフィールドに値を設定         |
+| getBoolean(Object obj)            | フィールドがboolean型の場合、その値を取得          |
+| getByte(Object obj)               | フィールドがbyte型の場合、その値を取得             |
+| getChar(Object obj)               | フィールドがchar型の場合、その値を取得             |
+| getDouble(Object obj)             | フィールドがdouble型の場合、その値を取得           |
+| getFloat(Object obj)              | フィールドがfloat型の場合、その値を取得            |
+| getInt(Object obj)                | フィールドがint型の場合、その値を取得              |
+| getLong(Object obj)               | フィールドがlong型の場合、その値を取得             |
+| getShort(Object obj)              | フィールドがshort型の場合、その値を取得            |
+| setBoolean(Object obj, boolean z) | boolean型の値をフィールドに設定                    |
+| setByte(Object obj, byte b)       | byte型の値をフィールドに設定                       |
+| setChar(Object obj, char c)       | char型の値をフィールドに設定                       |
+| setDouble(Object obj, double d)   | double型の値をフィールドに設定                     |
+| setFloat(Object obj, float f)     | float型の値をフィールドに設定                      |
+| setInt(Object obj, int i)         | int型の値をフィールドに設定                        |
+| setLong(Object obj, long l)       | long型の値をフィールドに設定                       |
+| setShort(Object obj, short s)     | short型の値をフィールドに設定                      |
++-----------------------------------+----------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+■総合演習８ ～ SpringによるDI ～
+------------------------------------------------------------------------------------------------------------------
+■環境変数 SPRING_PROFILES_ACTIVE
+   @Profile アノテーションで記載した文字列を設定する。
+   SPRING_PROFILES_ACTIVE は、Spring Framework（特にSpring Boot）で使用される環境変数。
+   SPRING_PROFILES_ACTIVEは、実行中のアプリケーションに対してどのプロファイルを有効にするかを指定する。
+   プロファイルは異なる設定や設定値、Beanを環境ごとに切り替えるために使用する。
+   プロファイルは1つしか指定出来ない（default、English、German など）
+   この環境変数を使うことで、開発・テスト・運用などの異なる環境に応じた設定を簡単に適用できる。
+   @Profile アノテーションを使用して、特定のプロファイルに関連付けられたBean（コンポーネント）を定義。
+
+■SPRING_PROFILES_ACTIVEの設定方法
+  ①ターミナル使用
+    エクリプスより優先される。
+    SpringBootをコマンドライン起動する際に環境変数も設定する方法。
+    例：SPRING_PROFILES_ACTIVE=English java -jar myapp.jar
+    これは一時的な設定なので、毎回入力する必要があるが、IDEに依存しないためどこでも利用可能。
+  ②エクリプスの「実行R」＞「実行構成」使用
+    IDEの実行に限定されるので注意、エクリプス外のサーバやアプリケーションや端末では無効になる。
+
+■設定方法による違い
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 項目                    | エクリプス「実行構成」で設定する環境変数      | コマンドラインで SPRING_PROFILES_ACTIVEを設定 |
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 設定方法                | エクリプスの実行構成ダイアログで設定          | ターミナルで環境変数を設定しアプリ実行        |
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 適用範囲                | エクリプス内での実行にのみ適用                | コマンドライン実行orサーバー/CI/CDで適用される|
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 柔軟性                  | 特定の実行構成に依存                          | より汎用的で、サーバーや他の環境でも使用可能  |
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 永続性                  | 実行構成ごとに保存、エクリプス内で再利用可    | 実行時の一時的な設定として、終了後に無効になる|
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+| 複数のプロファイルの設定 | 設定可能(SPRING_PROFILES_ACTIVE=English,Test)| 同様に設定可能（, で区切る）                  |
++-------------------------+-----------------------------------------------+-----------------------------------------------+
+
+■Springを利用したコンストラクタインジェクション
+------------------------------------------------------------------------------------------------------------
+@Controller //このアノテーションがついているクラスはSpring起動時に自動でインスタンス化される。
+public class GreetController {
+	private final GreetService greetService;
+
+  @Autowired
+	public GreetController(GreetService greetService) {
+		this.greetService = greetService;
+	}
+  // コンストラクタが1つの場合は@Autowiredを省略可能。
+  // さらに、今回は
+	// 引数のGreetServiceはインタフェースなので実装クラスが検索される。
+	// 今回GreetServiceを実装してる＆@Serviceが付いているクラスは3個ある
+	// @Profileで環境変数にしていされているクラスが選ばれる。
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+■th;objectを使うか否か
+①バインドなし(th:object不使用) 表示させるだけならこれで十分
+  @GetMapping("/greet")
+  public ModelAndView greet(ModelAndView modelAndView) {
+      String language = greetService.language();
+      modelAndView.setViewName("greet");
+      modelAndView.addObject("language", language);
+      modelAndView.addObject("message", ""); // 空のメッセージ
+      return modelAndView;
+  }
+  --------------------------------------------------------------
+  <h2>世界の挨拶</h2>
+  <div>
+      <span>言語 ： </span>
+      <span th:text="${language}"></span> <!-- 言語を表示 -->
+      <br />
+      <h3>
+          <span>挨拶：</span>
+          <span th:text="${message}"></span> <!-- メッセージを表示 -->
+      </h3>
+  </div>
+  ---------------------------------------------------------------
+
+②フォームバインディング(th:object) バックエンドで処理させたい時に使う(バリデーション等)
+  @PostMapping("/submitForm")
+  public String submitForm(@ModelAttribute("user") User user) {
+      // userオブジェクトを処理
+      return "formResult";
+  }
+  ---------------------------------------------------------------
+  <form action="/submitForm" th:object="${user}" method="post">
+      <input type="text" th:field="*{name}" />
+      <input type="submit" value="Submit" />
+  </form>
+  ---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+■総合演習９ ～ JPAを使って挨拶をデータベースに登録 ～
+------------------------------------------------------------------------------------------------------------------
