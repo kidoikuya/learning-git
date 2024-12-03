@@ -608,3 +608,121 @@ public class GreetController {
 
 ■総合演習９ ～ JPAを使って挨拶をデータベースに登録 ～
 ------------------------------------------------------------------------------------------------------------------
+■Spring Data JPAとは
+データベースとのマッピングを簡潔に行う。
+
+■JpaRepositoryを継承したインタフェースを作るだけで基本的なCRUD処理は作成完了=DAOが出来ちゃう。
+Public interface ProductRepository extends JpaRepository<Product, Integer> {
+    // Product=Entity, Integer=主キーの型
+    // 何も定義しなくても以下のような基本処理は使用可能
+}
+--------------------------------------------------------------------------------
+
+メソッド             | 引数              | 戻り値             | 説明
+---------------------|-------------------|--------------------|-------------------------------------------
+findAll()            | なし              | List<T>            | すべてのレコードを取得
+findById()           | キー              | Optional<T>        | キーに該当するレコードを取得
+getById()            | キー              | T                  | キーに該当するレコードを取得
+count()              | なし              | long               | レコード数を取得
+existsById()         | キー              | boolean            | キーに該当するレコードが存在するかを取得
+save()               | T                 | T                  | キーが存在する場合は更新、存在しない場合は登録
+saveAll()            | List<T>           | List<T>            | Entity の数だけsave()を実行
+deleteById()         | キー              | なし               | キーに該当するレコードを削除
+deleteAllById()      | List<キー>        | なし               | キーの数だけdeleteById()を実行
+
+■メソッド名からクエリ文を自動生成
+Public interface ProductRepository extends JpaRepository<Product, Integer> {
+// Product=Entity, Integer=主キーの型
+// インタフェースを定義するだけで独自のCRUD処理が可能
+  List<Product> findByNameContainig(String keyword);
+}
+--------------------------------------------------------------------------------
+メソッド命名ルール
+※以下の３つの要素を規則に従って組み合わせる。
+・プレフィックス（find...By / exists...By / delete...By / count...By / get...By など）
+  名前の出だしで動作決まる。
+
+・キーワード(Not / And / Or / LessThan / GreaterThan / OrderBy / Distinct など)
+  検索条件や並べ替え条件などを決める。
+
+・フィールド名
+  Entityのフィールド名をパスカル形式で記述する。
+  ※パスカル形式
+  最初の文字が大文字になる。
+  以降の単語の最初の文字も大文字にし、他の文字は小文字にする。
+  単語と単語の間にスペースやアンダースコアなどは入れない。
+  ＜例＞
+  LastnameとFirstnameを引数で指定された値で検索し、その結果をAgeで降順にソートする
+  これは例なので実際は""は記述しない、このキーワードが入ってるか否かで判断される。
+  "findBy"Lastname"And"Firstname"OrderBy"Age"Desc"(String lastname, String firstname)
+
+・Entity（エンティティ）
+  データベースと連携してデータを操作するためのJavaクラスのこと。
+  JPA（Java Persistence API）を使ってデータベースにアクセスする際
+  エンティティクラスはデータベースのテーブルと対応します。
+  エンティティは、データベースのテーブルの行（レコード）を表現し
+  オブジェクト指向の形式でデータを管理するために使います。
+
+・@SuppressWarnings("null")アノテーション
+  コンパイラに対して「nullに関する警告を無視するように指示するもの」です。
+
+・JPAの利用はインタフェースを継承するだけで使えるって話のやつ
+public interface GreetRepository extends JpaRepository<GreetMessage, Integer> {
+	public GreetMessage findByLanguage(String language);
+	public List<GreetMessage> findAll();
+}
+------------------------------------------------------------------------------------
+
+
+mysql> select * from greet_message;
++----+----------+--------------------+------------+------------+----------------+---------+
+| id | language | morning            | noon       | evening    | night          | remarks |
++----+----------+--------------------+------------+------------+----------------+---------+
+|  1 | 日本語   | おはようございます | こんにちは | こんばんは | おやすみな さい | NULL    |
++----+----------+--------------------+------------+------------+----------------+---------+
+
+・findByLanguageはSQL：SELECT * FROM greet_message WHERE language = ?;
+  →?はメソッド引数であるlanguageに対応、これはプレースホルダーを利用している時と同じ。
+  Spring Data JPAは自動的にSQLインジェクションのリスクを軽減している。
+  このコマンドは"languageに一致する最初の行（レコード）"を取得できる。
+・findAllですべてのレコード(全行)を取得SQL：SELECT * FROM greet_message
+  findByLanguageでGreetMessage(１行分しか入ってないけど)の全行を取得し"リストにしている"
+
+■アノテーションが一気に出てきたので情報整理
+@Data
+@Entity
+@Table(name = "greet_message")
+public class GreetMessage {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	@Column(nullable = false, unique = true)
+	private String language;
+	private String morning;
+	private String noon;
+	private String evening;
+	private String night;
+	private String remarks;
+}
+
+■@Entity
+ 付与されたクラスがJPAエンティティであることを示す。
+ エンティティとはDBのテーブルと１対１でマッピングされるクラスのこと。
+
+■@Table(name = "greet_message")
+ @Tableアノテーションは、このエンティティクラスが対応するデータベーステーブルの名前を指定する。
+ @Tableアノテーションはクラス名と異なるテーブル名を付ける場合指定
+
+■@Id
+ @Idアノテーションは、このフィールドがエンティティの主キー（ユニークな識別子）であることを示す。
+ プライマリキーとなるプロパティを指定します。プライマリーキーを自動採番する場合は@GeneratedValueアノテーションで指定。
+
+■@GeneratedValue(strategy = GenerationType.IDENTITY)
+ 主キーの値が自動的に生成されることを指定しています。
+ GenerationType.IDENTITYは、データベースで自動インクリメントされる主キーを使う場合に使用します。
+
+ ■@Column
+  列名とプロパティ名が異なっていたり、Nullを許さない列だったり、同じ値を格納できない場合に使用。
+
+■ndexからデリートのリンクボタンを作る
+  <a th:href="@{/delete/{id}(id=${greet.id})}">削除</a>

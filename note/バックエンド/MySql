@@ -9,7 +9,7 @@
 テーブル操作        :
   テーブル作成      : CREATE TABLE table_name (column1 datatype, ...);
   テーブル一覧表示  : SHOW TABLES;
-  テーブル構造表示  : DESCRIBE table_name;
+  テーブル構造表示  : DESCRIBE テーブル名;
   テーブル削除      : DROP TABLE table_name;
   テーブル変更      : ALTER TABLE table_name ADD column_name datatype;
   テーブル名変更    : RENAME TABLE old_name TO new_name;
@@ -25,8 +25,15 @@
   データ全削除      : TRUNCATE TABLE table_name;
   インデックス作成  : CREATE INDEX index_name ON table_name (column_name);
   インデックス削除  : DROP INDEX index_name ON table_name;
-  ユーザー作成      : CREATE USER 'username'@'host' IDENTIFIED BY 'password';
-  ユーザー権限付与  : GRANT ALL PRIVILEGES ON database_name.* TO 'username'@'host';
+  ユーザー作成      : CREATE USER 'ユーザ名'@'ホスト名' IDENTIFIED BY 'password';
+                  例: CREATE USER 'kido' IDENTIFIED BY 'kido';
+  ユーザ名確認      : SELECT User, Host FROM mysql.user;
+  ホスト名確認      : SELECT User, Host FROM mysql.user WHERE User = '調べたいユーザ名';
+  ユーザ削除        : DROP USER 'ユーザ名'@'ホスト名'; //ホスト名は上記コマンドで調べる。
+  ユーザー権限付与  : GRANT ALL PRIVILEGES ON database_name.* TO 'ユーザ名'@'ホスト名';
+                  例: grant all privileges on greetdb.* to kido; //.* はDB内の全テーブルを指す。rootはユーザ名。
+                      ※ユーザ名はrootだとデフォルトで全権限を付与されているのでこのコマンドはエラーになる。
+  ユーザ権限の確認  : SHOW GRANTS FOR kido; //権限を確認するコマンド
   権限削除          : REVOKE ALL PRIVILEGES ON database_name.* FROM 'username'@'host';
 ---------------------------------------------------------------------------------------
 
