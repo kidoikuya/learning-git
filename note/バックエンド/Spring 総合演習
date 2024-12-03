@@ -310,7 +310,7 @@ th:text="${language}"でタイムリーフによってlanguage属性の値を表
   --------------------------------------------------------------------------------------
   // サーバサイド、コントローラでバインド(@ModelAttribute使用)
   @PostMapping("/updateUser")
-  public String updateUser(@ModelAttribute("user") User user) { //@Modelではバインドできない。
+  public String updateUser(@ModelAttribute("user") User user) {
       // from→Userにバインドされた情報を使って処理を行う
       System.out.println("Updated Username: " + user.getUsername());
       // 処理後にリダイレクトや別のページに遷移
@@ -318,7 +318,7 @@ th:text="${language}"でタイムリーフによってlanguage属性の値を表
   }
   // 2行目の@ModelAttribute("user")でバインド情報とbeanインスタンスuserをUser userで受取っている。
   // @ModelAttributeが動作するタイミング(メソッド呼び出し前)にフォーム入力値がbeanプロパティに代入される。
-  // この仕組みをfom-backing-beanという。
+  // この仕組みをform-backing-beanという。
   ---------------------------------------------------------------------------------------
 
 ・バリデーションが完了するまでの流れ
@@ -724,5 +724,58 @@ public class GreetMessage {
  ■@Column
   列名とプロパティ名が異なっていたり、Nullを許さない列だったり、同じ値を格納できない場合に使用。
 
-■ndexからデリートのリンクボタンを作る
+■タイムリーフでリンクボタンを作る
   <a th:href="@{/delete/{id}(id=${greet.id})}">削除</a>
+
+■タイムリーフでループ
+<!-- greetMessages をループして表示 -->
+<tr th:each="greet : ${greetMessages}">
+    <td th:text="${greet.id}"></td>
+    <td th:text="${greet.language}"></td>
+    <td th:text="${greet.morning}"></td>
+    <td th:text="${greet.noon}"></td>
+    <td>・・省略・・</td>
+    <!-- 削除確認画面に遷移 -->
+    <td><a th:href="@{/delete/confirm/{id}(id=${greet.id})}">削除</a></td>
+</tr>
+
+■th:if
+	<div th:if="${error != null}">
+	<h3 style="color:red" th:text="${'エラー ： ' + error}"></h3>
+
+■th:object
+  divタグ内でmodelのフィールドにアクセスする際
+  オブジェクト名(例：greetForm)を省略できる。
+  ※省略時は$じゃなくて*になるのも地味に注意。
+  ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+	<div th:object="${greetForm}">
+  <table border="1">
+    <tr>
+      <td>言語</td>
+      <td>
+        <span th:text="*{language}"></span> //th:objectが無いと"${greetForm.language}"で長くなる。
+      </td>
+  ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+■findById(識別子)
+  greetRepository.findById(id).orElse(null)
+  ・findById
+    JPAがデフォルトで持ってるメソッド、戻り値は「Optional<T>」
+  ・orElse(null)
+    findById(id)の戻り値であるOptionalのため、Optionalのメソッドが使える。
+    Optionalが値を持っている場合はその値を返し、無い場合は引数として渡したnullを返す。
+
+  Optionalはnullを扱うメソッドを持つクラス。
+  +---------------------+---------------------------------------------------------------------------------------------+
+  | メソッド名          | 説明                                                                                        |
+  +---------------------+---------------------------------------------------------------------------------------------+
+  | of(T value)         | `null` ではない値を包む `Optional` を作成。もし`null` を渡すと`NullPointerException` が発生 |
+  | ofNullable(T value) | 値が `null`かもの時 `Optional` を作成する。`value`が`null`なら`Optional.empty()` を返す。   |
+  | empty()             | 中身がない `Optional` を返します。                                                          |
+  | isPresent()         | 値が存在すれば `true` を返します。                                                          |
+  | get()               | 値を取得。値が存在しない場合は `NoSuchElementException` をスロー（非推奨）。                |
+  | orElse(T other)     | `Optional` が値を持っていればその値を返し、持っていなければ引数のデフォルト値を返す。       |
+  +---------------------+---------------------------------------------------------------------------------------------+
+
+
+  
