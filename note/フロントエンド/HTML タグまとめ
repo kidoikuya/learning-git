@@ -13,3 +13,32 @@
 +------------------+----------------------------------+----------------------------------------------+
 | 使用例           | テキスト一部、リンク、画像タグ等 | セクション、段落、リスト、コンテナなど       |
 +------------------+----------------------------------+----------------------------------------------+
+
+■ドロップダウンリスト
+<select id="language" name="language">
+    <option value="japanese">日本語</option>
+    <option value="english">英語</option>
+    <option value="french">フランス語</option>
+    <option value="spanish">スペイン語</option>
+</select>
+・selectはユーザーに複数の選択肢を提供するためドロップダウンリストやリストボックスを作成します。
+・idはselectタグをcssなどで編集する際に使う。
+・nameはselectタグの結果を送る際の属性。
+・optionタグの内容がリスト内容になる、ここがブラウザに表示される。
+・英語を選択した場合、language=englishが送られる。
+
+■<selected>
+<select name="timeframe" size="4">
+    <option value="morning" th:selected="${timeframe == 'morning'}">朝</option>
+    <option value="noon" th:selected="${timeframe == 'noon'}">昼</option>
+    <option value="evening" th:selected="${timeframe == 'evening'}">夕方</option>
+    <option value="night" th:selected="${timeframe == 'night'}">夜</option>
+</select>
+
+2. Thymeleaf テンプレートでの動作
+テンプレートがレンダリングされる際、th:selected 属性が評価されます。
+
+<option> タグ内で th:selected="${timeframe == 'morning'}" が評価されます。
+timeframe の値が "morning" と一致している場合、その <option> に selected 属性が付与されます。
+
+■めちゃめちゃなやんだ

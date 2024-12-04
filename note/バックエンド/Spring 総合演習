@@ -513,13 +513,16 @@ Field field = GreetController.class.getDeclaredField("greetService")
 ■総合演習８ ～ SpringによるDI ～
 ------------------------------------------------------------------------------------------------------------------
 ■環境変数 SPRING_PROFILES_ACTIVE
-   @Profile アノテーションで記載した文字列を設定する。
-   SPRING_PROFILES_ACTIVE は、Spring Framework（特にSpring Boot）で使用される環境変数。
+   @Profile("プロファイルグループ名") アノテーションで記載した文字列を設定する。
    SPRING_PROFILES_ACTIVEは、実行中のアプリケーションに対してどのプロファイルを有効にするかを指定する。
-   プロファイルは異なる設定や設定値、Beanを環境ごとに切り替えるために使用する。
    プロファイルは1つしか指定出来ない（default、English、German など）
-   この環境変数を使うことで、開発・テスト・運用などの異なる環境に応じた設定を簡単に適用できる。
    @Profile アノテーションを使用して、特定のプロファイルに関連付けられたBean（コンポーネント）を定義。
+   プロファイルグループ名を本番用とテスト用で分けて、環境変数でどちらを使うか指定すれば一括でON/OFF出来る。
+   どのDBを使用するかを設定するファイルを選ぶ際にも使える。
+   application-{プロファイル名}.properties
+   application-test.properties
+   application-product.properties
+   プロファイル名を変更すれば接続するDBを切り替える事が出来る。
 
 ■SPRING_PROFILES_ACTIVEの設定方法
   ①ターミナル使用
@@ -625,10 +628,20 @@ findById()           | キー              | Optional<T>        | キーに該�
 getById()            | キー              | T                  | キーに該当するレコードを取得
 count()              | なし              | long               | レコード数を取得
 existsById()         | キー              | boolean            | キーに該当するレコードが存在するかを取得
-save()               | T                 | T                  | キーが存在する場合は更新、存在しない場合は登録
+save()               | T                 | T                  | キーが存在する場合は更新、存在しない場合は登録 UPDATEとinsertが両方使える面白いメソッド
 saveAll()            | List<T>           | List<T>            | Entity の数だけsave()を実行
 deleteById()         | キー              | なし               | キーに該当するレコードを削除
 deleteAllById()      | List<キー>        | なし               | キーの数だけdeleteById()を実行
+
+■@Query 複雑なクエリ分を生成する
+  // JPQLによる定義
+  // この記述は特定のデータベースに依存しない定義。
+  @Query("select u from User u where u.age = :age")
+  List<User> myFindByAge(int age);
+  // ネイティブクエリによる定義
+  // こちらはデータベースに依存することになるので移行が困難になるので注意。
+  @Query(value = "select * from user where age = ?1", nativeQuery = true)
+  List<User> myFindByAge(@Param("age") int age);
 
 ■メソッド名からクエリ文を自動生成
 Public interface ProductRepository extends JpaRepository<Product, Integer> {
@@ -667,7 +680,7 @@ Public interface ProductRepository extends JpaRepository<Product, Integer> {
   コンパイラに対して「nullに関する警告を無視するように指示するもの」です。
 
 ・JPAの利用はインタフェースを継承するだけで使えるって話のやつ
-public interface GreetRepository extends JpaRepository<GreetMessage, Integer> {
+  public interface GreetRepository extends JpaRepository<GreetMessage, Integer> {
 	public GreetMessage findByLanguage(String language);
 	public List<GreetMessage> findAll();
 }
@@ -778,4 +791,77 @@ public class GreetMessage {
   +---------------------+---------------------------------------------------------------------------------------------+
 
 
-  
+
+
+
+
+
+
+
+
+
+■総合演習１０ 挨拶表示
+-----------------------------------------------------------------------------------------------------------------------------------
+■@GetMapping({"/", "/greet"})
+ / と /greet のどちらの URL がリクエストされても同じメソッドで処理できる記述。
+
+■■ドロップダウンリストの復習
+<select id="language" name="language">
+    <option value="japanese">日本語</option>
+    <option value="english">英語</option>
+    <option value="french">フランス語</option>
+    <option value="spanish">スペイン語</option>
+</select>
+・selectはユーザーに複数の選択肢を提供するためドロップダウンリストやリストボックスを作成します。
+・idはselectタグをcssなどで編集する際に使う。
+・nameはselectタグの結果を送る際の属性。
+・optionタグの内容がリスト内容になる、ここがブラウザに表示される。
+・英語を選択した場合、language=englishが送られる。
+・sizeが指定されていない場合は1行のドロップダウンリストが作成される。
+
+■<selected>とは？
+<select name="timeframe" size="4">
+    <option value="morning" th:selected="${timeframe == 'morning'}">朝</option>
+    <option value="noon" th:selected="${timeframe == 'noon'}">昼</option>
+    <option value="evening" th:selected="${timeframe == 'evening'}">夕方</option>
+    <option value="night" th:selected="${timeframe == 'night'}">夜</option>
+</select>
+このコードだと、timeframe の値が "morning" と一致している場合に<option>にselected属性が付与されます。
+
+■初期画面が完成するまでの流れ
+------------------------------------------------------------------------------
+<select id="language" name="language">
+  <option th:each="option : ${languageOption}" th:value="${option}"
+          th:selected="${option == language}" th:text="${option}"></option>
+</select>
+------------------------------------------------------------------------------
+まず、http://localhost:8080/greetにアクセスするとGETがコントローラーに投げられる。
+ここでドロップダウンリストで使う初期値が設定される。
+あと、ＤＢから言語一覧も取得する。
+  @GetMapping({"/","/greet"}) //これで拾う。
+  public ModelAndView greet(ModelAndView modelAndView) {
+  List<String> languages=greetService.getLanguages(); //言語一覧を取得
+  modelAndView.setViewName("greet");
+  modelAndView.addObject("language","日本語"); //初期値を設定
+  modelAndView.addObject("languageOption",languages);//言語一覧を設定
+  modelAndView.addObject("timeframe","morning"); //初期値を設定
+  return modelAndView; //これで初期画面が完成
+  }
+greet.htmlにタイムリーフで動的に取り込まれて、初期画面が完成する。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,103 @@
+■ORM(ORマッパー)とは
+ JavaとRDBの間の橋渡しをやってくれる技術。
+ SQL文を自動生成したり、自動的に変換(マッピング)する。
+
+■JPA
+ ORMの設計書や仕様書みたいなもの。
+ 実装する機能を持つ製品は
+ ・Hibernate ※総合演習ではこれを利用してる？
+ ・EclipseLink
+ ・OpenJPA
+
+■Springのサブフレームワーク
+・様々なDB(RDB以外のMongoDBやRedis等)のNoSQLもサポートしてる。
+    ・Spring Data JPA
+    ・Spring Data JDBC
+    ・Spring Data MongoDB
+    ・Spring Data Redis
+    ・Spring Data Cassandra
+    ・Spring Data Neo4j
+
+■リソースフォルダは以下にあるファイル
+このファイルはアプリケーション実行時に自動で読み込まれて裏側で必要なインスタンスが生成される。
+spring.application.name=SpringDataJPASample
+
+# Spring Data JPA Properties
+spring.datasource.url=jdbc:mysql://localhost:3306/jpa_sample
+spring.datasource.username=root
+spring.datasource.password=1234
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver ←プロジェクト作成時にドライバーにチェック入れとくこと
+
+# Hibernate Settings
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect ←Dialectは方言という意味
+spring.jpa.hibernate.ddl-auto=update ←テーブルを自動定義
+spring.jpa.show-sql=true ←SQLを表示するかどうか
+spring.jpa.properties.hibernate.format_sql=true ←SQL表示時に改行するかどうか
+
+# Connection Pool Settings (HikariCP is the default in Spring Boot) ←HikariCP光コネクションプーリングの略
+spring.datasource.hikari.minimum-idle=2 ←DBアクセス時に使いまわすコネクションを何個までにするか。
+spring.datasource.hikari.maximum-pool-size=10 ←プールのサイズ？
+spring.datasource.hikari.idle-timeout=30000 ←アイドル時間
+spring.datasource.hikari.connection-timeout=20000 ←単位はミリ秒
+spring.datasource.hikari.max-lifetime=1800000
+
+
+■DBに近いところからコードを書いていくのがラク。
+・リポジトリ
+・サービス
+・コントローラ
+・ビューとか？
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
