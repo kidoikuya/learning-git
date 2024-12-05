@@ -965,7 +965,6 @@ UserDetailsService
 ■PasswordEncoderインタフェース
  パスワードハッシュ化を扱うインタフェース
  実装クラスは下記の物がある。
-
 ------------------------------------------------------------------------------------------------------
  実装クラス                | 概要
 ---------------------------|-------------------------------------------------------------------------
@@ -990,10 +989,29 @@ UserDetailsService
 7  isEnabled()                  | 有効なユーザかを判定する
 ----------------------------------------------------------------------------------
 
+UserDetailsService(Interface) リクエスト(ログイン情報認証)処理時、DBから情報取得しSpringSecurityに渡す。
+  └── LoginUserDetailsService (Custom Implementation)
+        └── データベース操作で LoginUser (エンティティ) を取得
+            └── LoginUserDetails (UserDetails を実装)
+
+UserDetails (Interface)
+  └── LoginUserDetails (Custom Implementation)
+        └── LoginUser エンティティから必要な情報を取得して提供
+
+SecurityContextHolder (現在の認証情報を保持)
+    └── SecurityContext (認証情報のコンテナ)
+        └── Authentication (認証結果やユーザー情報を表現)
+            └── Principal (UserDetails または認証済みユーザーオブジェクト)
+                └── LoginUserDetails (Custom UserDetails Implementation)
 
 
-
-
+■コンテキストパス
+<!-- th:hrefはコントローラに「/login」があればリンクを貼る、無ければ何もしない --> 
+<!-- hrefじゃだめなの？hrefだとコンテキストパスが考慮されない＝アプリがデプロイされた場所によってはパスが通らない可能性がある -->
+<!-- コンテキストパスを明示的に設定しない場合、Tomcatが自動的にルートに設定する。その場合http://localhost:8080/～になる。 -->
+<!-- コンテキストパスがwebappの場合はhttp://localhost:8080/webapp/～になる。 -->
+<!-- th:hrefはコンテキストパスの変化を考慮して「動的に」URLを生成してくれるので汎用性が高い。 -->
+<!-- Springの場合、application.propertiesにコンテキストパスが書かれているか確認出来る。server.servlet.context-path=/myappなどの記載が無ければルート。  -->
 
 
 

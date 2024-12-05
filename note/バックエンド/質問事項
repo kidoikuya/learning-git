@@ -22,3 +22,25 @@
       データとUIの間で双方向または一方向のデータ同期を行う広い概念です。
       UI（ビュー）とバックエンド（データ）間でデータを自動的に同期する仕組みを指します。
       これがいまいちわからない。
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+
+・総合演習１１
+<!-- index.htmlに飛ぶこと無いのに何で書いてあるの？ -->
+  <form method="post" action="index.html" th:action="@{/login}"> 
+      ユーザーId: <input type="text" name="username"><br>
+      パスワード: <input type="password" name="password"><br>
+      <button type="submit">ログイン</button>
+  </form>
+
+・コンテキストパス
+<!-- th:hrefはコントローラに「/login」があればリンクを貼る、無ければ何もしない --> 
+<!-- hrefじゃだめなの？hrefだとコンテキストパスが考慮されない＝アプリがデプロイされた場所によってはパスが通らない可能性がある -->
+<!-- コンテキストパスを明示的に設定しない場合、Tomcatが自動的にルートに設定する。その場合http://localhost:8080/～になる。 -->
+<!-- コンテキストパスがwebappの場合はhttp://localhost:8080/webapp/～になる。 -->
+<!-- th:hrefはコンテキストパスの変化を考慮して「動的に」URLを生成してくれるので汎用性が高い。 -->
+<!-- Springの場合、application.propertiesにコンテキストパスが書かれているか確認出来る。server.servlet.context-path=/myappなどの記載が無ければルート。  -->
+
+
+
