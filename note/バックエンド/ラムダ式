@@ -1,0 +1,34 @@
+import java.util.List;
+
+public class Main {
+
+	public static void main(String[] args) {
+		List<Integer> numbers = List.of(1, 2, 3, 4, 5);
+
+		// 拡張 for 文を利用した場合
+		for (Integer num : numbers) {
+		    System.out.println(num);
+		}
+
+		// Stream API の高階メソッドを利用した場合
+		numbers.stream().forEach(num -> System.out.println(num));
+
+		// メソッド参照を用いるとさらにコードが簡潔になる
+		numbers.stream().forEach(System.out::println);
+		
+		/* 各要素を 2 倍にしたリストを作成する  */
+		List<Integer> doubled_numbers = numbers.stream()
+				.map(num -> num * 2)
+				.map(num -> num * 2)
+				.map(num -> num * 2)
+				.map(num -> num * 2)
+				.toList();
+		System.out.println(doubled_numbers);
+		
+		/* 2 の倍数のみ集める */
+		List<Integer> multipleOf2 = numbers.stream().filter(num -> num % 2 == 0).toList();
+		System.out.println(multipleOf2);
+		
+	}
+
+}

@@ -860,6 +860,143 @@ greet.htmlにタイムリーフで動的に取り込まれて、初期画面が�
 
 
 
+■総合演習１１ ～ Spring Security ～
+-------------------------------------------------------------------------------------------------
+■セキュリティの基本
+認証(Authentication) auth：来訪者を識別し、登録された本人か確認。
+認可(Authrization)  authz：識別した上で、権限のチェックを行い、リクエストを許可。
+
+■主な攻撃手段
+XSS攻撃 → Thymeleafのth:text(HTMLにおいて意味のある記号<>等を無害化※&gt;&lt;)にする。
+          th:textはサニタイジングした上でテキストを展開してくれる。
+          th:utextはサニタイジングなし
+
+SQLインジェクション → ORMapper
+セッションハイジャック →
+◎CSRF攻撃 → Spring Security
+             th:actionを使えば勝手に対応してくれる
+DOS攻撃
+DDoS攻撃
+
+■securityFilterChain(セキュリティーチェーン)
+・ブラウザからリクエスト
+・securityFilterChain
+  認証 ログイン認証後、セッションスコープにユーザの認証情報が一時的に保持される。
+  例外ハンドリング
+  認可：Filter(ServletFilterを利用)
+    → @EnableWebSecurity
+      クラスに付与することで、Webセキュリティ設定を行うためのクラスであることを示す。
+      デフォルトで用意されているfilterを追加してくれる。
+・フロントコントローラ(DisptcherServlet)
+・コントローラ(@Controller)
+
+■認証について詳しく
+セッションスコープの中身
+・Authenticationインスタンスをセッションスコープから貰ってくる
+・name：id
+・suthorities：権限
+・principal：ここにUserDetailsが格納される
+  ※principalは認証された相手のこと
+↑
+AuthenticationProvider ⇔ 認証を行うフィルター
+↕ UserDetails(最終的にユーザ認証に必要な情報)これを共有する
+UserDetailsService
+↕
+～Repository
+↕
+DB
+
+自分で作るのは
+UserDetails
+UserDetailsService
+～Repository
+
+■認可について詳しく
+３つのレベルで制御出来る
+  ・リクエストレベル：URL、HTTP(GET,POSTなど)
+  ・メソッドレベル：サービスクラスのメソッド(メソッド呼び出し時) ※結構難しい
+  ・ビュー(画面表示)レベル：Thymeleafのsec:authorize="hasRole('admin')"
+    → admin持ってるかセッションスコープ見に行って確認後、有るならtrue／無いならfalse。
+      ビューと言っているけど、HTMLのタグレベルで制御できる。
+
+@Configuration
+@EnableWebSecurity
+@Beanメソッドの戻り値を
+
+■HttpSecurity
+ ログイン制御などのメソッドを持っている。
+ authorizeHttpRequestsメソッド、リクエストレベルでの認可を行う。
+ 例：.requestMatchers("/admin").hasRole("ADMIN")
+ /daminで来たのを認可するのはADMINを持っている人だけということ。
+
+ ・authz
+   ・requestMatchers()
+   ・anyRequest()
+   このメソッドの戻り値はAuthorizedurlに入り
+   ・hasRole()や
+   ・hasAnyRole
+   ・authenticated()に渡され
+   ・anyRequest().authenticated(); 全てのリクエストは・認証済み＝許可。
+   このメソッドの戻り値はauthzに戻る。
+   ※anyRequest()を必ず最後に書くのがポイント。
+     これはフィルターの重ね掛けなので、条件が厳しいものから列記しないといけない。
+
+■login.html
+<p sec:authorize="authenticated">
+    ようこそ<span sec:authentication="principal.username">ユーザー</span>さん
+</p>
+-------------------------------------------------------------------------------
+・<p sec:authorize="authenticated"> 
+・sec:authorize(許可)：ユーザーがログイン状態である場合にのみ記述したタグ内容を表示。
+・sec:authentication="principal.username"
+  authentication(認証)：secの名前空間(認証情報オブジェクト)からデータを取得して表示するだけ。
+※sec：Spring Securityの属性
+
+■WebSecurityConfig
+
+■IoC：Inversion of Control（制御の反転）
+  アプリケーションの処理の流れやオブジェクトの生成を、開発者が直接管理するのではなく
+  フレームワークやコンテナ（IoCコンテナ）に任せるという設計原則のこと。
+  メリット
+  ・モジュール性の向上：依存関係が明示的に注入されるため、各コンポーネントが独立して管理しやすくなる。
+  ・テストの容易さ：依存関係を簡単にモックやスタブに差し替えることができるため単体テストが容易になる。
+  ・再利用性の向上：各コンポーネントが他のコンポーネントと疎結合になるため再利用がしやすくなる。
+
+■PasswordEncoderインタフェース
+ パスワードハッシュ化を扱うインタフェース
+ 実装クラスは下記の物がある。
+
+------------------------------------------------------------------------------------------------------
+ 実装クラス                | 概要
+---------------------------|-------------------------------------------------------------------------
+1  AbstractPasswordEncoder | ※これだけ抽象クラス。ハッシュ化処理の共通機能を提供、実装を支援する役割。
+2  NoOpPasswordEncoder     | ハッシュ化を行わない (テスト用)
+3  Pbkdf2PasswordEncoder   | 設定可能な反復回数とランダムな8バイトランダムソルト値を使用しPBKDF2を使用
+4  StandardPasswordEncoder | SHA-256アルゴリズム + 1024回のストレッチでハッシュ化を行う
+5  BCryptPasswordEncoder   | Blowfish暗号を基盤としたbcryptアルゴリズムでハッシュ化を行う。
+6  SCryptPasswordEncoder   | scryptアルゴリズムでハッシュ化を行う
+------------------------------------------------------------------------------------------------------
+
+■UserDetailsインタフェース
+----------------------------------------------------------------------------------
+メソッド名                      | 説明
+--------------------------------|-------------------------------------------------
+1  getAuthorities()             | ユーザの権限を返す
+2  getUsername()                | ユーザのユーザ名を返す
+3  getPassword()                | ユーザのパスワードを返す
+4  isAccountNonExpired()        | アカウントが有効期限切れかを判定する
+5  isAccountNonLocked()         | アカウントのロック状態を判定する
+6  isCredentialsNonExpired()    | アカウントの資格情報（パスワード）が有効期限を判定
+7  isEnabled()                  | 有効なユーザかを判定する
+----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
