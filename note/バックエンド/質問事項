@@ -33,6 +33,7 @@
       パスワード: <input type="password" name="password"><br>
       <button type="submit">ログイン</button>
   </form>
+→Thymeleafのth:action属性を使うことで、HTMLにトークンを埋め込むことが可能だから。
 
 ・コンテキストパス
 <!-- th:hrefはコントローラに「/login」があればリンクを貼る、無ければ何もしない --> 
@@ -41,6 +42,5 @@
 <!-- コンテキストパスがwebappの場合はhttp://localhost:8080/webapp/～になる。 -->
 <!-- th:hrefはコンテキストパスの変化を考慮して「動的に」URLを生成してくれるので汎用性が高い。 -->
 <!-- Springの場合、application.propertiesにコンテキストパスが書かれているか確認出来る。server.servlet.context-path=/myappなどの記載が無ければルート。  -->
-
 
 
