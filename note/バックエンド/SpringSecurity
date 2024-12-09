@@ -1,0 +1,7 @@
+■@PostMapping("/login")が無いのに認証される
+  Spring Security を依存関係に追加している場合
+  Spring Securityのデフォルトログインフィルタ (UsernamePasswordAuthenticationFilter) が
+  /login へのPOSTリクエストを処理するため、コントローラーでPOST用の/loginメソッドを実装する必要が無い。
+  フォームの name="username" と name="password" のフィールド名を Spring Security が認識→認証に利用。
+
+■

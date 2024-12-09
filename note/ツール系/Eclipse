@@ -18,12 +18,24 @@
 一括エクスポートしたいプロジェクトにチェックを入れます（複数選択可能）。
 必要に応じて、特定のフォルダやファイルのみを選択することもできます。
 
+■プロジェクトコピー時の修正箇所
+・pom.xml内の記述
+・XXXXXApplication.javaのファイル名
+・XXXXXApplication.java内の記述
+・application.properties内の記述
 
-
-
-
-
-
+■ビルド(プロジェクト作成時にMavenとwarを指定)
+プロジェクト右クリ＞実行＞Mavenビルド…＞ゴール「package」でtarget直下にwarファイルが作成される。
+コンソールログに「BUILD SUCCESS」が表示されれば成功。 ※途中にwarning出るけど平気らしい。
+C:\Program Files\Apache Software Foundation\Tomcat 10.1\webappsを開いて
+ここにwarファイル(オリジンじゃない方)をコピー、バージョン名は長いので削除する。
+※Tomcatインストール時に特に弄っていなければ上記フォルダになる。
+Windowsキー + S を押し「サービス」または「services.msc」でサービスを起動、Apache tomcatを起動。
+webappsフォルダにwarファイルと同名のフォルダが作成される。
+ブラウザからhttp://localhost:8080/プロジェクト名 でアクセス出来れば成功。
+※エクリプス上でSpringを起動しているとポート8080を使っていたら起動エラーになるらしいので注意。
+http://localhost:8080/manager/html でアプリケーションマネージャが開ける。
+このマネージャ画面ではパス事にログイン中のセッション数が見れたり、個別にWEBアプリケーションの停止や起動といった制御が行える。
 
 
 

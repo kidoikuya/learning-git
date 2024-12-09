@@ -1087,6 +1087,38 @@ SecurityContextHolder (現在の認証情報を保持)
 -------------------------------------------------------------------
 
 
+■エンティティクラス
+@Entity
+@Table(name = "users")
+public class LoginUser {
+	
+	@Id //このフィールドがテーブルのプライマリキーで有る事を示す。
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//strategy=ID生成戦略という意味。
+	//GenerationType.IDENTITY=戦略は自動インクリメントであるという意味。
+	private Integer id;
+
+  //nullable=nullを許容しない、unique=重複不可。
+	@Column(nullable = false, unique = true)
+	private String username; // デフォルトのフィールド名に変更
+
+	@Column(nullable = false)
+	private String password;
+	private String role;
+	private String userId;
+}
+ 
++-----------------+-----------------------------------------+-------------------------------------+
+| GenerationType  | 説明                                    | 使用例                              |
++-----------------+-----------------------------------------+-------------------------------------+
+| AUTO            | JPAプロバイダに自動で選択させる          | MySQLやOracleでの自動インクリメントやシーケンス |
++-----------------+-----------------------------------------+-------------------------------------+
+| IDENTITY        | 自動インクリメント                       | MySQL、SQL Server                   |
++-----------------+-----------------------------------------+-------------------------------------+
+| SEQUENCE        | シーケンスを使用してIDを生成            | Oracle、PostgreSQL                  |
++-----------------+-----------------------------------------+-------------------------------------+
+| TABLE           | ID生成用のテーブルを使用                 | 特殊なID生成要件                    |
++-----------------+-----------------------------------------+-------------------------------------+
 
 
 
@@ -1097,7 +1129,8 @@ SecurityContextHolder (現在の認証情報を保持)
 
 
 ■総合演習12
-プロジェクト右クリ＞実行＞Mavenビルド...するとwarファイルが生成される。
+プロジェクト右クリ＞実行＞Mavenビルド...
+ゴールに「package」を設定、warファイルが生成される。
 tomcatをインストールすると、C:\Program Files\Apache Software Foundation\Tomcat 10.1\webapps
 ここにwarファイル(オリジンじゃない方)をコピー、バージョン名は長いので削除する。
 Windowsキー + S を押し、「サービス」または services.msc でサービスを起動。
@@ -1117,8 +1150,52 @@ http://localhost:8080/greet12 でアクセス出来ればOK。
 
 
 ■総合演習13
+・ユーザ管理ページを作成。
+  ①新規登録ボタンのリンク。
+  ②DBからテーブル情報を取得
+  ③roleを日本語に変換
+  ④編集ボタンリンク
+  ⑤削除ボタンリンク
+  ⑥トップページへのリンク
 
-お家でやりましょう
+・登録ページの作成
+  ①フォーム作成
+    ユーザID・ユーザ名・役割はドロップボックス・パスワード
+    ※ユーザidは重複チェックさせる。
+    ※パスワードは強度チェックを入れる。
+    ・  英大文字、英小文字、数字、記号を一文字以上使っていること 
+    ・  文字列の長さが１０文字以上であること
+  ②ユーザ管理へのリンク
+
+・編集ページの作成
+  ①ユーザ名、役割はドロップボックス、パスワードは強度チェック
+    ※ユーザidは編集不可。
+  ②ユーザ管理へのリンク。
+
+・削除ページの作成
+  ①ユーザid・ユーザ名・役割を表示。
+  ②削除ボタンを押下するとDBから削除。
+  ③ユーザー管理へのリンク。
+
+■プレースホルダーでプライマリキーを使ったGETリクエスト
+<td><a th:href="@{/delete/{id}(id=${user.id})}">削除</a></td>
+このリンクでは、{id} プレースホルダが Thymeleaf で ${user.id} の値に置き換えられ、/delete/1 などの URL が生成されます。
+
+    // ユーザ削除処理
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            // ユーザーが存在するか確認して削除
+            loginUserRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "ユーザーを削除しました。");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "削除中にエラーが発生しました。");
+        }
+        
+        // ユーザー管理ページにリダイレクト
+        return "redirect:/administration";
+    }
+
 
 
 
