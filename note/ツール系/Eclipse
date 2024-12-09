@@ -24,6 +24,27 @@
 ・XXXXXApplication.java内の記述
 ・application.properties内の記述
 
+■プロジェクトコピー時の注意点
+・起動時に下記エラーが表示されることがある。
+  これはプロジェクト起動時に読み込まれるはずのファイルが読み込まれていないことが原因。
+  対象プロジェクトを右クリ＞使用しているビルドツールMaven等にカーソル合わせる＞プロジェクトの更新（Alt＋F5）
+  これで問題なく動いた。greet13
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+[2m2024-12-09T09:12:30.318+09:00[0;39m [31mERROR[0;39m [35m15576[0;39m [2m--- [  restartedMain] [0;39m[36mo.s.b.d.LoggingFailureAnalysisReporter  [0;39m [2m:[0;39m 
+***************************
+APPLICATION FAILED TO START
+***************************
+Description:
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+Reason: Failed to determine a suitable driver class
+Action:
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 ■ビルド(プロジェクト作成時にMavenとwarを指定)
 プロジェクト右クリ＞実行＞Mavenビルド…＞ゴール「package」でtarget直下にwarファイルが作成される。
 コンソールログに「BUILD SUCCESS」が表示されれば成功。 ※途中にwarning出るけど平気らしい。

@@ -1120,13 +1120,16 @@ public class LoginUser {
 | TABLE           | ID生成用のテーブルを使用                 | 特殊なID生成要件                    |
 +-----------------+-----------------------------------------+-------------------------------------+
 
-
-
-
-
-
-
-
+■細く解説
+・セッションスコープでAuthentication(username等の認証情報)を保持。
+・さらに、スレッドローカルでどのクラスやViewのタイムリーフからも参照できる領域にも保持する。
+  コントローラーで貰うのはめっちゃ簡単。
+  @GetMapping("/admin")
+  public String admin(Authentication auth){ //この引数で簡単にもらえる。
+  System.out.println(auth.getName());
+  System.out.println(auth.getAuthorities());
+  System.out.println(auth.getPrincipal());
+  }
 
 ■総合演習12
 プロジェクト右クリ＞実行＞Mavenビルド...
