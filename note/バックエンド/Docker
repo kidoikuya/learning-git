@@ -1,3 +1,137 @@
+- GUI DockerDesctop
+■参考URL
+https://shk-education-docker.netlify.app/docs/%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E5%8F%82%E8%80%83%E8%B3%87%E6%96%99/docker-appendix-1
+
+■DockerHubからイメージをダウンロード
+・imagesタブ＞Search images to runボタン＞イメージ名を入れてpull
+
+■イメージからコンテナ作成
+・imagesタブ＞Actions欄の三角実行アイコン
+
+■コンテナ作成時のOptional settingsで設定すること
+・Container name
+  コンテナの名前で一意に付けられる識別子になる。mysql001など。
+  Container nameは人が見やすくするためorコマンドで楽に使えるためのもの、変更も可能。
+  ※コンテナの識別には自動生成される一意の16文字のContainerID(変更不可)が使用される。
+・HOSTPORT
+  ホスト側のポート番号で、外部からアクセスする際に使用するポート番号。※コンテナ側と別なので注意。
+  例：docker run -p 8080:80 nginx （CUIの例だけど）
+  ホストのlocalhost:8080にアクセスすると、コンテナ内で実行されているnginxサーバーの80番ポートに接続されWebページが表示。
+・Volumes
+  Dockerコンテナ内のデータを永続的に保存するために使用される項目。
+  これを設定しないとコンテナ再起動で普通にデータが消去される。
+  ホストマシンのディレクトリ・コンテナ内のディレクトリ
+・Environment Variables（環境変数）
+  コンテナやアプリケーションに設定する動的な設定値
+  環境ごとに異なる設定を簡単に複数個変更設定できる。
+  例：MYSQL_ROOT_PASSWORD 1234
+  この例ではMySQLのパスワードを設定する環境変数にパスワードを設定している。
+
+■コンテナのターミナル操作
+・Containersタブ＞操作したいコンテナを選択
+・Execタブを開くとターミナル画面が開かれる。
+
+■ローカルのファイルをDocker上のコンテナにコピー
+Filesでコンテナのディレクトリ構成は見れるが、ドラッグ＆ドロップでは移動できない。
+dockerコマンドはローカル側のPowerShellから下記のコマンドで行う。
+docker cp ローカル側のファイルパス <コンテナID>:/コンテナ側のパス
+例：docker cp ./greet13-0.0.1-SNAPSHOT.war e1f7583e8fdff61400bebf919130e3cece2568130b3e511da63602d3e2e660ff:/usr/local/tomcat/webapps/                     Successfully copied 59.5MB to e1f7583e8fdff61400bebf919130e3cece2568130b3e511da63602d3e2e660ff:/usr/local/tomcat/webapps/
+
+■MySQLを使う時の中点
+Docker上のMySQLにテーブルを作っても、コンテナを再起動したらそのテーブルは消える。
+netstat -anoでLISTENINGだと使用中。
+TCP         0.0.0.0:3306           0.0.0.0:0              LISTENING       5128
+PIDでプロセスを特定する。
+tasklist /FI "PID eq 5128"
+
+■ローカルSQLのダンプ
+PowerShellから下記コマンドでDBをコピー
+mysqldump -u root -p greetdb > greetdb_dump.sql
+
+■ダンプ→Dockerのtmpにコピー
+docker cp C:\Users\SHK007\greetdb_dump.sql d6e563891340ab9c3931bd975e93b2e05a3d8a58ca7b46762aefb37bc95a0805:/tmp/greetdb_dump.sql
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- CUI ----------------------------------------------------------------------------------------------------------------------------------------
+
 ■イメージ取得
 docker image pull mysql:latest
 
@@ -6,7 +140,6 @@ docker container create --name mysql001 -e MYSQL_ROOT_PASSWORD=1234 -p 3307:3306
 docker container start mysql001
 docker container exec -i -t mysql001 mysql -u root -p
 
------------------------------------------------------------------------------------------------------------------------------------------
 
 ■参考URL
 https://shk-education-docker.netlify.app/docs/Docker%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9%E3%82%92%E5%AD%A6%E3%81%B6/docker-text-1
