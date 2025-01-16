@@ -1,0 +1,54 @@
+■１.クラスとインタフェース
+01
+02
+03
+04
+05
+06
+07
+08
+09
+10
+11
+12
+13
+14
+15
+16
+17
+
+■２.関数型インタフェースとラムダ式
+01〇 Supplier
+02〇 Supplier
+03〇 Consumer
+04〇 Consumer 2が✕な理由を覚えておく。ビルダーを使う解説がわからないので要復習。
+05✕ BiConsumer Aが間違いな理由がわからない、戻り値は戻していないのでは？ P80のメソッド参照例。
+06✕ Predicateのメソッドはtestで戻り値はboolean型。
+07〇 Predicate P83のif文は、sampleインスタンスが「男性or成人女性」ならOKを返すアルゴリズム。
+08〇 BiPredicate 
+09〇 Functionのメソッドは？
+10〇 Functionの合成メソッド
+11〇 BiFunction
+12〇 Function.UnaryOperatorの抽象メソッド
+13✕ リストで扱っているコレクションに対して使う関数型インタフェースは？
+14〇 BinaryOperator
+
+
+■３.並列処理
+01✕Threadクラスの継承・start()・run()
+02〇Runnableインタフェースの実装・start()・run()
+03✕ExecutorServiceを取得するExecutorsクラスのメソッドは？例文のコードがヤバイわからん。
+04✕遅延実行スレッドの作り方
+05
+06
+07
+08
+09
+10
+11
+12
+13
+14
+15
+16
+17

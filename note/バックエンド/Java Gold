@@ -1,0 +1,2308 @@
+- １.クラスとインタフェース ----------------------------------------------------------------------------------------------------
+■エンクロージャークラス
+外側のクラスのこと
+
+■インナークラス P
+new Outer().new Inner();
+staticフィールドとstaticメソッド定義不可(コンパイルエラー)
+
+■staticインナークラス
+new Inner();
+フィールドとメソッドの定義に制限なし。
+static→非staticのアクセスはそのまま出来ない。
+エンクロージャークラスとインナークラスのインスタンス化が必要。
+
+■ローカルクラス
+メソッド内に定義するクラスのこと。
+メソッド外からのアクセスは不可(同じエンクロージャークラス内でもダメ)
+メソッド内ではローカル変数を利用出来るが2点注意が必要。
+①ローカル変数の定義前には利用不可。
+②ローカル変数は実質finalで再代入不可。
+※インスタンス化時に一度だけローカル変数を参照するためfinalである必要がある。
+
+■匿名クラス
+・既存クラスやインタフェースをnewした直後に{}内に定義する無名の一時的なクラス。
+・インスタンス化する場合は匿名クラスのみインスタンス化される。
+・クラス名が無いのでコンストラクタ利用不可、戻り値型の不定義扱いでコンパイルエラーになる。
+  ※初期化したい場合には初期子ブロック{}を使う。
+・匿名クラスに定義したメソッドにアクセスする場合に注意点が２つある。
+①Overrideしたメソッドの場合のみ外部クラスからアクセス出来る。
+  匿名クラス自体に名前が無いため、外部からは親クラス名を指定してアクセス。
+②独自メソッドの場合、同クラスor同メソッド内からのみアクセス出来る。
+  ただし、クラス型をvarにする必要がある。
+  ※既存のクラス型を指定すると、存在しないメソッドを呼び出す事になるから。
+
+■インタフェースのstaticメソッドの扱い
+・呼び出し方は必ず「staticメソッドを定義したインタフェース名.メソッド名();」
+  ※「サブインタフェース名.メソッド名();」で呼び出し不可。
+  ※実現クラス内からであってもインタフェース名の省略不可。
+  ※実現クラスでOverride不可、@Overrideを付けるとコンパイルエラー。
+    インタフェースに限らずクラスのstaticメソッドに対して同じ挙動が起こる。
+    Overrideとはインスタンスがどう動作するべきか再定義するのに使われるため。
+    staticはインスタンスが無くても動作出来るのでOverrideは出来ない。
+  ※Override不可なので、逆に同名メソッドを定義することが出来る。
+    呼び出し方は「実現クラス名.同名メソッド名();」
+ 
+■親インタフェースのデフォルトメソッド呼び出し
+・「親インタフェース名.super.デフォルトメソッド名();」
+  複数の親インタフェースを実装してる＆その親に同名デフォルトメソッドが存在する場合
+  明示的に親インタフェースのデフォルトメソッドを呼び出すために使う構文。
+  ※「親インタフェース名.デフォルトメソッド名();」ではダメなのか？？？
+    これは"staticメソッドを呼び出す時に使う記述"だが
+    "デフォルトメソッド＝インスタンスメソッド"なのでコンパイルエラーになる。
+  ※呼び出せる対象は１つ上の階層にあたる親インタフェースだけ。
+  ※Override自体は実現クラスorサブインタフェースで行える。
+
+■親クラスと親インタフェースに同名のメソッドがある場合
+・この両方を継承したクラスから呼び出されるのは親クラスのメソッドのみ。
+  インタフェースはあくまで型提供が本来の役割なので優先度が低い。
+
+■インタフェースに定義できるメソッド種類？？？P23
+・抽象メソッド(暗黙的にpublicとabstract)
+・デフォルトメソッド(暗黙的にpublic)
+・staticメソッド(暗黙的にpublic)
+  デフォルトでpublic扱いでprivateに出来ない。
+・privateメソッド()
+  defaultの記載は不要、defaultメソッドから利用される前提で定義する。
+・private staticメソッド
+  クラス内部からのみアクセス可能かつstaticなのでインスタンス化不要。
+  複数のstaticメソッドをまとめるのに使われる。P52
+
+■enum(列挙型) P52・P82
+・定数をまとめて定義するための特殊クラス(フィールドやメソッドやコンストラクタも追加可能)
+・enumの定数は重複不可、さらに内部的にpublic static finalが付与されている。
+・"enum定数＝インスタンス"であり、シングルトン的に管理される。
+  このインスタンスは"enumがロードされた時に自動でインスタンス化されるのでnewは不要"。
+  自動インスタンス化の際はコンストラクタが動く。
+  コンストラクタはオーバーロード可能なので、引数の指定で処理内容を分けられる。
+  --------------------
+  public enum Day {
+    MONDAY("月曜日"),  //;引数に"月曜日"を指定
+    TUESDAY(),         //;引数無し
+    WEDNESDAY,         //;引数無しの場合は()を省略可能。
+  ~~~~~~~~~~~~~~~~~~~~
+
+・enum型の変数を定義できるが、代入出来るのは列挙された定数のみ。
+  --------------------------------------------------------------------------
+  public enum Gender{
+  MALE,FEMALE   //これはGender型のインスタンスとして扱われ、変数としても保持出来る。
+  }
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Gender gender = Gender.MALE; // OK
+  gender = Gender.FEMALE;      // OK
+  gender = "TEST";             // コンパイルエラー: enum型が一致しない
+  --------------------------------------------------------------------------
+
+・代入値は基本的に完全修飾名で記述する必要があるが省略可能な場合もある。
+  -----------------------------------------------------------------------------
+    public class EnumExample {
+      enum Day {
+          MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+      }
+
+      public static void main(String[] args) {
+          Day today = Day.MONDAY; 
+
+          // ;if文は完全修飾名が必要
+          if (today == Day.MONDAY) {
+              System.out.println("今日は月曜日です！");
+          }
+
+          // ;switch文は省略可能
+          switch (today) {
+              case MONDAY:
+                  System.out.println("月曜日です。");
+                  break;
+              case FRIDAY:
+                  System.out.println("金曜日です。");
+                  break;
+              default:
+                  System.out.println("他の曜日です。");
+          }
+      }
+  }
+  -----------------------------------------------------------------------------
+  if文は完全修飾名、switch文は省略可能。 
+  難しいので基本的に完全修飾名がベター。
+
+・列挙する定数にはコンストラクタで使用するための引数を設定出来る。
+--------------------------------------------------------------------------------
+public enum Day {
+    MONDAY("月曜日"),  // ;ここで引数を設定
+    TUESDAY("火曜日"), 
+    WEDNESDAY("水曜日"),
+    THURSDAY("木曜日"),
+    FRIDAY("金曜日"),
+    SATURDAY("土曜日"),
+    SUNDAY("日曜日");
+
+    private final String japaneseName; // enum定数のインスタンスは普遍であるべきだからfinal。
+
+    // コンストラクタ ;盲目的にprivateになっている。
+    Day(String japaneseName) {
+        this.japaneseName = japaneseName; // 引数の日本語曜日名をフィールドに代入
+    }
+
+    // メソッド
+    public String getJapaneseName() {
+        return japaneseName; // 日本語名を返す
+    }
+}
+--------------------------------------------------------------------------------
+
+・コンパイラによって自動的に生成されるenumのメソッド
+  ①values()
+  enum のすべての定数を配列として返す。
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public enum Test{
+    A,B,C
+  }
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  for(Test t : Test.values()){ 
+    System.out.print(t);
+  } // ABC
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  System.out.println(Test.values()[0]); // A  ←列挙子を配列で取得
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  ②valueOf()
+  引数の文字列から、enum定数を取得するためのメソッド。
+  ユーザーからの入力やファイル、外部システムから文字列として取得したデータに基づいて
+  対応するenum定数を取得したい場合などに使われる。
+  例えば、曜日の名前（"MONDAY"）が文字列として渡され
+  その曜日をenum定数に変換して処理を行いたい場合など。
+  ----------------------------------------------
+  public enum Test{
+    A,B,C
+  }
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  System.out.println(Test.valueOf("A")); // 列挙子Aのインスタンス参照を表示
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+- ２.関数型インタフェースとラムダ式 ----------------------------------------------------------------------------------------------------
+
+■ジェネリクスと型パラメータ
+・メソッドで型パラメータ T を使用する場合
+  "引数が必須" ※～(T[] array){}
+  "引数に型パラメータを使用したら、メソッド定義時にも型パラメータ<T>が必須"
+  "戻り値の型は通常通り定義すればOK"
+  -戻り値なし------------------------------------------------
+  public static <T> void printArray(T[] array) { //引数にTがあるので戻り値に<T>が必須。
+      for (T element : array) {
+          System.out.println(element);
+      }
+  }
+  -戻り値あり------------------------------------------------
+  public static <T> T getFirstElement(T[] array) { //戻り値型の指定は通常通りでOK。
+      return array[0];
+  }
+
+・メソッドの戻り値としてのみ T を使用する場合
+  "引数は無しでも可能"
+  "メソッド定義時にも型パラメータ<T>が必須"
+  "戻り値の型は通常通り定義すればOK"
+  -引数なし--------------------------------------------------
+  public static <T> T getNull() {
+      return null;  // 戻り値が T 型、戻り値の型は呼び出し時に決まる
+  }
+
+  public static void main(String[] args) {
+      Integer intResult = getNull();  // T は Integer 型
+      String strResult = getNull();   // T は String 型
+  }
+-------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+| シンボル | 意味                                     | 使用例                      
+|----------|------------------------------------------|-----------------------------------------------------------
+| T        | Type（型）。任意の型を表す。             | `List<T>`                   
+| E        | Element（要素）。コレクションの要素型。  | `Set<E>`, `List<E>`         
+| K        | Key（キー）。マップのキーを表す。        | `Map<K, V>`                 
+| V        | Value（値）。マップの値を表す。          | `Map<K, V>`                 
+| N        | Number（数値）。数値型を表す。           | `class Numeric<N extends Number>`
+| R        | Return（戻り値）。メソッドの戻り値型。   | `Function<T, R>`            
+| U        | Another Type（別の型）。複数の型パラ区別 | `BiFunction<T, U, R>`       
+| S        | Second Type（2番目の型）。               | 特にジェネリクスの中で複数の型を扱う場合に使われることが多い。
+| P        | Parameter（パラメータ）。                | 特定の型引数を明示する際に使われることがあるが一般的ではない。
+------------------------------------------------------------------------------------------------------------------
+
+■関数型インタフェース
+・１つだけの抽象メソッドをもつインタフェース
+  つまり"ラムダ式でメソッド名を指定しなくてもそのメソッドのOverrideが可能"。
+  Javaコンパイラが「ラムダ式で抽象メソッドの実装がされた」と自動判断してくれる。
+・抽象メソッドは1つだが"デフォルトor静的メソッドなら複数個持てる"
+・"同じ名前の抽象メソッドでもインタフェース毎にシグネチャが異なる事がある意"
+------------------------------------------------------------------------------------
+@FunctionalInterface //関数型インタフェースの印(省略可能)
+public interface Supplier<T> {
+    T get(); //１つしか抽象メソッドが存在しないのが特徴。
+             // インタフェースのメソッドには「publicとabstractが暗黙的に付与される」
+}
+------------------------------------------------------------------------------------
+
+■ラムダ式
+・省略記法
+  ・引数が1つだけの場合は()を省略OK "※() 引数が無い場合は()は必要"
+  ・引数の型省略OK(推論されるから)
+    ----------------------------------
+    // 型を指定したラムダ式（省略前）
+    (int x, int y) -> x + y
+
+    // 型を指定しないラムダ式
+    (x, y) -> x + y
+    ----------------------------------
+  ・{} 処理内容が1行の場合は{}とreturnを省略可能
+・"ラムダ式が使えるのは関数型インタフェースに対してのみ"
+・処理内容には、抽象メソッドを実装する処理を記述する。
+  ※ラムダ式ではインスタンス生成しないのでOverrideじゃなく実装扱い。
+
+■関数型インタフェースの利用パターン
+①匿名クラス利用-----------------------------------------------------------
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> supplier = new Supplier<String>() {
+            // ;supplierはインタフェースなのでインスタンス化できない。
+            // ;だから、匿名クラスでインスタンス化するが
+            // ;抽象メソッドのままではインスタンス化出来ないのでOverrideが必要。
+            @Override //;ラムダ式とは違い、インスタンス生成しているのでOverrideが必要。
+            public String get() {
+                return "Hello, World!";
+            }
+        };
+        String result = supplier.get();
+        System.out.println(result); // 出力: Hello, World!
+    }
+}
+
+②ラムダ式---------------------------------------------------------------------
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> supplier = () -> "Hello, World!"; //6行→1行に省略
+        String result = supplier.get();
+        System.out.println(result); // 出力: Hello, World!
+    }
+}
+
+③ラムダ式(メソッド参照)------------------------------------------------------------------------
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> supplier = Main::getMessage; // メソッド参照
+        String result = supplier.get();
+        System.out.println(result); // 出力: Hello, World!
+    }
+
+    // 静的メソッド
+    public static String getMessage() {
+        return "Hello, World!";
+    }
+}
+-------------------------------------------------------------------------------------------------
+Mainクラス内のgetMessageメソッドの処理内容「return "Hello, World!";」を
+supplierのgetメソッドの実装として使っている。
+
+■メソッド参照
+・文法「クラス名もしくはインスタンス名::メソッド名」
+・使える条件は"関数型インタフェース利用時のみ"
+・ラムダ式の一種である。
+
+-インスタンスメソッド参照-----------------------------------------------------------------------------------------------------------------
+String str = "Hello";
+Function<String, Integer> lengthFunction = str::length;  // インスタンス名とメソッド名を指定して参照(str→Stringクラスのlengthメソッド)
+System.out.println(lengthFunction.apply("")); applyメソッドで引数を渡す。
+;// 出力: 5
+
+- Staticメソッド参照 ----------------------------------------------------------------------------------------------------
+Function<String, Integer> parseFunction = Integer::parseInt;  // 静的メソッド参照
+System.out.println(parseFunction.apply("123"));
+;// 出力: 123
+
+- コンストラクタ参照 (黒本ではメソッド参照と言われているけど) ----------------------------------------------------------------------------------------------------
+・newキーワードが入っているメソッド参照はコンストラクタを参照している。
+  ※Javaではメソッド参照の形で関数型インターフェースに実装を割り当てることができる。
+class C {
+    C() {
+        System.out.println("Cのインスタンスが作成されました");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Supplier<C> supplier = C::new;  // Cクラスの引数なしコンストラクタを参照
+        C cInstance = supplier.get();   // 出力: Cのインスタンスが作成されました
+    }
+}
+------------------------------------------------------------------------------------------------------------------
+
+■ビルダーとコンストラクタ P74-76
+・コンストラクタ
+  パラメータを一括指定する必要があり、順序も決まっている。
+  引数が増えてくると間違いやすく、可読性は低くなる。
+  フィールドの数が変更されると、引数やインスタンスを生成するコードを修正する必要があって面倒。
+・ビルダー
+  コンストラクタの代わりにセッターで初期化に必要な値を受取りセットする。
+  必要なパラメータだけを個別指定でき、順序も自由。メソッドチェーンが使えて可読性が高い。
+  デメリットとしてはフィールドが増える度にセッターも増えるという所。
+  この問題を解決してくれるのがConsumer。
+
+■Javaで使われる代表的なデザインパターン
+---------------------------------------------------------------------------------------------
+パターン名     | 使用例                                                           
+--------------------------------------------------------------------------------------------- 
+Singleton      | クラスのインスタンスが一度だけ生成され、アプリ全体で共通のインスタンスを使用。            
+               | ログ管理、設定ファイルの読み込み、データベース接続プール
+---------------------------------------------------------------------------------------------
+Factory Method | サブクラスにインスタンスの生成を任せるパターン。生成方法をクライアントから隠蔽。                   
+               | JDBCのドライバのインスタンス生成、SpringのBean生成
+---------------------------------------------------------------------------------------------
+Builder        | 複雑なオブジェクトを構築する際に、その生成過程を分離し段階的にオブジェクトを構築。
+               | コンストラクタをprivateにして、自作したビルダークラスのオブジェクトを渡す感じ。    
+               | 複雑なオブジェクト（例: XMLファイルの構造、設定オブジェクト）の生成
+---------------------------------------------------------------------------------------------
+Observer       | あるオブジェクトの状態変化を他のオブジェクトに通知し、依存するオブジェクトを更新。                        
+               | イベント駆動型プログラミング、GUIイベント処理
+---------------------------------------------------------------------------------------------
+Decorator      | 既存のオブジェクトに新たな機能を追加する。クラスを変更せずに振る舞いを変更できる。              
+               | 入出力ストリーム（例: BufferedReader）、ログ機能の追加
+---------------------------------------------------------------------------------------------
+
+
+■Supplier<T>
+・抽象メソッド:get()
+・戻り値型:T
+※Supplierを利用するとファクトリクラスが不要になる。P70-71
+
+-基本例-----------------------------------------------------------------------------------------------------------------
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> supplier = () -> "Hello, World!"; //引数無しなので()
+        String result = supplier.get();
+        System.out.println(result); // 出力: Hello, World!
+    }
+}
+-引数でラムダ式を利用-----------------------------------------------------------------------------------------------------------------
+public class Sample {
+    public static void main(String[] args) {
+        Test test = new Test();
+        test.execute(() -> new C());
+    }
+}
+・P71-72で悩んだところ
+  () -> new C() は入れ物が無いラムダ式として考えればOK。
+  メソッドの引数としてオブジェクトを直接利用する場合はこの記法でいける。
+  これでファクトリクラスを利用しないでも
+  ちなみに、引数が無しでオブジェクトを返しているのでSupplierのget()と同じ処理らしい。
+
+-引数でメソッド参照を利用------------------------------------------------------------------------------------------
+public class Sample {
+    public static void main(String[] args) {
+        Test test = new Test();
+        test.execute(C::new); //引数無しコンストラクタメソッド参照
+        // C::new は、引数なしで C のインスタンスを生成するファクトリーメソッドとして機能
+        // C::new が Supplier<C> として解釈され、get() メソッドを使って新しい C のインスタンスが返されます。
+    }
+}
+インスタンス生成だけであればメソッド参照の方が簡潔に書ける。      
+------------------------------------------------------------------------------------------------------------------
+
+■Consumer<T>
+・抽象メソッド:accept(T)メソッドで渡されたデータを処理する役割を持つ。
+・戻り値:無し
+- Consumerの中身 -------------------------------------------------------------------------------------------------
+@FunctionalInterface
+public interface Consumer<T>{
+  void accept(T t);
+}
+-使用例-----------------------------------------------------------------------------------------------------------
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        // Consumer<T> を使って文字列を受け取って表示する
+        // ラムダ式でConsumerのacceptメソッドをOverride。
+        // strは引数の名前だが、基本的に何でも良い。xとかでもOK。
+        Consumer<String> printConsumer = (str) -> System.out.println(str);
+
+        // Consumer を呼び出して "Hello, World!" を表示
+        printConsumer.accept("Hello, World!"); //引数strに"Hello,World!"が送られる。
+    }
+}
+------------------------------------------------------------------------------------------------------------------
+
+■BiConsumer<T,U>
+・抽象メソッド:accept(T,U)で渡されたデータを処理する役割を持つ。
+・戻り値:無し
+※HashMap等で使われる。
+
+■Predicate<T>
+・抽象メソッド:test(T) T型のインスタンスを受けて、何らかの判断をする関数を定義。
+・戻り値型:boolean型
+・デフォルトメソッド
+  or(Predicate<? super T> other) :2つの Predicate を論理和（OR）で結びつけるデフォルトメソッド。
+  and(Predicate<? super T> other):2つの Predicate を論理積（AND）で結びつけるデフォルトメソッド。
+  negate():Predicate を反転させるデフォルトメソッドです。
+
+■BiPredicate<T,U>
+・戻り値型はboolean型
+・抽象メソッドはtest(T,U)
+・戻り値型:boolean型
+
+■Function<T,R>
+・抽象メソッド:apply(T)
+・戻り値型:R
+・デフォルトメソッド(合成メソッド)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+| メソッド       | 説明                                                                                     | 使用例                                                         
+|----------------|------------------------------------------------------------------------------------------|---------------------------------------------------
+| a.compose(b)   | 引数として渡されたb関数を最初に適用し、その結果に現在の関数aを適用する。順番は逆になる。 | f.compose(g) → g を先に適用し、次に f を適用。             
+| a.andThen(b)   | 現在の関数aを最初に適用し、その結果に引数として渡された関数bを適用する。順番はそのまま。 | f.andThen(g) → f を先に適用し、その後に g を適用。         
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+※after()やbefore()はPredicateやConsumerで使用される関数適用"前後"で別動作を行わせるためのメソッドとして使われる。
+
+■BiFunction<T,U,R> P65
+・抽象メソッド:apply(T,U) T型とU型で受け取った引数をR型で返す関数。
+・引数:T型とU型とR型インスタンス
+・戻り値型:R型
+※Integer.toString()等と組み合わせて使われる。
+
+■UnaryOperator<T>   ※UnaryOperator(ユーナリーオペレーター):単項演算子 P90
+・抽象メソッド:apply(T)
+・戻り値型:T型インスタンス
+・Functionと違って引数と戻り値の型が同じなのが特徴。
+・リストの値をreplaceALLの引数としてラムダ式で一律処理する場合等に使われる。
+  ---------------------------------------------
+  void replaceAll(UnaryOperator<E> operator);
+  -使用例--------------------------------------------
+  package greet.demo;
+
+  import java.util.ArrayList;
+  import java.util.List;
+
+  public class Test {
+    public static void main(String[] args) {
+      List<String> list = new ArrayList<>();
+      list.add("a");
+      list.add("b");
+      list.add("c");
+
+      list.replaceAll(x -> x.toUpperCase());
+      for (String str : list) {
+        System.out.println(str);
+      }
+    }
+  }
+  ---------------------------------------------
+  ※ラムダ式を使っている場合、java.util.function.UnaryOperatorのimport文を省略しても
+    UnaryOperatorやその他の関数型インターフェースは自動的に解決される。
+
+■BinaryOperator<T>  ※BinaryOperator(バイナリーオペレーター):二項演算子 P92
+・抽象メソッド:apply(T,T)
+・戻り値型:T
+  UnaryOperatorのapplyメソッドの引数が増えたバージョン。
+
+■Runnableインターフェース java.lang
+・抽象メソッド:run()
+・戻り値型:無し
+※この次の章「並列処理」で使われる。
+
+■Callable<V>
+・抽象メソッド:call()
+・戻り値型:V
+
+■Comparator<T>
+・抽象メソッド: compare(T o1, T o2) メソッドで2つのオブジェクトを比較する。
+・戻り値: 整数 (負の値: o1 < o2, 0: o1 == o2, 正の値: o1 > o2)
+
+- Comparatorの中身 ------------------------------------------------------------------------------------------------
+@FunctionalInterface
+public interface Comparator<T> {
+    int compare(T o1, T o2);
+}
+// - 使用例（文字列のアルファベット順ソート）------------------------------------------------------------------------
+import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        // サンプルデータのリスト
+        List<String> names = new ArrayList<>();
+        names.add("Alice");
+        names.add("Charlie");
+        names.add("Bob");
+
+        // Comparator<T> を使って文字列をアルファベット順に並べ替える
+        Comparator<String> alphabeticalOrder = (s1, s2) -> s1.compareTo(s2);
+
+        // ソート処理
+        names.sort(alphabeticalOrder);
+
+        // 結果を表示
+        System.out.println(names); // [Alice, Bob, Charlie]
+    }
+}
+// - 使用例（カスタムオブジェクトの比較）----------------------------------------------------------------------------
+import java.util.Comparator;
+
+public class Main {
+    public static void main(String[] args) {
+        // カスタムオブジェクト
+        class Person {
+            String name;
+            int age;
+
+            Person(String name, int age) {
+                this.name = name;
+                this.age = age;
+            }
+
+            @Override
+            public String toString() {
+                return name + " (" + age + ")";
+            }
+        }
+
+        // Personオブジェクトを年齢で比較
+        Comparator<Person> compareByAge = (p1, p2) -> Integer.compare(p1.age, p2.age);
+
+        // 比較対象
+        Person alice = new Person("Alice", 25);
+        Person bob = new Person("Bob", 20);
+
+        // 比較結果
+        int result = compareByAge.compare(alice, bob);
+        System.out.println(result); // 正の値（Alice > Bob）
+    }
+}
+// - Comparatorの応用メソッド例-------------------------------------------------------------------------------------
+import java.util.Comparator;
+
+public class Main {
+    public static void main(String[] args) {
+        // カスタムオブジェクト
+        class Person {
+            String name;
+            int age;
+
+            Person(String name, int age) {
+                this.name = name;
+                this.age = age;
+            }
+
+            @Override
+            public String toString() {
+                return name + " (" + age + ")";
+            }
+        }
+
+        // 名前で比較
+        Comparator<Person> compareByName = (p1, p2) -> p1.name.compareTo(p2.name);
+        // その後、年齢で比較
+        Comparator<Person> compareByNameThenAge = compareByName.thenComparing((p1, p2) -> Integer.compare(p1.age, p2.age));
+
+        // 比較対象
+        Person alice = new Person("Alice", 25);
+        Person bob = new Person("Bob", 20);
+        Person charlie = new Person("Charlie", 25);
+
+        // 比較結果
+        System.out.println(compareByNameThenAge.compare(alice, bob));   // 負の値（Alice < Bob）
+        System.out.println(compareByNameThenAge.compare(alice, charlie)); // 負の値（Alice < Charlie）
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- ３.並列処理 ----------------------------------------------------------------------------------------------------
+■並行処理と並列処理
+・並行処理:シングルコアで一定時間で処理を切り替えること。(並列処理に見せかけてる)
+・並列処理:マルチコアで同時に処理を実行すること。(これが本物)
+
+■スレッド
+・メソッドの呼び出し順はmainから順に"スタック構造"で管理されている。
+  スタックにメソッドが出入りする一連の流れをスレッドと呼ぶ。
+
+■シングルスレッド
+・１つのスタックでプログラムが並列/並行処理されること。
+
+■マルチスレッド P104
+・複数のスタックでプログラムが並列/並行処理されること。
+・プログラムが処理される順番はJVMやCPUによって変動する。
+  ※優先順位を設定しても、スレッドスケジューラ（JVMとOSによる）がどの程度尊重するかは環境による。
+
+■Threadクラス
+・Threadクラスは関数型インタフェースRannableの実装クラスで抽象メソッドrun()を持っている。
+・java.lang.ThreadなのでThreadクラスを新たに作成する必要は無いし、インポートも不要。
+・Threadクラスを利用してマルチスレッドにする方法
+  新たにスタックを作成し、そのスタックで処理を実行させる。 P104
+  ・mainメソッドから「Thread t = new sampleThread();」でインスタンス作成。
+  ・t.start();で新たなスタックが作成され、その中でrunメソッドが実行される。
+    ※start()を呼び出さないで直接run()を呼び出した場合、現在のスタックのままrun()が実行される。P96
+    ※スタック作成には時間がかかるため、後ろの処理が先に終わる事もあるが気にしない。
+    ※他にもExecutorServiceを使ってスレッドを管理する方法がある。
+
+・主なメソッド
+  ・スレッドの開始
+    ・start()
+  
+  ・スレッドの実行
+    ・run()
+  
+  ・スレッドの停止を待つ
+    ・thread.join()
+  
+  ・スレッドの状態確認(ON/OFFのみ)
+    ・isAlive() ;起動中はtrue,停止中はfalse
+  
+  ・スレッドの状態確認(具体的)
+    ・getState() ;スレッドの状態は Thread.State 列挙型で定義されている
+      状態遷移: NEW → RUNNABLE → TIMED_WAITING → WAITING → BLOCKED → TERMINATED
+      NEW: start() メソッドが呼ばれていない状態。
+      RUNNABLE: 実行可能or実行中or実行待ち(CPU割当待ち) ※実行中と実行可能の区別は難しい。
+      BLOCKED: 他のスレッドが保持するロックを待っている状態。
+      WAITING: 無期限の待機状態（例: wait() を呼び出し中）。
+      TIMED_WAITING: タイムアウト付きの待機状態（例: sleep()、join(timeout)）。
+      TERMINATED: スレッドの実行が完了した状態。
+  
+  ・スレッドの優先順位設定
+    ・setPriority(優先度) ※1～10の整数でも指定可能だが非推奨。
+      thread1.setPriority(Thread.MAX_PRIORITY);  優先度(10): 最大
+      thread2.setPriority(Thread.NORM_PRIORITY); 優先度(5) : デフォルト(一般的)
+      thread3.setPriority(Thread.MIN_PRIORITY);  優先度(1) : 最低
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      thread1.setPriority(2);
+      thread2.setPriority(6);
+      thread3.setPriority(9);
+      thread3.setPriority(0); IllegalArgumentExceptionが発生
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ※getで取得も出来る。
+
+・Sleep(停止させたいミリ秒数)メソッド
+  Threadクラスが提供する静的メソッド ※インスタンス化不要でThread.Sleep()で使える。
+  現在実行中のスレッドを指定した時間だけ停止（1000ミリ秒 = 1秒） ※P113は間違ってる？
+  指定された時間が経過すると、スレッドは再び実行可能状態になる。
+  主な特徴
+  1. スレッドの一時停止
+    - 実行中のスレッドをミリ秒単位またはナノ秒単位で停止させる。
+    - 指定した時間が経過すると、スレッドは再びスケジューリング対象となる。
+  2. 指定時間の形式
+    - ミリ秒: Thread.sleep(milliseconds)
+    - ミリ秒とナノ秒: Thread.sleep(milliseconds, nanoseconds)
+  3. 例外処理
+    - sleep メソッドは InterruptedException をスローする可能性があるため
+      呼び出し元でこの例外を処理する必要がある。
+  4. CPU使用率の抑制
+    - 待機時間中はスレッドが休止するため、他のスレッドにリソースを割り当てられる。
+
+■Threadクラスのコンストラクタを利用するパターン
+・関数型インタフェースRunnableのインスタンスを引数にし"Runnableのrun"を新スレッドで実行させている。
+  Runnableはrun()のみ持っているので、匿名クラスかラムダ式で実装する。
+  startメソッドで作成された新スレッド上でrun()メソッドが実行される。
+
+-匿名クラス使用----------------------------------
+public class Sample{
+  public static void main(String[] args){
+    Thread t = new Thread(new Runnable(){ //ThreadはコンストラクタでRunnableを待ってる。
+      @Override
+      public void run(){
+        System.out.println("sub");
+      }
+    });
+
+    t.start();
+    System.out.println("main");
+  }
+}
+
+-ラムダ式----------------------------------
+public class Sample {
+    public static void main(String[] args) {
+        Thread t = new Thread(() -> { //Runnableのrunを実装し、インスタンスを渡している。
+            System.out.println("sub");
+        });
+
+        t.start();
+        System.out.println("main");
+    }
+}
+-------------------------------------------
+
+■Executorフレームワーク P107～
+・スレッドプールを作って効率的に並行処理を実現するためのインタフェースとクラス群。
+・スレッドの無駄遣い(無駄な生成)を防げる仕組み。
+  予め複数個の空スレッドを作っておき、そのスレッドにタスクを与えて実行させる。
+  処理が終わるとスレッドはスレッドプールに返却される。
+  この流れを実現するのがExecutorフレームワーク。P108
+
+Executor (スーパーインターフェース)
+  ├─ ExecutorService (サブインターフェース)
+  │    ├─ ScheduledExecutorService (サブインターフェース)
+  │    │    │
+  │    │    └─ ScheduledThreadPoolExecutor (クラス)
+  │    └─ ThreadPoolExecutor (クラス)
+  └─ ForkJoinPool (クラス)
+
+■Executors (クラス)
+・このクラスは、ExecutorServiceの実装クラス(ThreadPoolExecutorやScheduledThreadPoolExecutor)を
+  "インスタンス化して返す＝ファクトリメソッドを提供する役割"を持っている。
+・Executorsクラス自体は単なるユーティリティクラスなので"別にExecutorService を実装していない"ので注意。
+  スレッドプールやタスク実行サービス作成する等の"静的メソッド"を提供＝インスタンス化不要クラス。
+
+・単一スレッド
+  ・newSingleThreadExecutor()
+    "単一スレッド"でタスクを順番に実行。
+    複数タスクが送られた場合はキューに追加され、送られた順番で実行される。
+    使用シーン: 順番に実行したいタスクや、スレッド競合を避けたい場合。
+    実際の動作は ThreadPoolExecutor が担っている。
+
+  ・newSingleThreadScheduledExecutor()
+    "単一スレッド"でタスクを順番に実行。
+    単一スレッドでスケジュールされたタスク(遅延or定期)を順次実行するスレッドプールを作成する。
+
+・複数スレッド
+  ・newFixedThreadPool(int 生成したいスレッド数)
+    "引数で指定された数のスレッド"を持つ固定サイズのスレッドプールを作成。
+    スレッドが空いていない場合、新しいタスクはキューに追加され、スレッドが空くのを待つ。
+    使用シーン: 固定数のスレッドでタスクを効率的に処理。
+    スレッド数が固定されているため、過剰なスレッド生成を防ぎ、リソースの利用を最適化する。
+    タスクの処理が終了したスレッドは、新しいタスクを処理するために再利用される。
+
+  ・newScheduledThreadPool(int 生成したいスレッド数)
+   "引数で指定された数のスレッド"を持つ固定サイズのスレッドプールを作成。
+    スケジュールされたタスク(遅延or定期)を実行するためのスレッドプールを作成する。
+
+・可変スレッド
+  ・newCachedThreadPool()
+    "必要に応じてスレッド数を増減"させるスレッドプール。
+    60秒使用されないスレッドは破棄され、60秒未満は再利用される場合がある。
+    使用シーン: 動的にスレッド数を管理したい場合。
+  
+■ExecutorService (サブインタフェース)
+  非同期タスクの実行: タスクを非同期に実行するためのAPIを提供。
+  スレッドプール管理: スレッドの数やタスクの管理を自動的に行い、スレッドの使い回しを効率化します。
+  終了処理の管理: タスクの終了やシャットダウンを管理、シャットダウン後は新しいタスクを受け入れない。
+
+  ※非同期タスクの実行とは？
+    主スレッドから独立して別のスレッドでタスクを並行処理すること。
+    非同期タスクはスレッドプール（例えば ExecutorService）を利用して管理されることが多く
+    タスクが増えても効率的にスレッドを使い回し、パフォーマンスを維持して過剰なスレッド生成を避ける。
+  
+  ※API（Application Programming Interface）とは
+    APIはより広い概念で、インタフェースを含む全体的な仕様を指す。
+    ソフトウェアやプログラム同士が通信⇔連携するためのインターフェースを含む。
+    開発者が特定の機能を利用できるように提供される一連の仕様や規約。
+    例:java.utilパッケージ全体はAPI。
+    スコープは広く、インタフェース・クラス・メソッド・データ形式・プロトコルなど。
+
+・メソッド一覧
+  0. submit(runかcallの処理内容)
+    - "1つのタスク"を非同期で実行し、結果を取得するための" `Future` オブジェクトを返す"。
+    - ①使用例: submit(Runnable runの処理内容)
+    -   返り値: `Future<?>`
+        ※<?>は戻り値型不明or不要の場合に使用。例: Future<?> future = executor.submit(() -> {～})
+        runの戻り値がnull(void)なのでFuture<?>で受けるようになっている。
+        Runnableは例外をスロー出来ない。
+    - ②使用例: submit(Callable<T> callの処理内容)
+    -   返り値: `Future<T>` 
+        Callable<T>だとCallの戻り値がFutture<T>に格納される。
+        Callableは例外をスロー出来る。
+      ※Futureインタフェース
+      ・get()
+        スレッドの終了まで待機し、処理結果をFuture型で受け取る。
+        「Future future =」の場合、runの戻り値を代入するとわかるが"runはnullしかない返さない"ので注意。
+        「Future<Integer> future =」の場合、callの戻り値を代入するとわかる。
+
+  1. submit(runかcallの処理内容,戻り値)
+    - 第二引数で設定した値のみが処理結果として返される。
+      Runnableの戻り値はもともと無いから気にしなくていいけど
+      Callableの戻り値は無視され、第二引数が結果として採用されるので注意。  
+      間違えやすいので注意したいのが"RunnableとCallable自体が戻り値を返すのではない"ということ。
+      あくまで、"submitが第2引数を返す"というのを覚えておくこと。P99
+
+  2. invokeAll()
+    - "複数のタスク"を実行し全タスクが終了するまで待機し"各タスクの結果を `List<Future<T>>` として返す"
+    - 使用例: invokeAll(Collection<? extends Callable<T>> tasks)
+    - 返り値: `List<Future<T>>`
+
+  3. invokeAny() ※これだけデフォルトメソッド
+    - "複数のタスク"を実行し"最初に完了したタスクの結果をTとして返す" ※他のタスクはキャンセルされる。
+    - 使用例: invokeAny(Collection<? extends Callable<T>> tasks)
+    - 返り値: `T`（最初に完了したタスクの結果）
+
+  4. execute()
+    - "引数として渡されたタスク（`Runnable`）"を非同期で実行するが"結果は返さない"
+    - 使用例: execute(Runnable runの処理内容)
+    - 返り値: なし（`void`）
+      +--------------------+------------------------+--------------------------+
+      | 特徴               | submit                 | execute                  |
+      +--------------------+------------------------+--------------------------+
+      | タスクの種類       | Runnable / Callable    | Runnable のみ            |
+      | 実行結果の取得     | Future を返す          | なし                     |
+      | 実行時例外の扱い   | Future.get() で取得可能| 未処理例外はプールを終了 |
+      | 例外の取扱いが安全 | ◯                     | ✕                       |
+      +--------------------+------------------------+--------------------------+
+
+  5. shutdown()
+    - スレッドプールをシャットダウンし新しいタスクの受付停止。※実行中タスクが完了するまでは待機。
+    - 使用例: shutdown()
+    - 返り値: なし（`void`）
+
+  6. shutdownNow()
+    - スレッドプールをシャットダウンし新しいタスクの受付停止。※実行中タスクは可能な限り中断、待機中タスクはキャンセル。
+    - 使用例: shutdownNow()
+    - 返り値: `List<Runnable>`（待機中にキャンセルされたタスクのRunnableオブジェクトをリストで返す）
+
+  7. isShutdown()
+    - スレッドプールがシャットダウン要求がされたか確認(タスク状態に関与しない)
+    - 使用例: isShutdown()
+    - 返り値: `boolean`（シャットダウン要求がされていれば `true`、されていなければ `false`）
+
+  8. isTerminated()
+    - スレッドプールがシャットダウンされ全タスクが終了したかどうかを確認。
+    - 使用例: isTerminated()
+    - 返り値: `boolean`（すべてのタスクが終了した場合は `true`）
+
+  9. awaitTermination()
+    - シャットダウン後、全タスクが終了するのを待機。指定した時間内に終了しない場合、`false` を返します。
+    - 使用例: awaitTermination(long 待機時間, TimeUnit 時間の単位)
+              awaitTermination(3, TimeUnit.SECONDS)って感じ。
+    - 返り値: `boolean`（引数の時間内に全タスクが終了したら`true`）
+
+■ScheduledExecutorService(サブインタフェース) P112
+・タスクを定期的 or 一定遅延後に実行するためのスケジューリング機能を提供。
+
+・メソッド
+  ・schedule(Runnable runの処理内容, long 遅延させたい時間, TimeUnit 時間の単位)
+    遅延時間後にタスクを"一度だけrunを実行する"
+
+  ・scheduleAtFixedRate(Runnable run処理内容, long 初期遅延時間, long 2回目以降の遅延時間, TimeUnit.遅延単位)
+    初期遅延時間経過後に1回目のrunを実行、最初のタスクの"開始時間から"インターバル経過後に次タスクを実行。
+    最初のタスク開始時間から一定間隔のインターバルが設けられるので"開始タイミングを揃えたい場合に使う"
+    ただし"インターバル経過後でも前処理が残っている場合はその処理を待つので開始タイミングは後ろにズレる"
+
+  ・scheduleWithFixedDelay(Runnable run処理内容, long 初期遅延時間, long タスク間の遅延時間, TimeUnit unit)
+    初期遅延時間経過後に1回目のrunを実行、最初のタスクの"終了時間から"インターバル経過後に次タスクを実行。
+    最初のタスク終了時間からインターバルが設けられるので"インターバルを一定間隔に揃えたい場合に使う"
+
+■ScheduledThreadPoolExecutor(クラス)
+・ScheduledExecutorServiceを実装しスケジュールされたタスクを複数スレッドで効率的に管理するクラス。
+  例: 複数の定期タスクを並列で処理。
+
+・メソッド
+  ・schedule(Runnable 処理内容, long 遅延させる時間, TimeUnit.遅延時間の単位)
+    指定された遅延時間後にタスクを一度実行。
+    ------------------------------------------------------------------------
+    exec.schedule(()->{    //ラムダ式で第1引数を指定。
+      System.out.println("finish");
+      exec.shutdown();     //スレッドプールを閉じる
+    },1,TimeUnit.SECONDS); //第2引数と第3引数も指定。
+    TimeUnit:DAYS/HOURS/MINUTES/SECONDS  ※例:TimeUnit.SECONDS で 秒単位。
+    ------------------------------------------------------------------------
+  
+  ・scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)
+    最初の遅延後、一定の間隔でタスクを繰り返し実行。
+  
+  ・scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)
+    最初の遅延後、タスク終了後に指定された遅延時間を空けて繰り返し実行。
+  
+  ・getQueue()
+    現在待機しているタスクのキューを取得する。
+  
+  ・isShutdown()
+    シャットダウンされている場合はtrueが返る。
+
+■ThreadPoolExecutor(クラス)
+・ExecutorServiceを実装したスレッドプールを管理するための柔軟なクラス。
+  スレッド作成or再利用を効率化し大量のタスクを処理。
+  例: 大量の並列処理が必要な場合。
+
+・execute(Runnable command)  
+  戻り値: なし  
+  指定したタスクをスレッドプールで即座に実行。
+
+・submit(Callable<T> task)  
+  戻り値: Future<T>  
+  非同期でタスクを実行し、結果を取得するための `Future` オブジェクトを返す。
+
+・shutdown()  
+  戻り値: なし  
+  スレッドプールをシャットダウンし、タスクの受け付けを停止する。
+
+・getQueue()  
+  戻り値: BlockingQueue<Runnable>  
+  待機中のタスクのキューを取得する。
+
+・isShutdown()  
+  戻り値: boolean  
+  シャットダウンされている場合はtrueが返る。
+
+
+■ForkJoinPool(クラス)
+・再帰的なタスクを分割して並列に処理するためのスレッドプール。
+  "Fork"（分割）してタスクを小さくし、"Join"（結合）して結果をまとめる。
+  例: 大規模データの分割統治アルゴリズムでの利用。
+
+・invoke(ForkJoinTask<T> task)  
+  戻り値: T  
+  タスクを実行し、結果を返す。
+
+・fork()  
+  戻り値: なし  
+  タスクを非同期に実行開始する。
+
+・join()  
+  戻り値: T  
+  非同期タスクの結果を取得するために待機。
+
+・submit(Callable<T> task)  
+  戻り値: Future<T>  
+  タスクを非同期に実行し、Future を返す。
+
+・shutdown()  
+  戻り値: なし  
+  プールをシャットダウンし、新しいタスクの受け入れを停止する。
+
+・awaitTermination(long timeout, TimeUnit unit)  
+  戻り値: boolean (終了可否)  
+  シャットダウン後、全タスクが終了するまで待機。
+
+・getQueue()  
+  戻り値: BlockingQueue<Runnable>  
+  実行待ちのタスクのキューを取得する。
+
+・isShutdown()  
+  戻り値: boolean  
+  プールがシャットダウンされているかを確認。
+
+・isTerminated()  
+  戻り値: boolean  
+  プールが全てのタスクの終了後、完全にシャットダウンされたか確認。
+
+■Future例外
+・別スレッド(非同期タスク中)で例外が発生した場合
+  例: Callableのタスク内でSampleExceptionをスローしたら、"mainではなくFutureが一旦受け取る"
+・例外が格納されたFutureにget()メソッドを使った場合
+  その例外が"ExecutionExceptionにラップされてからスローされる"
+  ExecutionExceptionは検査例外なので例外処理が必須。
+・ラップ前の例外(例ではSampleException)を取り出す方法
+  ThrowableのgetCauseメソッドを使い、Throwable型で取得する。
+  ※原因例外が設定されていないとnullが返る。
+  ※中身をprintで表示させるだけならgetMessage()でも良い。P127
+・多層の例外が有る場合
+  getCause()で再帰的に原因を辿る必要がある。
+  -------------------------------------------
+  Throwable cause = e.getCause();
+  while (cause != null) {
+      System.out.println("原因: " + cause);
+      cause = cause.getCause();
+  }
+  -------------------------------------------
+
+■CyclicBarrierクラス P128
+・概要
+  各スレッドが特定のポイント(バリアー)まで到達するのを待機できるよう
+  同期化支援機能を提供するクラスのこと。
+  ※同期化処理: 複数スレッドが並行処理されている時に処理順番を制御すること。
+  バリアーに全スレッドが到達したらバリアーアクションと呼ばれる処理を実行する。
+  ここまでの流れは１つのインスタンスによって循環式(Cyclec)で繰り返し実行される。
+・インスタンス化
+  CyclicBarrier barrier = new CyclicBarrier(3, new BarrierAction());
+  第1引数: バリアポイント(集合地点)の事で、到達する必要があるスレッド数を指定。
+  第2引数: バリアアクションとして、Runnableを実装したクラスを指定する。
+・コード例
+-----------------------------------------------------------------------------------------
+import java.util.concurrent.CyclicBarrier;
+public class CyclicBarrierExample {
+    public static void main(String[] args) {
+        CyclicBarrier barrier = new CyclicBarrier(3, new BarrierAction());
+
+        Thread t1 = new Thread(new Worker(barrier, "スレッド1"));
+        Thread t2 = new Thread(new Worker(barrier, "スレッド2"));
+        Thread t3 = new Thread(new Worker(barrier, "スレッド3"));
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+class Worker implements Runnable {
+    private CyclicBarrier barrier;
+    private String name;
+
+    public Worker(CyclicBarrier barrier, String name) {
+        this.barrier = barrier;
+        this.name = name;
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println(name + " が作業を開始...");
+            Thread.sleep((long) (Math.random() * 3000)); // ランダムな時間で作業
+            System.out.println(name + " がバリアに到達しました。");
+            barrier.await(); // バリアに到達して処理を中断し待機
+            System.out.println(name + " が続行します！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class BarrierAction implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("すべてのスレッドがバリアに到達しました！処理を実行します。");
+    }
+}
+-----------------------------------------------------------------------------------------
+スレッド1 が作業を開始...
+スレッド2 が作業を開始...
+スレッド3 が作業を開始...
+スレッド2 がバリアに到達しました。
+スレッド1 がバリアに到達しました。
+スレッド3 がバリアに到達しました。
+すべてのスレッドがバリアに到達しました！処理を実行します。
+スレッド2 が続行します！
+スレッド1 が続行します！
+スレッド3 が続行します！
+-----------------------------------------------------------------------------------------
+
+■synchronaized P132～P134
+・synchronized は、スレッドの安全性を確保するためのキーワード。
+  同時に1つのスレッドだけに実行されるように制御され
+  複数のスレッドが共有資源にアクセスしてデータが不整合になるのを防ぐことができる。
+  synchronizedメソッド: 静的or非静的(抽象メソッドは不可)メソッドにキーワードを付与。
+  synchronizedブロック: メソッド内のコードブロックにキーワードを付与。
+
+■atomicパッケージ P140
+・synchronaizedを使うとパフォーマンスに影響を及ぼしやすいため
+  単純なコードの場合は原始性(0 or 1)が担保されたatomicパッケージクラスを利用する事がある。
+
+・AtomicInteger    : アトミック変数としてint型の値を扱うクラス。主フィールドはvolatileなint型のvalue変数
+・AtomicLong       : アトミック変数としてlong型の値を扱うクラス。主フィールドはvolatileなlong型のvalue変数
+  この2つクラスは、addAndGet(原始性を持たせたい値)で値の読みだし→変更まで原始性を保てる。P142
+  numberクラスを継承しているのでintValue()やlongValue()も利用可能で、Atomic～型→int型やlong型へ変換して返せる。
+
+※volatile(ボラタイル)キーワードを変数に付与すると
+  変数の値の読み書き全てがメインメモリで直接行われるようになり下記が保証される。
+  "可視性の保証: 一つのスレッドが値を更新した場合、他のスレッドから常に最新の値を読み取れる"
+  "再順序化の防止: メモリ操作の順序を保証する"
+  "原始性(読み書きと計算)の保証はvolatileキーワードでは無理、クラスのCAS操作によって実現される。"
+
+※CAS（Compare-And-Swap）操作とは
+  CASは、次の3つの要素を持つ操作のこと。
+  比較（Compare）: 対象の変数（またはメモリ位置）の現在の値を読み取る。
+  交換（Swap）   : 読み取った値が予想していた値（期待される値）と一致する場合に、新しい値に置き換える。
+  結果（Result） : 値の更新が成功したかどうかを返す（成功・失敗）。
+  CAS操作は複数のスレッドが並行動作する環境でデータの整合性を保ちながら原子性を保証するための基本的手法の1つ。
+  ※CASの問題点: ラッシュリスト問題やABA問題がある。解決策としてバージョン番号やタグ付きポインタを使うらしい。
+
+・AtomicBoolean    : アトミック変数としてboolean型の値を扱う
+・AtomicReference  : アトミック変数として参照を扱う
+
+■CopyOnWriteArrayList(クラス) P146
+・ArrayListのスレッドセーフ版
+  従来のArrayListでは読みだし中にコレクション内の要素数が変更されるConcurrentModificationExceptionがスローされる。
+  CopyOnWriteArrayListは読み書き前にスナップショット(コピー)を作り、コピーを使用することで例外を回避出来る。
+  書込み処理後にオリジナルへ変更が反映される。※反映させるのにexec.shutdown()は不要(テキストでは必要みたいに書いてる)
+
+■ReentrantLock(クラス) P151
+・lock() ※引数と戻り値なし、インスタンスメソッド。
+  lockメソッドを呼び出したメソッドがunlockメソッドを呼び出すまでロックされる。
+  ロック中は、別スレッドによるlockメソッドの呼び出しを待機させる。
+  これで、マルチスレッド間での複数メソッドの排他制御＆処理順を制御できる。
+  使用例: run()内のtryブロックでlockをかけ、finallyブロックでunlock。
+  -シングルスレッドの例--------------------------------------------------------------------------
+  Test test = new Test();
+
+  Runnable task = () -> {
+      try {
+          test.lock();   // ３つの処理順番を保証
+          test.first();  // 処理1
+          test.second(); // 処理2
+          test.third();  // 処理3
+      } finally {
+          test.unlock(); // 必ずアンロックさせる。
+      }
+  };
+
+  // 同じスレッドで処理を実行
+  task.run();
+
+  -マルチスレッドの例--------------------------------------------------------------------------
+  Test test = new Test();
+
+  Runnable task = () -> {
+      try {
+          test.lock();
+          test.first();
+          test.second();
+          test.third();
+      } finally {
+          test.unlock();
+      }
+  };
+
+  Thread thread1 = new Thread(task);
+  Thread thread2 = new Thread(task);
+
+  // マルチスレッドの場合は1スレッドずつ処理
+  thread1.start();
+  thread2.start(); //thread1がunlockされてからスタート。
+  ---------------------------------------------
+
+・tryLock() ※引数なし、戻り値boolean、インスタンスメソッド。
+  ロックを即時に取得できたかどうかを返す。
+
+・tryLock(long time, TimeUnit unit) ※引数2つ、戻り値boolean、インスタンスメソッド。
+  指定時間内にロックが取得出来たかどうかを返す。
+
+※今まで使っていたsynchronizedやatomicでは
+  "複数メソッドにまたがるような処理の排他制御は出来ない"
+  "複数メソッドをマルチスレッド環境では処理順番の保証が出来ない"
+
+
+
+
+
+
+
+
+
+- 4.ストリームAPI ----------------------------------------------------------------------------------------------------
+■Optional(クラス) P170～
+・メソッドの処理結果を正常異常問わずに同じ型で扱う事が出来る。
+  例外処理に関するコードを減らすことが出来るので可読性がUP。
+
+・公開されているコンストラクタが存在せず"newでインスタンス生成が出来ない"
+  インスタンス生成は下記のファクトリメソッドを使って行う。
+
+・empty()
+  空のOptionalインスタンスを生成して参照を返す。
+  if文等で引数の値がnullの時に使うメソッド。
+
+・of(T value)
+  null以外の値を持ったOptionalインスタンスを生成して参照を返す。
+  引数にnullを指定すると"コンパイルは通るが実行エラーでNullPointerExceptionが発生する"
+  ※nullの可能性が少しでも有るならofNullableを使うこと。
+  -------------------------------------------------------------------------
+  public class Main {
+    public static void main(String[] args) {
+        Optional<String> sample = Optional.of(null); // ここでNullPointerException
+        System.out.println(sample); // 到達しない
+    }
+  }
+  -------------------------------------------------------------------------
+
+・ofNullable(T value)
+  引数がnullの場合    : empty()で空のOptionalインスタンスを生成して参照を返す。
+  引数がnullでない場合: of(T value)で値を含むOptionalインスタンスを生成して参照を返す。
+  ※Optional<T> T型をOptionalでラップして返す表現。
+  -------------------------------------------------------------------------
+  public static <T> Optional<T> getOptionalValue(T value) {
+      return Optional.ofNullable(value);
+  }
+  -------------------------------------------------------------------------
+
+・インスタンス.get()
+  空のOptionalインスタンスに対して使うと
+  実行時エラーのNoSuchElementExceptionが発生するので注意。
+  ※安全性の観点から、代わりに ifPresent() や orElse()を使うこと。
+
+・インスタンス.isPresent()
+  インスタンスが何か値を持っていたらtrue
+  空のならfalseを返す。
+
+・インスタンス.isEmpty()
+  インスタンスがnullならtrueを返すメソッド。
+  falseの時は中身が有ると判定できるので、get()メソッド等で値を取得出来る。
+
+・インスタンス.orElse(T デフォルト値)
+  インスタンスが値を持っていたらそのまま値を返す。
+  空の場合は引数のデフォルト値を返す。
+
+・インスタンス.orElseGet(Supplier型のラムダ式) P179
+  インスタンスが値を持っていたらそのまま値を返す。
+  空の場合はSupplier型のラムダ式で"処理結果"を返す。
+
+・インスタンス.onElseThrow(Supplier型のラムダ式)
+  インスタンスが値を持っていたらそのまま値を返す。
+  空の場合はSupplier型のラムダ式で"任意の例外"を返す。※例外の種類に縛り無し 
+  生成した例外はthrowsやtry-catchで処理する。
+  ※orElseGetでも同じ事が出来るけど、可読性とか設計理念とかで使い分けるらしい。
+  -------------------------------------------------------------------------------------------------
+  public class Main { 
+      public static void main(String[] args) throws IOException { //;チェック例外はthrowsかtry-catchが必要。
+          Optional<String> optional = Optional.empty(); //Optionalの空インスタンスを生成
+
+          // チェック例外をスローする場合
+          String result = optional.orElseThrow(() -> new IOException("値が空です")); //例外をスロー。
+          System.out.println(result); //到達前に例外がスローされるため処理されない。
+      }
+  }
+---------------------------------------------------------------------------------------------------
+
+・インスタンス.ifPresent(Consumer型のラムダ式) P181
+  インスタンスが値を持っていたら"ラムダ式のaccept(引数)で処理するが値は返さない" 例:printとか。
+  空の場合は何も実行されない。
+
+・インスタンス.ifPresentOrElse(Consumer型のラムダ式,Runnable型のラムダ式) P181
+  インスタンスが値を持っていたら"ラムダ式のacceptで処理するが値は返さない" 例:printとか。
+  空の場合は"ラムダ式のrun(引数も戻り値も例外も無し)で処理するが値は返さない"
+
+・インスタンス.map(Function型のラムダ式)  ※Function<T, R> P183
+  インスタンスが値を持っていたら"ラムダ式のapplyで引数を1つ処理して値を返す"
+  もし、applyでOptionalインスタンスを生成して返す処理があった場合
+  mapもOptinalインスタンスを生成するため、戻り値型が"Optional<Optional<R>>"になってしまう。
+  ※mapは"Optional<T>の中身に対して変換を行い新しい型のOptionalを生成する"ので入れ子になるので注意。
+  空の場合は新たに空のOptionalインスタンスを生成するので例外は発生しない。
+
+・インスタンス.flatMap(Function型のラムダ式)
+  上記で書いた通り、mapはOprinalインスタンスを生成する関係ため
+  applyの戻り値型がOptional<Optional<R>>というようにラップされてしまう。
+  これを「Optional<R> = 」で受けようとすると互換性が無くコンパイルエラーになる。
+  「Optional<R> = 」で受けられるようにOptionalの生成をせずにflatに結果を返すメソッドがflatMap()
+  ---------------------------------------------------------------------------------------
+    public class FlatMapTest {
+        public static void main(String[] args) {
+            Optional<String> a = Optional.of("test");
+              Optional<Optional<String>> b = a.map(str -> test(str));     // OK
+              Optional<String>           b = a.map(str -> test(str));     // 型違いでコンパイルエラー
+              Optional<String>           b = a.flatMap(str -> test(str)); // OK
+    ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+    }}
+  ---------------------------------------------------------------------------------------
+
+・インスタンス.forEach(Consumer型ラムダ式) P187
+  forEachは本来java.lang.iterableインタフェースで定義されているメソッドだが
+  Optionalクラスがjava.util.function.Consumerインタフェースを引数に取るforEach()メソッドを提供している
+  Consumer型ラムダ式(引数を受けて戻り値を返さない処理)を引数に繰り返し処理が行われる。
+  拡張for文などのコードを簡潔に出来る。
+  ※printするだけならメソッド参照を使うとさらに短縮できる。
+
+
+■ストリームAPI P189～
+・ストリームAPIとは
+  コレクションや配列などに対してメソッドとラムダ式で処理すること。
+  基本機能はjava.util.stream.Streamインタフェースに定義されている。
+
+・使用用途
+  ・全要素を同じように変換する
+  ・要素の合計や平均といった統計を取る
+  ・要素を何らかの条件でグルーピングする
+  ・要素から条件に合ったデータを検索する
+
+・注意点
+  ・ストリームAPIはfor文などの繰り返し処理の置き換えとして用意された物では無い。
+  ・ストリームのラムダ式ではfinalもしくは実質的finalなローカル変数しか扱えない。
+  ・そのため、ストリームパイプライン無いからローカル変数の値を変更出来ない。
+  ・他にもreturn,break,continueといった制御も行えない。
+
+・コレクション→ストリーム作成
+  コレクションのインスタンス.stream().中間操作.終端操作; ※中間操作は省略可
+  stream()はjava.util.Collectionインタフェースのデフォルトメソッド。
+  java.util.CollectionはListやSetを含む全コレクションの基本インタフェース。
+  ※Mapはjava.util.Mapを実装しているのでstream()は直接使えない。
+
+  -------------------------------------------------------------------------------------------
+  コレクション      | streamを持つ実装クラス例
+  ------------------|------------------------------------------------------------------------
+  List              | ArrayList, LinkedList, Vector, Stack
+  Set               | HashSet, LinkedHashSet, TreeSet
+  Queue             | PriorityQueue, ArrayDeque
+  Collections       | Collections.singletonList(), Collections.emptyList(), 
+                    | Collections.singleton(), Collections.emptySet()
+  -------------------------------------------------------------------------------------------
+
+  -------------------------------------------------------------------------------------------
+  コレクション      | streamを間接的に利用する実装クラス例
+  ------------------|------------------------------------------------------------------------
+  Map(stream無し)   | HashMap, LinkedHashMap, TreeMap
+                    | ※entrySet(),keySet(),values()を利用しSetやCollectionをストリーム化可能。
+  -------------------------------------------------------------------------------------------
+
+  ---------------------------------------------------------------------------------------------------
+  import java.util.*;
+  import java.util.stream.*;
+
+  public class StreamCreationExamples {
+      public static void main(String[] args) {
+          // Listからストリームを作成
+          List<String> list = Arrays.asList("A", "B", "C");
+          Stream<String> listStream = list.stream();
+          listStream.forEach(System.out::println);
+
+          // Setからストリームを作成
+          Set<Integer> set = new HashSet<>(Arrays.asList(1, 2, 3));
+          Stream<Integer> setStream = set.stream();
+          setStream.forEach(System.out::println);
+
+          // Mapからストリームを作成 (キーと値のペア)
+          Map<Integer, String> map = Map.of(1, "One", 2, "Two", 3, "Three");
+          Stream<Map.Entry<Integer, String>> mapStream = map.entrySet().stream();
+          mapStream.forEach(entry -> System.out.println(entry.getKey() + " -> " + entry.getValue()));
+
+          // ArrayDequeからストリームを作成
+          ArrayDeque<Double> deque = new ArrayDeque<>(Arrays.asList(1.1, 2.2, 3.3));
+          Stream<Double> dequeStream = deque.stream();
+          dequeStream.forEach(System.out::println);
+
+          // Queueからストリームを作成
+          Queue<String> queue = new LinkedList<>(Arrays.asList("X", "Y", "Z"));
+          Stream<String> queueStream = queue.stream();
+          queueStream.forEach(System.out::println);
+      }
+  }
+  ---------------------------------------------------------------------------------------------------
+
+
+■配列→ストリーム作成
+  配列の場合はjava.util.Arraysクラスのstream()を使う。
+  このクラスはユーティリティクラスなので全メソッドがstaticメソッド。
+  戻り値はjava.util.stream.BaseStreamインタフェースのサブインタフェースで受ける。
+  -----------------------------------------------------------------------------
+  Stream<String> stringStream = Arrays.stream(new String[] {"A", "B", "C"});
+  Stream<Integer> integerStream = Arrays.stream(new Integer[] {1, 2, 3});
+  Stream<Double> doubleStream = Arrays.stream(new Double[] {1.1, 2.2, 3.3});
+  Stream<Long> longStream = Arrays.stream(new Long[] {100L, 200L, 300L});
+  -----------------------------------------------------------------------------
+  IntStream intStream = Arrays.stream(new int[] {1, 2, 3});
+  DoubleStream doubleStream = Arrays.stream(new double[] {1.1, 2.2, 3.3});
+  LongStream longStream = Arrays.stream(new long[] {100L, 200L, 300L});
+  -----------------------------------------------------------------------------
+
+■BaseStreamインタフェースとサブインタフェース
+  BaseStream<T, S>  // BaseStream は Stream の親インタフェース
+      ↳ Stream<T>  // 一般的なオブジェクト型のストリーム
+      ↳ IntStream   // プリミティブ型のストリーム（int専用）
+      ↳ LongStream  // プリミティブ型のストリーム（long専用）
+      ↳ DoubleStream // プリミティブ型のストリーム（double専用）
+
+■中間操作
+  取り出した要素(ストリーム)処理を加えて新たなストリームを作る操作 (非破壊) P188
+  複数個繋げることが可能。
+  -----------------------------------------------------------------------------------------------------------------
+  | インスタンスメソッド名     | 説明                                                                 | 戻り値型  |
+  |----------------------------|----------------------------------------------------------------------|-----------|
+  | distinct()                 | 重複を除いた要素のストリーム生成 "※equals,hashCodeで重複確認される" | Stream<T> |
+  | filter(Predicate<T>)       | 条件を満たす要素だけを含むストリームを生成                           | Stream<T> |
+  | limit(long)                | "要素個数"(値じゃない)以下の要素を含むストリーム生成 3→1～3個目     | Stream<T> |
+  | skip(long)                 | "要素個数"(値じゃない)以降の要素を含むストリーム生成 3→4個目～n個目 | Stream<T> |
+  | sorted()                   | 自然順序で要素を並び替えたストリームを生成                           | Stream<T> |
+  | sorted(Comparator<T>)      | 指定した順序で要素を並び替えたストリームを生成                       | Stream<T> |
+  | map(Function<T, R>)        | 各要素に関数を適用した形で新しいストリームを生成 "Rは自動定義される" | Stream<R> |
+  | peek(Consumer<T>)          | デバッグ用途でストリームをそのまま返す"処理内容によって副作用が有る" | Stream<T> |
+  -----------------------------------------------------------------------------------------------------------------
+
+■終端操作
+  中間操作後のストリームに対して行う最終操作(ストリームの消費) P189
+  1個のみ利用可能(終端操作1回でストリームが消費されるため)
+  "同ストリームに対して終端操作を2個書くと2個目で実行エラー(IllegalStateException)が発生"
+  -------------------------------------------------------------------------------------------------------------------
+  | インスタンスメソッド名     | 説明                                                                 | 戻り値型    |
+  |----------------------------|----------------------------------------------------------------------|-------------|
+  | forEach(Consumer<T>)       | 各要素に対して処理を行う                                             | void        |
+  | forEachOrdered(Consumer<T>)| 各要素に対して処理を行う(並列ストリーム時に順序保証付き)             | void        |                                | void        |
+  | findFirst()                | ストリームの中から最初の要素を返す                                   | Optional<T> |
+  | findAny()                  | ストリームの中からランダムに要素を返す(パフォーマンス優先時に使用)   | Optional<T> |
+  | reduce(BinaryOperator<T>)  | ストリームの要素を畳み込み操作で1つの結果にまとめる                  | Optional<T> |
+  | reduce(T,BinaryOperator<T>)| 初期値を指定してストリームを畳み込み操作で1つの結果にまとめる        | T           |
+  | max(Comparator<T>)         | ストリーム内の最大値の要素を返す                                     | Optional<T> |
+  | min(Comparator<T>)         | ストリーム内の最小値の要素を返す                                     | Optional<T> |
+  | collect(Collector<T, A, R>)| ストリームの要素を収集してコレクションや別の結果に変換               | R           |
+  | count()                    | ストリームの要素の数を返す                                           | long        |
+  |----------------------------|----------------------------------------------------------------------|-------------|
+  | anyMatch(Predicate<T>)     | 少なくとも1つの要素が条件を満たすかを判定し、結果を返す              | boolean     |
+  | allMatch(Predicate<T>)     | すべての要素が条件を満たすかを判定し、結果を返す                     | boolean     |
+  | noneMatch(Predicate<T>)    | すべての要素が条件を満たさないかを判定し、結果を返す                 | boolean     |
+  | toArray()                  | ストリームの要素を配列に変換する                                     | Object[]    |
+  | toArray(IntFunction<A[]>)  | ストリームの要素を指定した型の配列に変換する                         | A[]         |
+  -------------------------------------------------------------------------------------------------------------------
+
+■リダクション
+  reduceやMAXやMINなど、要素を次々と結合していく処理のこと。
+  ①"初期値はint型→Integer型にボクシングされる。さらに初期値型が戻り値型になる"
+  理由:ラムダ式やストリームの処理でオブジェクト型（Integer など）として扱うため
+       プリミティブ型からボクシングされてオブジェクト型に変換される。
+  ②"初期値のデータ型が戻り値のデータ型になる" P162の問19
+------------------------------------------------------------------------------------------------------------
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+public class Main {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> emptyList = Arrays.asList();
+
+        //; 初期値あり 
+        int sumWithIdentity = numbers.stream().reduce(10, (a, b) -> a + b); //初期値a,1がbに入る。
+        System.out.println("初期値あり: " + sumWithIdentity); // 出力: 25
+
+        //; 初期値あり ※空のストリームの場合
+        int sumWithIdentityEmpty = emptyList.stream().reduce(10, (a, b) -> a + b); //初期値の型に依存する。
+        System.out.println("空ストリーム（初期値あり）: " + sumWithIdentityEmpty); // 出力: 10
+
+        //; 初期値なし
+        Optional<Integer> sumWithoutIdentity = numbers.stream().reduce((a, b) -> a + b);
+        sumWithoutIdentity.ifPresent(sum -> System.out.println("初期値なし: " + sum)); // 出力: 15
+
+        //; 初期値なし ※空のストリームの場合 ※Optional.emptyとはnullの代わりに空のOptionalを返す。
+        Optional<Integer> sumWithoutIdentityEmpty = emptyList.stream().reduce((a, b) -> a + b);
+        System.out.println("空ストリーム（初期値なし）: " + sumWithoutIdentityEmpty); // 出力: Optional.empty
+    }
+}
+------------------------------------------------------------------------------------------------------------
+
+
+■ストリーム・パイプライン
+  中間操作0個以上 + 終端操作1個を組み合わせた物のこと。
+  streamは"管理順"で出力される。
+
+■並列ストリーム P194
+  ストリーム・パイプラインを並列処理するためのストリームでパフォーマンスを向上できる。
+  コレクションからストリームを取り出す時に"parallelStreamメソッド"を使うだけ。
+  parallelStreamは"順番が変動する可能性がある"
+  順序保証させたいなら終端操作で"forEachOrdered(Consumer<T>)"を使うがパフォーマンスは落ちる。
+  -----------------------------------------------------------------------------
+  import java.util.Arrays;
+  import java.util.List;
+
+  public class ParallelStreamOrderExample {
+      public static void main(String[] args) {
+          List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+          //; stream の順序
+          numbers.stream()
+                .filter(n -> n % 2 == 0)
+                .forEach(System.out::print); // 順序が維持される
+          System.out.println(); // 出力例: 246810
+
+          //; parallelStream の順序（forEach）
+          numbers.parallelStream()
+                .filter(n -> n % 2 == 0)
+                .forEach(System.out::print); // 順序が変わる可能性がある
+          System.out.println(); // 出力例: 468102
+
+          //; parallelStream の順序（forEachOrdered）
+          numbers.parallelStream()
+                .filter(n -> n % 2 == 0)
+                .forEachOrdered(System.out::print); // 順序が保証される
+          System.out.println(); // 出力例: 246810
+      }
+  }
+  -----------------------------------------------------------------------------
+
+
+■ストリームの問題点 P211
+①ラムダ式内部から外部オブジェクトにアクセスする場合"外部オブジェクトは実質final"になる。
+
+・ラムダ式内で使用される変数が「実質final」と見なされる条件
+  変数が初期化後に"再代入されていない"こと。
+  ※参照先のオブジェクトの状態変更は再代入ではないが"副作用のある処理のため非推奨"
+    並列ストリームを使用すると外部オブジェクトに同時アクセスが発生し"競合状態になるため"
+    ラムダ式の使用目的（簡潔で予測可能なコード）を損なうことがあるので使わないこと。
+
+  ・再代入: 変数自体が新しいオブジェクトを参照するように変更されること。
+    StringBuilder builder = new StringBuilder();
+    builder = new StringBuilder(); // これは再代入なのでラムダ式内ではコンパイルエラー
+
+  ・オブジェクトの状態変更: 変数が参照しているオブジェクトの中身を変更すること。
+    builder.append("A"); // これはオブジェクトの状態変更でエラーにならないが非推奨
+
+  ・コード例
+    下記コードはbuilderに対してオブジェクトの状態変更が行われている。
+    再代入は行われていないため「実質final」は保たれるので問題なく動くが非推奨。
+    代替手段:Collectorsやreduceなどの関数型APIで副作用を持たない純粋な関数を用いる(後述)
+
+    -非推奨-----------------------------------------------------------------
+    import java.util.Arrays;
+    import java.util.List;
+
+    public class Main {
+        public static void main(String[] args) {
+            List<String> list = Arrays.asList("A", "B", "C", "D", "E");
+            StringBuilder builder = new StringBuilder();
+
+            list.stream().forEach(str -> {
+                if (builder.length() != 0) {
+                    builder.append(",");
+                }
+                builder.append(str); //; これはオブジェクトの状態変更(非推奨)
+            });
+
+            System.out.println(builder); // 出力: A,B,C,D,E
+        }
+    }
+    --------------------------------------------------------------------------
+
+②処理を再利用できない。
+・非推奨コードはforEachに直接ラムダ式を記述しているため再利用が出来ない。
+  →ストリーム生成前にConsumer型でラムダ式を用意することで解消できる。
+    -修正版-----------------------------------------
+    Consumer<String> c = 
+          (str) -> {
+              if (builder.length() != 0) {
+                  builder.append(",");
+              }
+              builder.append(str);
+          };
+    list.stream().forEach(c);
+    System.out.println(builder); // 出力: A,B,C,D,E
+    ------------------------------------------
+
+・java.util.stream.Collector<T, A, R> インタフェースの実装 P214
+  ストリームの要素を収集して結果を生成する操作を定義するためのインタフェース。  
+  java.util.stream.Streamの終端操作の"collect(Collector<T, A, R>)で引数として使われる"
+  T:ストリーム内の要素の型 例:String
+  A:処理途中の値を保持するためのオブジェクト型 例:StringBuilder
+  R:最終的な結果の型 例:String
+ 
+  ・抽象メソッド (これらを全て実装しなければいけない)
+    ・supplier() (コンテナを作成)
+    ・accumulator() (要素をコンテナに追加)
+    ・combiner() (並列処理時の部分結果を統合)
+    ・finisher() (最終的な結果に変換)
+    ・characteristics() (特性セット)
+      特性の種類 ※Collectorクラスの内部EnumとしてCollector.Characteristicsが用意されている。
+      ・CONCURRENT      : このColeectorが並行処理をすることを表す。
+      ・IDENTITY_FINISH : このCollectorのfinisherメソッドが省略可能であることを表す。
+      ・UNORDERED       : コレクション操作に置いて順序の維持を保証しない事を表す。
+
+    -実装例------------------------------------------------------------------
+    class SampleCollector implements Collector<String, StringBuilder, String> {
+
+      /; supplier:結果のコンテナを作成
+      @Override
+      public Supplier<StringBuilder> supplier() {
+          return StringBuilder::new;
+      }
+
+      //; accumulator:各要素をコンテナに追加する処理
+      @Override
+      public BiConsumer<StringBuilder, String> accumulator() {
+          return (builder, str) -> {
+              if (builder.length() != 0) {
+                  builder.append(",");
+              }
+              builder.append(str);
+          };
+      }
+
+      //; combiner:並列処理時にsupplierで作成した結果コンテナを結合する。
+      @Override
+      public BinaryOperator<StringBuilder> combiner() {
+          return (a,b) -> {
+            if(a.length() !=0){
+              a.append(",");
+            }
+            a.append(b);
+            return a;
+          };
+      }
+
+      //; finisher:最終結果を変換
+      @Override
+      public Function<StringBuilder, String> finisher() {
+          return builder -> builder.toString();
+      }
+
+      //; characteristics:特性を指定(Enumのセットを戻す)
+      @Override
+      public Set<Characteristics> characteristics() {
+          return EnumSet.noneOf(Characteristics.class); //;return 一般的な空のセットSet.of()よりも適切。
+      }
+    }
+    -使い方------------------------------------------------------------------
+    public class CollectorSample{
+      public static void main(String[] args){
+        List<String> list = Arrays.asList("A","B","C","D","E");
+
+        String result = list.stream().collect(new SampleCollector()); //collectの引数はCollectorインタフェースor実装クラス
+        System.out.println(result); // 出力結果 A,B,C,D,E
+      }
+    }
+    -------------------------------------------------------------------------
+
+■java.util.stream.Collectorsクラス P222
+  ・概要
+    Collectorインタフェースの実現クラス
+    カンマ区切りの文字列を作る等の特殊処理が無いなら基本はこれを使いまわす。
+    
+  ・toList()
+    リストから生成したストリームをフィルタリングした結果を基に
+    " .collect(Collectors.toList())" で新しいリストを作成
+    ※toListの他に、toSetやtoMapを利用したコレクション作成が可能。P223-224
+
+  ・groupingBy(メソッド参照orラムダ式) 引数1つパターン
+    任意のフィールドを基にグルーピングが出来るメソッド。
+    戻り値型はMap<フィールド名,List<クラス名>>で、キーはフィールド/キー毎にリストが生成される。
+    任意のフィールド毎の値をリストに出来る。
+      ------------------------------------------------------------------------------------------
+      ①メソッド参照を利用した例
+      " .collect(Collectors.groupingBy(Item::getType)) "
+      ------------------------------------------------------------------------------------------
+      ②Functionのラムダ式を利用した例
+      " .collect(Collectors.groupingBy(
+          item -> item.getType()
+        ));"
+      ------------------------------------------------------------------------------------------
+
+  ・groupingBy(メソッド参照orラムダ式,summingのメソッド参照orラムダ式) 引数2つパターン P227-
+    Mapで任意のフィールド毎の合計値が扱える。
+    ※summingInt,summingLong,summingDoubleメソッド
+      グルーピング後の要素が持つ数値の合計値をラッパークラスで戻す。summingIntならInteger
+  
+  ・groupingBy(メソッド参照orラムダ式,averagingのメソッド参照orラムダ式) 引数2つパターン P227-
+    ※averagingInt,averagingLong,averagingDouble
+      グルーピング後の要素が持つ数値の平均値をラッパークラスで戻す。averagingIntならInteger
+
+  ・partitioningBy(Predicate<T>) P228
+    Predicate はラムダ式やメソッド参照で条件を指定するための関数型インタフェース。
+    Predicateの結果に基づいてストリーム内の全要素を真/偽の2つのグループに分割する。
+    戻り値型 Map<Boolean, List<T>>
+    -------------------------------------------------------------------------------
+    List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "David");
+    // 偶数と奇数に分類
+       Map<Boolean, List<String>> result = names.stream()
+                .collect(Collectors.partitioningBy(name -> name.length() >= 5));
+    -------------------------------------------------------------------------------
+ 
+  ・partitioningBy(Predicate<T> , Collectors.counting())
+    分類した結果のリストをさらに要約する場合は、第2引数にダウンストリームコレクターを指定できる。
+    -------------------------------------------------------------------------------
+    List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "David");
+    // 名前の長さが5文字以上かどうかで分類し、それぞれのグループの要素数を取得
+       Map<Boolean, Long> result = names.stream()
+                .collect(Collectors.partitioningBy(name -> name.length() >= 5, Collectors.counting()));
+    -------------------------------------------------------------------------------
+    
+
+
+
+
+
+- 5.入出力 ----------------------------------------------------------------------------------------------------
+
+■java.io.Fileクラス P242
+・ディレクトリやファイルを扱うクラス。
+・Fileクラスのインスタンス作成時、引数にファイルのパスを指定しコンストラクタに渡す。
+  -------------------------------------------------------
+  File directory = new File("."); // カレントディレクトリ
+  -------------------------------------------------------
+・インスタンスメソッドのみ。 ※多くのメソッドでIOExceptionが発生する可能性がある。
+・もっと高度な操作が必要な場合は java.nio.file パッケージを利用する。
+  --------------------------------------------------------------------------------------------------------------
+  createNewFile()  | boolean  | 新しい空のファイルを作成。
+  mkdir()          | boolean  | 新しいディレクトリを作成。
+  mkdirs()         | boolean  | 必要に応じて親ディレクトリも含めて作成。
+  renameTo(File)   | boolean  | ファイルまたはディレクトリの名前を変更（または移動）。
+  delete()         | boolean  | ファイルまたは空のディレクトリを削除。
+  --------------------------------------------------------------------------------------------------------------
+  exists()         | boolean  | ファイルまたはディレクトリが存在するか確認。
+  getAbsolutePath()| String   | 絶対パスを取得。
+  listFiles()      | File[]   | ディレクトリ内のファイルやサブディレクトリをFileオブジェクトの配列として取得。
+  list()           | String[] | ディレクトリ内のファイルやサブディレクトリの名前を配列として取得。
+  isFile()         | boolean  | ファイルであるかどうかを確認。
+  isDirectory()    | boolean  | ディレクトリであるかどうかを確認。if文と組み合わせると再帰的にサブディレクトリも取得できる。
+  getName()        | String   | ファイルまたはディレクトリの名前を取得。リストに使うとリスト内のデータを全表示する。
+  getPath()        | String   | ファイルまたはディレクトリのパスを取得。
+  length()         | long     | ファイルのサイズ（バイト単位）を取得。
+  --------------------------------------------------------------------------------------------------------------
+
+■java.io.FileFilter インタフェース
+・boolean accept(File pathname)メソッドのみを持つ関数型インタフェース。
+  ※Consumerのacceptと違い戻り値を返すので注意。
+・実装クラスを持たないため、匿名クラスかラムダ式でフィルタリング条件を指定する。
+・File.listFiles(FileFilter filter)の引数として渡される。
+  filterで定義した条件に一致した場合にtrueが返され
+  File.listFilesはtrueのファイルorディレクトリのみFile型のオブジェクトとして配列で取得する。
+
+-匿名クラス利用例------------------------------------------------------------------------------------------
+import java.io.File;
+import java.io.FileFilter;
+
+public class Main {
+    public static void main(String[] args) {
+        File directory = new File("."); // カレントディレクトリ
+
+        //; FileFilterの匿名クラスを使用
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isFile() && file.getName().endsWith(".txt");
+            }
+        };
+
+        //; listFilesでフィルタリング
+        File[] filteredFiles = directory.listFiles(filter);
+
+        //; フィルタリングされたファイルの表示
+        if (filteredFiles != null) {
+            for (File file : filteredFiles) {
+                System.out.println(file.getName()); // フィルタリングされたファイル名を表示
+            }
+        }
+    }
+}
+-ラムダ式利用例------------------------------------------------------------------------------------------
+import java.io.File;
+
+public class Main {
+    public static void main(String[] args) {
+        File directory = new File("."); // カレントディレクトリ
+
+        //; FileFilterをラムダ式で実装
+        File[] filteredFiles = directory.listFiles(file -> 
+            file.isFile() && file.getName().endsWith(".txt")
+        );
+
+        //; フィルタされたファイルの表示
+        if (filteredFiles != null) {
+            for (File file : filteredFiles) {
+                System.out.println(file.getName()); // フィルタリングされたファイル名を表示
+            }
+        }
+    }
+}
+-----------------------------------------------------------------------------------------------------------
+
+■文字ストリーム(人向け)
+・Readerの実装クラスのコンストラクタに「読み取りたいパスとファイル名」を指定してインスタンス化。
+・Readerクラスの主要メソッド ※全てインスタンスメソッド
++----------------------+----------------------+----------------------------------------------------+
+| 基底クラス           | 実装クラス           | 説明                                               |
++----------------------+----------------------+----------------------------------------------------+
+| Reader               | FileReader           | ファイルから文字を読み込む。                       |
+|                      | BufferedReader       | 文字バッファを利用して"効率的"に読み込む。         |
+|                      | InputStreamReader    | バイトストリームを文字ストリームに変換して読み込む |
++----------------------+----------------------+----------------------------------------------------+
+| Writer               | FileWriter           | ファイルへ文字を書き込む。                         |
+|                      | BufferedWriter       | 文字バッファを利用して効率的に書き込む。           |
+|                      | OutputStreamWriter   | バイトストリームを文字ストリームに変換して書き込む |
++----------------------+----------------------+----------------------------------------------------+
+
+・int read() P250
+  1文字単位で読み込んで対応するコードポイントをint型で返し、それをcharにキャストして使う。
+  全て読み後は終端を意味する-1をint型で返す。
+  これをif文やwhileで利用しfinallyで.close()で文字ストリームを閉じる。
+
+・int read(char[] cbuf)
+  指定された char[] 配列に文字を読み込み、読み込んだ文字数を返します。
+
+・int read(char[] cbuf, int off, int len)
+  char[] 配列の指定された位置から最大 len 文字を読み込みます。
+
+・long skip(long n)
+  指定された数の文字をスキップします。読み飛ばした文字数を返します。
+
+・boolean ready()
+  次の読み取り操作が可能かどうかを確認します。
+
+・void close()
+  ストリームを閉じてリソースを解放します。
+  入出力ストリームは外部リソース（ファイル、ネットワーク接続など）を操作するが
+  ガベージコレクタでは自動的にリソースの解放が出来ないので、絶対に忘れてはいけない処理。
+  "try-with-resources文を利用すれば明示的にclose()する必要は無くなる" P251
+
+■FileWriterクラス P255
+  ----------------------------------------------
+  FileWriter out = new FileWriter("output.txt",true); //true:追記ON、false:デフォ(上書きのまま)
+  try(out){
+    out.write("Hello,Java!");
+  }
+  ----------------------------------------------
+・ファイルが存在しなければ新規作成、存在するなら上書きする。
+  第二引数をtrueをすると追記モードになり、falseもしくは省略時は上書きモードのまま。
+・改行したい場合は、write("\n")を入れる。
+
+■Bufferとは P252
+  readが1文字単位であるのに対して、バッファ利用時は1行単位でテキストを読み取れる。
+  バッファ未使用:100文字読み取るのにネイティブAPIが100回呼び出される=100回のディスクアクセスが発生する。
+  バッファ使用  :バッファにデータを溜め込むことで、空になったタイミングで1回だけネイティブAPIが呼ばれる。
+  これを利用しているクラスはデコレートパターン(単体使用不可)になっている。
+
+■BufferedReaderクラス P252～
+・文字ストリームでバッファ利用するためのクラス
+  readLines()で"1行ずつ"テキストを読みこみ、全行読取り完了後は"null"が返される。
+  戻り値型はStream<String>
+
+・BufferedReader単体では利用不可で"FileReaderのインスタンスが必要"
+  このように基本機能と拡張機能を組み合わせるデザインパターンを"Decoratorパターン"と呼ぶ。
+  -------------------------------------------------------------
+  FileReader fr = new FileReader("sample.txt");
+  BufferedReader reader = new BufferedReader(fr); //コンストラクタにFileReaderのインスタンスが必要
+  try(reader){   //;frは大丈夫？ ←readerのコンストラクタで指定されているのでfrのclose()も自動で行われる。
+    String line = null;
+    while((line = reader.readLine()) != null){
+      System.out.print(line);
+    }
+  }
+  -------------------------------------------------------------
+・Stream APIとの組み合わせも可能。
+  文字ストリームは4章でやったStreamと同じ様に中間操作や終端操作をチェーンが出来る。
+  ※バイトストリームの場合はStreamAPIでデータ変換が必要らしい。
+  -------------------------------------------------------------
+  reader.lines().forEach(System.out::println); //
+  -------------------------------------------------------------
+
+
+■try-with-resources文 P251～252
+-------------------------------------------------------------------------------------------
+public class SimpleExample {
+    public static void main(String[] args) {
+        //; try-with-resources文で自動的にリソースを閉じる
+        try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line); // ファイルの内容を出力
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 例外処理
+        }
+    }
+}
+-------------------------------------------------------------------------------------------
+
+■BufferedWriterクラス P257
+・行単位の書込みが行える。
+・write("～")はバッファに書込み後に自動的にファイルに書き込まれるが、認識できないレベルのラグが生じる。
+  バッファから強制的にファイルに書き込ませたい場合はflush()を使う。
+・改行したい場合はnewLine(); ※キャリッジリターン(CR)とラインフィード(LF)を自動判別→適用してくれる。
+
+■InputStreamReaderクラス P260
+・バイトストリーム→文字ストリームに変換出来るクラス。
+・InputStreamReader(バイトストリーム)
+  コンソール入力した値は、java.lang.Systemクラスのinフィールドに保管されている。
+  このフィールドは、InputStream型(バイトストリーム型)のため
+  文字として扱うにはInputStreamReader(System.in)で文字ストリームに変換が必要。
+・readLine() は入力を受け取るまで待機するためプログラムはその行でユーザ入力待ち状態で停止する。
+  ----------------------------------------------
+  try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+    String input = br.readLine(); //ユーザ入力待ち状態に移行(入力中の値はコンソールに表示されてしまう)
+    System.out.println(input); A B Cと入力していたなら、A B Cと出力される。
+  }
+  ----------------------------------------------
+
+■java.io.Consloeクラス P261
+・InputStreamReader()の代わりにconsole()を使えばコードを減らせる。
+・入力中の値を非表示にしたい場合は.readPassword()を使う。
+  -改善前---------------------------------------
+  Console console = System.console();
+  String str = console.readLine(); //ユーザ入力待ち状態に移行(入力中の値はコンソールに表示されてしまう)
+  System.out.println(str);
+  -改善後---------------------------------------------
+  Console console = System.console();
+  char[] password = console.readPassword(); //ユーザ入力待ち状態に移行(入力中の値はコンソールに表示されない。)
+  System.out.println(String.valueOf(password)); //出力するためにchar[]からStringへのキャストが必要になる。
+
+
+
+■バイトストリーム(機械向け) ※写真など。
++----------------------+---------------------+----------------------------------------------------+
+| InputStream          | FileInputStream     | ファイルからバイトデータを読み込む。               |
+|                      | BufferedInputStream | バッファを利用して"効率的"にバイトデータを読込む。 |
+|                      | DataInputStream     | プリミティブ型データを効率的に読み込む。           |
+|                      | ObjectInputStream   | シリアライズされたオブジェクトを読み込む。         |
++----------------------+---------------------+----------------------------------------------------+
+| OutputStream         | FileOutputStream    | ファイルへバイトデータを書き込む。                 |
+|                      | BufferedOutputStream| バッファを利用して効率的にバイトデータを書き込む。 |
+|                      | DataOutputStream    | プリミティブ型データを効率的に書き込む。           |
+|                      | ObjectOutputStream  | オブジェクトをシリアライズして書き込む。           |
++----------------------+---------------------+----------------------------------------------------+
+
+・void write(int c)
+  1文字を出力します。引数として与えられた整数 c を文字として書き込みます。
+
+・void write(char[] cbuf)
+  char[] 配列に含まれる文字をすべて書き込みます。
+
+・void write(char[] cbuf, int off, int len)
+  char[] 配列の指定された部分をファイルに書き込みます。off から始めて最大 len 文字を出力します。
+
+・void flush()
+  バッファをフラッシュして、書き込みを実行します。バッファに残っているデータを確実に書き出すために使用します。
+
+・void close()
+  ストリームを閉じてリソースを解放します。
+  入出力ストリームは外部リソース（ファイル、ネットワーク接続など）を操作するが
+  ガベージコレクタでは自動的にリソースの解放が出来ないので、絶対に忘れてはいけない処理。
+  "try-with-resources文を利用すれば明示的にclose()する必要は無くなる" P251
+
+■BufferedInputStreamクラス P258
+・基本的には文字ストリームと同じように扱える。
+・デコレートパターンなので、利用するには基底クラスのインスタンスを引数に取る。
+・readNBytes(任意のバイト数)で引数のバイト数単位で読み取り、byte[]を返す。
+  全バイトを一度に読み取る事も出来るがメモリへの負担がかかるので非推奨。
+  --------------------------------------------------------------
+  //; 読取り処理
+  FileInputStream fis = new FileInputStream("sample.jpg");
+  BufferedInputStream bis = new BufferedInputStream(fis);
+
+  //; 書込み処理
+  FileOutputStream fos = new FileOutputStream("sample_bk.jpg");
+  BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+  //; sample.jpgを読取り→sample_bk.jpgに書込み処理(コピー処理)
+  try(bis; bos){
+    byte[] data = null;
+    while ((data = bis.readNBytes(1024)).length != 0){ //;1024byte単位でbisを読取り
+      bos.write(data); //読み取ったデータが存在する時はdataに書込み。
+    }
+    bos.flush(); //強制的にバッファ→ファイルに反映させる。
+  }
+  --------------------------------------------------------------
+
+■java.util.Scannerクラス P264
+・文字入力を簡単に扱えるようにした便利なクラス。
+・hasNext()とwhileの組み合わせで次に読みこむ行があるか確認しながら1行ずつ読みこんでいく。
+  hasNextは次に行がある場合にtrueを戻す。
+・useDelimiter("区切り文字")でトークン単位で分割する(非破壊、内部的に分割するだけ)
+  ・"※デフォルトで空白文字(空白,タブ,改行コード)が設定されており、明示的に区切り文字を設定すると上書きされる"
+  ・区切り文字は「|」で列挙可能。
+    良い例(",|\n")
+    悪い例(", | \n") これは空白が入ってるので「, 空白 | \n」が区切り文字になってしまう。
+・トークンはnext()で１つ取得出来る。 P265
+  不要なデータはscanner.next()を入れるだけで戻り値を受けない事でSKIP出来る。
+  必要なデータはString test = scanner.next(); 必要なトークンだけ変数に格納していく。
+  ※next().replaceAll(～～); みたいにチェーンして加工することも可能。
+・各変数にトークンを格納後、その変数をリストにまとめる。
+
+■java.io.Serializableインタフェース P266～271
+・シリアライズ
+  メモリ上にあるオブジェクトをObjectOutputStreamのwriteObject(Object obj)でバイトストリームに出力すること。
+  java.io.Serializableを実装しているクラスを対象に下記データをシリアライズする。
+  ①インスタンスフィールドの値＆その参照先のオブジェクト
+    staticかtransientで装飾されているフィールドはシリアライズの対象外になる。P272
+  シリアライズで作成するファイル名の拡張子は「ファイル名.ser」にすることが多い。
+  ※オブジェクトAとBがあるとして、AがBを参照先としてフィールドに持っている場合
+    ストリームからオブジェクトを復元時に"参照先が存在しない可能性がある"
+    再起動or他プログラムの進行状況によって参照先のメモリがガベージコレクションでクリアされるため。
+    これを防ぐために"参照先もまとめてストリームに出力する"、これを直列化(シリアライズ)と呼ぶ。
+  ②クラスのserialVersionUID(クラス名、フィールド、メソッドなどからハッシュ値を計算して生成される)
+    この値はデシリアライズ時に使用される(後記)
+
+・デシリアライズ P271～
+  シリアライズでまとめられたバイトストリームを基に
+  ObjectInputStreamのreadObject()でオブジェクトを復元すること。
+  ------------------------------------------------------------------------------
+  シリアライズされた際のserialVersionUIDと現在のクラスのserialVersionUIDを比較。
+  一致  : シリアライズ成功
+  不一致: InvalidClassExceptionがスローされ、デシリアライズが失敗。
+
+・マーカーインタフェース P269
+  抽象メソッドを何も持たない特殊なインタフェースの呼び名。
+  このインタフェースを実装しているクラスは何らかの意味が追加されているとJVMに認識される。
+  java.io.Serializableの場合"実装クラスはシリアライズ可能とJVMに認識される" 
+  ※標準クラスライブラリの多くはSerializableを実装済。例:コレクションクラスやI/Oや日時やラッパークラス等。
+  ※Serializable未実装でシリアライズしようとするとjava.io.NotSerializableExceptionチェック例外が発生する。
+
+・シリアライズで使用するクラスとメソッド
+  +---------------------------+-------------------------+------------------------------------------------------+
+  | クラス名                  | メソッド名              | 説明                                                 |
+  +---------------------------+-------------------------+------------------------------------------------------+
+  | ObjectOutputStream        | writeObject(Object obj) | オブジェクトをシリアライズしてバイトストリームに書込 |
+  |                           | flush()                 | 書き込みバッファを強制的にフラッシュする。           |
+  |                           | close()                 | 通常はtry-with-resourcesで自動的に呼び出される。     |
+  +---------------------------+----------------------------------+---------------------------------------------+
+  | ObjectInputStream         | readObject()            | デシリアライズしてオブジェクトを復元する。           |
+  |                           | close()                 | 通常はtry-with-resourcesで自動的に呼び出される。     |
+  +---------------------------+-------------------------+------------------------------------------------------+
+
+・カスタムシリアライズ P273～
+  シリアライズ対象クラスに自由に直接書込みや読み込みを行う。
+  +--------------+-------------------------------------------------+-------------------------------------------------+
+  | シリアライズ | private void writeObject(ObjectOutputStream oos)| 独自シリアライズ処理を定義するカスタムメソッド  |
+  | 対象クラス   | private void readObject(ObjectInputStream ois)  | 独自デシリアライズ処理を定義するカスタムメソッド|
+  +--------------+-------------------------------------------------+-------------------------------------------------+
+  ①デフォルトシリアライズ
+    ObjectOutputStreamがリフレクションでシリアライズ対象のクラスをサーチして
+    writeObject()が見つからなければ"ObjectOutputStreamクラスのdefaultWriteObject()を自動的に呼び出す"
+    この場合、nameとageは通常通りシリアライズされる。
+    ----------------------------------------
+    class Person implements Serializable {
+    private String name;
+    private int age;
+    }
+    ----------------------------------------
+
+  ②カスタムシリアライズ
+    ObjectOutputStreamがリフレクションでシリアライズ対象のクラスをサーチして
+    writeObject()が見つかったら"シリアライズ対象クラスのカスタムwriteObject()を自動的に呼び出す"
+    "writeXXXXXという各データ型に応じたObjectOutputStreamのメソッド"でストリームに追加したい情報を定義。
+    こては"シリアライズ対象クラスのフィールドとは関係なくバイトストリームに「直接追加データ」として追加される"
+    つまり、シリアライズ機能は単純なデータ型int,long,doubleなどもストリームに保存出来る。
+    ----------------------------------------------------------------------
+    class MyClass implements Serializable {
+        private String name;
+        private int age;
+
+        public MyClass(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject(); // nameとageをバイトストリームに出力 (デフォルトシリアライズ)
+            out.writeInt(123);        // 123を「追加データ」としてバイトストリームに出力 (カスタムシリアライズ)
+        }
+    }
+    ----------------------------------------------------------------------
+    ・バイトストリームの順番（簡略化した例）
+      オブジェクトのクラス情報（クラス名、serialVersionUID）。
+      nameフィールドの値（String型）をバイト列として。
+      ageフィールドの値（int型）を4バイトとして。
+      123（整数）を4バイトとして。
+
+    ・writeInt等で追加されたデータは、デシリアライズ後にObjectInputStreamのreadInt()で取得出来る。
+      ------------------------------------------------------------------------------------------------
+      // デシリアライズ
+      try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("personWithInt.ser"))) {
+          Person deserializedPerson = (Person) in.readObject();  // オブジェクトをデシリアライズ
+          int additionalInt = in.readInt();  // 追加されたintデータを読み込む
+          System.out.println("デシリアライズ完了: " + deserializedPerson);
+          System.out.println("追加された整数値: " + additionalInt);
+
+      } catch (IOException | ClassNotFoundException e) {
+          e.printStackTrace();
+      }
+      ------------------------------------------------------------------------------------------------
+
+
+
+■java.nio.file.Pathインタフェース P276
+# Paths ユーティリティクラス
+主に"Pathインタフェースを実装するオブジェクトを生成するための静的メソッド(ファクトリメソッド)を提供"
+このクラスはjava.nio.fileパッケージに含まれている。
+Filesクラスなどと連携してファイル操作をすることが多い。
+※古いFileクラスより柔軟で安全な操作を可能にするPathオブジェクトを生成出来るモダンなクラス。
+--------------------------------------------------------------------------------------------------
+| メソッド名                        | 説明                                                       |
+|-----------------------------------|------------------------------------------------------------|
+| get(String first, String... more) | 指定されたパス文字列を使ってPathオブジェクトを生成します。 |
+|                                   | 例えば、Paths.get("dir", "file.txt")でPathを作成できます。 |
+|-----------------------------------|------------------------------------------------------------|
+| get(URI uri)                      | 指定されたURIからPathオブジェクトを生成します。            |
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------
+public class PathsExample {
+    public static void main(String[] args) {
+        //; パス文字列を使ってPathオブジェクトを生成
+        Path path1 = Paths.get("dir", "sample.txt");
+        System.out.println("Path 1: " + path1);
+
+        //; URIからPathオブジェクトを生成
+        URI uri = URI.create("file:///home/user/dir/sample.txt");
+        Path path2 = Paths.get(uri);
+        System.out.println("Path 2: " + path2);
+    }
+}
+--------------------------------------------------------------------
+
+# Path インターフェース
+・パスそのものを表現し、さまざまな操作を行うためのメソッドを提供。
+・"PathsクラスのPaths.get()でPathインタフェースを実装したオブジェクトを生成して各メソッドを使用する"
+  ※この時、FileSystems.getDefault()によって「デフォルトのFileSystem」を取得して
+    現在実行中のOSやプラットフォームに対応する具体的なPath実装クラスが実装されることでOSの違いが吸収される。
+  -----------------------------------------------------------------------------------------------
+  | 実装クラス   | 説明              | 主なメソッド                                             |
+  |--------------|-------------------|----------------------------------------------------------|
+  | UnixPath     | LinuxやmacOSなど用| getFileName(), getParent(), resolve(), toAbsolutePath()  |
+  | WindowsPath  | Windowsシステム用 | getFileName(), getParent(), resolve(), toAbsolutePath()  |
+  | AbstractPath | UnixやWindows両方 | getFileName(), getParent(), resolve(), toString()        |
+  -----------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------
+  | メソッド名            | 説明                                                            |
+  |-----------------------|-----------------------------------------------------------------|
+  | getFileName()         | パスの最後の部分（ファイル名またはディレクトリ名）を返す。      |
+  | getParent()           | パスの親ディレクトリを返す。                                    |
+  | getRoot()             | パスのルート部分を返す（例: /やC:\など）。                      |
+  | toString()            | パスを文字列として返す。                                        |
+  | toUri()               | パスをURIに変換して返す。                                       |
+  | toAbsolutePath()      | 絶対パスに変換したPathを返す。                                  |
+  | isAbsolute()          | パスが絶対パスかどうかを判定する。                              |
+  | resolve(Path other)   | 指定されたPathと現在のPathを組み合わせて新しいPathを返す。      |
+  | normalize()           | 不要な相対パス（..や./など）を解消した正規化されたパスを返す。  |
+  | relativize(Path other)| 現在のPathから指定されたPathを相対パスとして返す。              |
+  -------------------------------------------------------------------------------------------
+
+  ・resolveの引数2個の場合 P240
+    ①Paths.get("a", "test")
+      resolve("c.txt") の結果は a/test/c.txt
+      test がディレクトリであれば、問題なく操作できる。
+    ②Paths.get("a", "test.txt")
+      resolve("c.txt") の結果は a/test.txt/c.txt です。
+      ただし、test.txt が通常ファイルの場合、このパスは無効となり操作時にエラーが発生。
+      だからFiles.isDirectoryでディレクトリかどうか判断させたりする。
+  
+  ・実装されているクラス名の確認方法
+    -------------------------------------------------------------------------------
+    import java.nio.file.Path;
+    import java.nio.file.Paths;
+
+    public class PathClassExample {
+        public static void main(String[] args) {
+            Path path = Paths.get("example/file.txt");
+            System.out.println("実際のクラス名: " + path.getClass().getName()); //実際のクラス名: sun.nio.fs.WindowsPath
+        }
+    }
+    --------------------------------------------------------------------------------
+・ファイルやディレクトリを操作するFilesクラスと組み合わせて使用される。
+・絶対パスや相対パスのどちらにも対応。
+・java.nio.fileパッケージに属するインタフェース。
+
+# Files ユーティリティクラス
+・java.nio.File.Pathで表現されるファイルやディレクトリを操作するためのクラス。
+  --------------------------------------------------------------------------------------------------------
+  | メソッド名                        | 説明                                                           
+  |-----------------------------------|------------------------------------------------------------------
+  | createFile(Path path)             | 指定したパスに新しい空のファイルを作成
+  |                                   | 既に存在する場合はチェック例外FileAlreadyExistsException
+  | createDirectory(Path path)        | 指定したパスに新しいディレクトリを作成する
+  |                                   | 既に存在する場合はチェック例外FileAlreadyExistsException
+  |                                   | 親が存在しない場合はチェック例外NoSuchFileException
+  | createDirectories(Path path)      | 指定したパスにディレクトリを作成する
+  |                                   | 既に存在する場合は何もしない
+  |                                   | 親が存在しない場合は再帰的に作成
+  | exists(Path path)                 | 指定したパスが存在するかどうかを判定する。                              
+  | notExists(Path path)              | 指定したパスが存在しない場合にtrueを返す。                              
+  | isDirectory(Path path)            | 指定したパスがディレクトリかどうかを判定する。                         
+  | isRegularFile(Path path)          | 指定したパスが通常のファイルかどうかを判定する。                        
+  | delete(Path path)                 | 指定したパスのファイルまたはディレクトリを削除する。                    
+  | deleteIfExists(Path path)         | 指定したパスが存在すれば削除する。                                      
+  | copy(Path source, Path target)    | ファイルをコピーする（デフォルトでは上書き）。                          
+  | move(Path source, Path target)    | ファイルまたはディレクトリを移動する。
+  |                                   | 移動先のディレクトリに同名ファイルが存在する場合はチェック例外FileAlreadyExistsException
+  |                                   | 移動元と移動先のパスが同じでもファイルが違う場合は問題無し。
+  |                                   | 上書きさせたい場合は引数にオプションを定義。
+  |                                   | Files.move(source, target, StandardCopyOption.REPLACE_EXISTING)
+  | readAllLines(Path path)           | 指定したパスのファイルを行単位で読み込んでリストとして返す。               
+  | size(Path path)                   | 指定したパスのファイルのサイズをバイト単位で返す。                        
+  | getLastModifiedTime(Path path)    | ファイルの最終更新日時を取得する。                   
+  | getPosixFilePermissions(Path path)| POSIXファイルパーミッション（権限）を取得するために使用される。
+  | isReadable(Path path)             | 指定したパスが読み取り可能かどうかを判定する。                          
+  | isWritable(Path path)             | 指定したパスが書き込み可能かどうかを判定する。                          
+  | isExecutable(Path path)           | 指定したパスが実行可能かどうかを判定する。                              
+  |------------------------------------------------------------------------------------------------------
+  | setLastModifiedTime(Path path, FileTime time)            | ファイルの最終更新日時を設定する。                              |
+  | write(Path path, Iterable<? extends CharSequence> lines) | ファイルに行単位で文字列を書き込む。                            |
+  --------------------------------------------------------------------------------------------------------
+  
+  ・list(Path dir)
+    指定ディレクトリ直下のディレクトリとファイルのリストを取得 ※サブディレクトリは列挙されない。
+    Stream<Path>を戻す
+
+  ・walk(Path start, int maxDepth, FileVisitOption... options)
+    指定ディレクトリ直下＋サブディレクトリのディ区取りとファイルのリストを再帰的に取得。
+    Stream<Path>を戻す
+
+  ・find(Path start, int maxDepth, BiPredicate<Path, BasicFileAttributes> matcher)
+    条件に合致する最初のファイルを検索
+    指定されたディレクトリ内のファイルを再帰的に検索し、条件に合致する最初のファイルを返します。
+    Optional<Path>を戻す
+
+  ・Files.newBufferedReader(Path path, Charset cs);
+    テキストを効率的に読みこむためのメソッド。
+    CS:テキストファイルの文字エンコーディングを指定するためのCharset。
+    省略時はシステムのデフォルトエンコーディングが使用される。
+    ・使用する際の流れ
+      Paths.get("example.txt") でファイルのパスを作成。
+      Files.newBufferedReader で BufferedReader を生成。
+      BufferedReader.readLine() を使ってファイルを1行ずつ読み込む。
+      ※テキストだとlines().forEach使ってた。
+      try-with-resources を使用して、自動的にリソースを閉じる。
+
+  ・Files.newBufferedWriter(Path path, Charset charset, OpenOption... options)
+    書込みの場合はオプションでjava.nio.file.OpenOptionインタフェースを実装した列挙型StandardOpenOptionを使用可能。
+    この列挙型には次のような定数が定義されていて、適切な組み合わせじゃない場合は例外が発生する事もあるので注意。
+    --------------------------------------------------------------------------------------------------------------------
+    | 定数名              | 説明                                                                                       |
+    |---------------------|--------------------------------------------------------------------------------------------|
+    | APPEND              | 既存のファイルに追記モードで開きます。                                                     |
+    | CREATE              | ファイルが存在しない場合に新たに作成します。                                               |
+    | CREATE_NEW          | 新しいファイルを作成しますが、ファイルがすでに存在している場合はFileAlreadyExistsException |
+    | DELETE_ON_CLOSE     | ファイルを閉じた際に、ファイルを削除します。                                               |
+    | READ                | ファイルを読み込み専用で開きます。                                                         |
+    |---------------------|--------------------------------------------------------------------------------------------|
+    | WRITE               | ファイルを上書きモードで開きます。                                                         |
+    | TRUNCATE_EXISTING   | ファイルが既に存在する場合、ファイルの内容を切り捨ててから開きます。                       |
+    | SPARSE              | スパースファイル（中身のない領域を効率的に保存するファイル形式）を作成します。             |
+    | SYNC                | 書き込んだ内容を即座にディスクに同期します。                                               |
+    | DSYNC               | メタデータの書き込みを即座にディスクに同期します。                                         |
+    --------------------------------------------------------------------------------------------------------------------
+    
+    ・使用例
+    -------------------------------------------------------------------------------------------------
+    public class BufferedWriterExample {
+    public static void main(String[] args) {
+        Path path = Paths.get("sample.txt");  // 書き込み先のファイル
+
+        // try-with-resources 文を使用して BufferedWriter を自動的に閉じる
+        try (BufferedWriter writer = Files.newBufferedWriter(path, 
+                                                             StandardCharsets.UTF_8, 
+                                                             StandardOpenOption.CREATE, 
+                                                             StandardOpenOption.APPEND)) {
+            writer.write("This is an appended line.");
+            writer.newLine();
+            writer.write("Another line appended.");
+        } catch (IOException e) {
+            e.printStackTrace();  // 書き込み時に例外が発生した場合の処理
+        }
+    }
+    }
+    //;出力結果
+    ; This is an appended line.
+    ; Another line appended.
+    -------------------------------------------------------------------------------------------------
+  
+  ・考えられる例外
+  ---------------------------------------------------------------------------------------------------------------------------------------------------
+  | 例外名                        | 説明                                                                                   
+  |-------------------------------|------------------------------------------------------------------------------------------------------------------
+  | `IOException`                 | ファイル操作に失敗した場合に発生。ファイルシステムへのアクセス不良、読み書きエラー、権限の問題などが原因。    
+  | `FileAlreadyExistsException`  | `StandardOpenOption.CREATE_NEW` を使用した際に、指定されたファイルが既に存在している場合に発生。              
+  | `NoSuchFileException`         | `CREATE` や `CREATE_NEW` で指定したディレクトリが存在しない場合に発生。ディレクトリが無いため、ファイルを作成できない。
+  | `AccessDeniedException`       | ファイルやディレクトリに対するアクセス権限が不足している場合に発生。例: 読み取り専用ファイルへの書き込みなど。
+  | `InvalidPathException`        | 指定されたパスが無効な場合に発生。パス形式がファイルシステムに合わない場合など。                              
+  | `SecurityException`           | アプリケーションがファイルシステムにアクセスする権限を持っていない場合に発生。セキュリティマネージャーにより制限されることが原因。 
+  ------------------------------------------------------------------------------------------------------------------------------------------
+
+・
+
+
+
+
+
+
+
+
+
+
+
+
+
+
