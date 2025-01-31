@@ -1,0 +1,304 @@
+■DOMツリーの例
+Document (ドキュメントノード)
+  └── html (要素ノード)
+       ├── head (要素ノード)
+       │    └── title (要素ノード)
+       │         └── "ページタイトル" (テキストノード)
+       └── body (要素ノード)
+            ├── h1 (要素ノード)
+            │    └── "見出し" (テキストノード)
+            ├── p (要素ノード)
+            │    └── "段落テキスト" (テキストノード)
+            └── img (要素ノード)
+                 ├── src="image.jpg" (属性ノード)
+                 └── alt="sample" (属性ノード)
+
+■ノードの種類
+1. ドキュメントノード（Document Node）
+   - 説明: HTML文書全体を表すノードで、DOMツリーのルート。
+   - アクセス例: document
+   - 主なプロパティ・メソッド:
+     ・document.getElementById("example") ... IDで要素を取得
+     ・document.querySelector(".className") ... CSSセレクタで要素を取得
+
+2. 要素ノード（Element Node）
+   - 説明: HTMLタグそのものを表すノードで、構造を作る基本単位。
+   - 例: <h1>見出し</h1>（"<h1>が要素ノード"）
+   - アクセス例:
+     const element = document.querySelector("h1");
+     console.log(element.nodeName); // "H1"（タグ名）
+   - 主なプロパティ:
+     ・nodeName   ... タグ名を取得
+     ・attributes ... 属性リストを取得
+     ・childNodes ... 子ノードのリストを取得
+
+3. テキストノード（Text Node）
+   - 説明: HTMLタグ内のテキスト内容を表すノード。
+   - 例: <h1>見出し</h1>（「"見出し」がテキストノード"）
+   - アクセス例:
+     const element = document.querySelector("h1");
+     const textNode = element.firstChild; // テキストノードを取得
+     console.log(textNode.nodeValue); // "見出し"
+   - 主なプロパティ:
+     ・nodeValue ... テキストの内容を取得
+
+4. 属性ノード（Attribute Node）
+   - 説明: 要素の属性を表しますが、通常は直接アクセスされません。getAttribute() や setAttribute() で操作します。
+   - 例: <img src="image.jpg" alt="Sample Image"> では、src や alt が属性ノードです。
+   - アクセス方法:
+     属性は element.id や element.src のように直接プロパティを使って操作することが一般的です。
+     例えば、getAttribute() や setAttribute() を使って属性を操作する方法:
+     const img = document.querySelector("img");
+     console.log(img.getAttribute("src")); // "image.jpg"
+
+5. コメントノード（Comment Node）
+   - 説明: ドキュメント内のHTMLのコメントを表します。※JSの//じゃないので注意。
+   - 例: <!-- This is a comment --> はコメントノードです。
+
+■主な操作
+1. 要素の取得
+   - DOMツリーから特定の要素を取得する。
+
+・document.getElementById("example");
+  ※Id指定の場合は#が付かないので注意。
+
+・document.querySelector(".my-class");
+  セレクタは1つのみ指定可能で"最初に一致したDOM要素を返す"
+  ※セレクタの書き方
+  クラス: ".box"
+  ID    : "#header"
+  タグ  : "div"
+  属性  : [type="text"]
+
+・document.querySelectorAll("'div,p'"); セレクタ1個でも可能。
+セレクタは複数指定可能で"一致した全DOM要素をHTMLの出現順でNodeListで取得"
+配列ではないのでメソッドのサポートが変わるが、基本は配列のように操作出来る。
+例では、<div>と<p>の全DOM要素が取得し、DOM要素のリスト「NodeList」を返す。
+※完全に配列のように使うためには、Array.from() で配列に変換することが出来る。
+-----------------------------------------------------------------------------------
+const elements = document.querySelectorAll('div,p');
+elements.forEach(elements => {
+    console.log(elements);  // divとpが出現した順番で出力される。
+});
+-----------------------------------------------------------------------------------
+
+2. 要素の操作
+   - 内容や属性を変更する。
+   const element = document.getElementById("example");
+   element.textContent = "新しい内容";
+   element.style.color = "blue";
+
+3. 要素の追加・削除
+   - 新しい要素を作成したり、既存の要素を削除する。
+   const newDiv = document.createElement("div"); divタグを生成して取得
+   newDiv.textContent = "追加された要素";        テキストを登録
+   document.body.appendChild(newDiv);            appendChildは１つノードを親要素の最後に追加
+                                                 apendの場合は複数要素(ノードや文字列)を一括追加
+
+4. イベント処理
+   - クリックや入力などのイベントに応答する。
+   const button = document.querySelector("button");
+   button.addEventListener("click", () => alert("クリックされました"));
+
+
+■IDを指定して要素取得
+・document :HTMLドキュメント全体を表すオブジェクト。
+・getElementById("example") :documentのメソッド、引数のidの要素を取得。
+  一致する ID が複数ある場合、最初に見つかった要素だけが返されます。
+  一致する要素がない場合は null を返します。
+-------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>getElementByIdの例</title>
+</head>
+<body>
+  <h1 id="example">Hello!</h1>
+  <script>
+    const element = document.getElementById("example");
+    console.log(element); // <h1 id="example">Hello!</h1>
+    console.log(element.textContent); // "Hello!"
+  </script>
+</body>
+</html>
+-------------------------------------------------------------
+
+■リスナー
+-------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>リスナーの例</title>
+</head>
+<body>
+  <button id="myButton">クリックしてね</button>
+
+  <script>
+    // ボタン要素を取得
+    const button = document.getElementById("myButton");
+
+    // リスナーを登録（クリックイベントを監視）
+    button.addEventListener("click", function() {
+      alert("ボタンがクリックされました！");
+    });
+  </script>
+</body>
+</html>
+-------------------------------------------------------------
+
+■querySelectorとquerySelectorAllだけでほぼ全ての要素は取得可(jQueryからの逆輸入の機能)
+------------------------------------------------------------------
+<script>
+    // ▼ querySelector の戻り値は最初に文書内で見つかったElement
+    const starElement = document.querySelector("article .star");
+    // テキストの先頭に★を付与する
+    starElement.textContent = `★ ${starElement.textContent}`;
+
+    // ▼ querySelectorAll の戻り値は NodeList
+    const heartList = document.querySelectorAll("article .heart");
+    for (const element of heartList) {
+        // テキストの先頭に♡を付与する
+        element.textContent = `♡ ${element.textContent}`;
+    }
+</script>
+------------------------------------------------------------------
+
+■HTMLElement
+XMLは含まない、HTML専用のノード。
+
+■.parentNodeと.parentElementの違い
+console.log(document.documentElement.parentNode); // #document（ドキュメントノード）
+console.log(document.documentElement.parentElement); // null（ドキュメントノードは要素ノードでないため）
+
+■ノードの作成・挿入・削除
+カレントディレクトリを把握しておかないと迷子になる。
+要素タブからデバッグするとわかりやすい(要練習)
+
+■プロパティから属性値を取得・更新・設定
+要素ノードの属性は基本的に属性名と同名のプロパティから参照できます。
+例えば、id 属性の値は、Element.id で取得できます。
+一部例外があります。 class 属性は className プロパティで、 
+aria 属性のように間に - が入る場合は、キャメルケースに変換したプロパティ名になります。
+例えば、aria-hidden 属性の場合は ariaHidden プロパティでアクセスすることになります。
+
+■属性とプロパティの違い（<a>要素のhrefとtargetの例）
+1. 属性（Attribute）
+HTMLの<a>タグ内に指定された静的な初期設定で、ページ読み込み時にブラウザに読み込まれる値。
+getAttribute()やsetAttribute()でJavaScriptから読み取ったり変更したりできますが、
+変更はHTMLの初期設定に影響しません。
+
+2. プロパティ（Property）
+JavaScriptのDOM要素としてアクセスできる動的な値です。
+属性が初期設定を持つのに対し、プロパティはDOM上の要素の現在の状態を示し、
+ユーザーの操作やJavaScriptによる変更で即座に反映されます。
+
+■プロパティかメソッドで要素を取得する違い
+getAttributeで取得出来るのは初期値
+ユーザが入力した値を取得するなら動的なプロパティを使う。
+※リセットボタンがある時などにこの挙動が起こる。
+
+■classListプロパティ
+Styleタグ内の任意のクラスを操作出来る。
+add("")とかremove("クラス名")とか。
+toggle(クラス名)だとON/OFFスイッチと同じ
+toggle(クラス名,force) これがややこしいので引数２個は使わない方が良さそう。
+※force=true/false    true;add()と同じ。false:remove()と同じ。
+
+要素の書き換え---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+■innerHTML プロパティ
+ただの代入はテキストとして認識されてしまうが
+innerHTMLプロパティに設定した内容はタグ等が解析されHTMLとして解釈される。
+例：1行で書いてもインデントも考慮して解釈する。
+<body>
+<div id="container">
+</div>
+<script>
+    const elm = document.getElementById("container");
+    elm.innerHTML = "<h2>果物リスト</h2><ul><li>apple</li><li>banana</li><li>cherry</li></ul>";
+</script>
+</body>
+-------------------------------------------------------------------
+<body>
+<div id="container">
+    <h2>果物リスト</h2>
+    <ul>
+        <li>apple</li>
+        <li>banana</li>
+        <li>cherry</li>
+    </ul>
+</div>
+</body>
+-------------------------------------------------------------------
+
+※追記ではなく全て置き換わる。
+追記したい場合は(Element).innerHTML += "追加したい文書";
+
+■innerText プロパティ
+本来、表に見えているテキストのみが取得対象。
+HTMLElement.innerText プロパティ（※）を利用すると、
+この要素とさらに子孫関係にある要素のテキスト内容を一括して、
+結合されたひとつの文字列として取得できます。
+反対に、innerText へ文字列を代入した場合は、
+innerHTML と同様に、内部がすべて置き換えられます。
+innerTextに代入されるのは<p>タグの解析なくただのテキストとして扱われる。
+また、代入される文字列に改行文字が含まれている場合は br 要素に変換される。
+-------------------------------------------------------------------------------
+    <script>
+        const container = document.getElementById("container");
+        // 子孫関係にある要素も含めて内側のすべてのテキストノードの内容を文字列で取得
+        console.log(container.innerText);
+        // 文字列を代入すると内側のノードがすべて置き換えられる
+        // innerHTMLと違いタグを記述しても要素として扱われることはない
+        container.innerText = "<p>新しいテキスト\n改行文字は<br />に変換される</p>";
+    </script>
+-------------------------------------------------------------------------------
+ Elements（要素）パネルを選択すると、改行文字（\n）が br 要素に変換されている。
+
+■textContent プロパティ
+innerTextとは違い、本来ユーザから見られないscriptとstyle要素を含む全てのテキストが取得対象。
+このノードとさらに子孫関係にあるノードに含まれるテキスト内容を一括して、
+結合されたひとつの文字列として取得できます。
+この説明だけだと、前章のinnerText プロパティと似ていますが、次の点で大きな違いがあります。
+
+■クロスサイト・スクリプティング めちゃくちゃ大事
+絶対にinnerHTMLで入力されたデータをそのまま表示しないようにする。
+サニタイジング(無害な文字列であるエスケープ文字列に変換したりして表示させるようにする。)
+Webアプリケーションの脆弱性を利用して、ページ内に悪意のあるスクリプトを埋め込む攻撃手法です。
+innerHTML で作成したものには、XSSに対する脆弱性があり、入力フォームから悪意のあるスクリプトを埋め込めてしまいます。
+innerHTMLでユーザが入力したデータを画面上に表示出来るような仕掛けをしてしまうと
+悪意のある人がユーザの個人情報を不正に取得したりされる。有名な脆弱性なので絶対に防ぐように考えて作ること。
+
+■フロントエンジニアのセキュリティスキル
+脆弱性でユーザを危険にさらしてしまうのでセキュリティの知識は必要。
+体系的に学ぶ安全なWebアプリケーションの作り方
+
+■insertAdjacentHTML()メソッド
+innerHTML と同様に XSS に対する脆弱性がある。
+既存ノードの破壊を伴わずに新しいノードを挿入できるのが insertAdjacentHTML() メソッド
+軽く要素を追加したい時に使う。
+・innerHTMLで要素を追加すると？
+  ツリーを削除してから要素を作り直す処理になる。
+  innerHTML += "<p>追加文書</p>"
+  空文字列を代入して真っさらにしたい時とかぐらい、使うのは。
+  綺麗にやるならNode.removeChild(node)とかを使う。
+・insertAdjacentHTMLで要素を追加
+  ツリーはそのまま、要素の追加するので処理が軽い。
+・Element.insertAdjacentHTML( position, text )
+  指定されたテキストを HTML として解釈し、結果として生成されたノードを DOM ツリーの position で指定された位置に挿入します。
+
+ ■insertAdjacentElement()
+  innerHTML と同様に XSS に対する脆弱性がある。
+  要素オブジェクト作ってから、ツリーのどこに追加するか指定して追加していく。
+  こちらは、HTMLの文書ではなく要素（Element）オブジェクトを挿入します。
+・Element.insertAdjacentHTML( position, text )
+  呼び出された要素から相対的に見た position で指定された位置に、element を挿入します。
+
+■positionの表記
+position文字列	挿入位置
+"beforebegin"	要素の直前
+"afterbegin"	要素内部の最初の子要素の前
+"beforeend"  	要素内部の最後の子要素の後
+"afterend"  	要素の直後

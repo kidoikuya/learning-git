@@ -1,0 +1,399 @@
+■何が出来るの？
+・カスタマイズ向けのベースのサービス。
+  サーバ側やクライアント側で動かすコードを弄る。
+
+■必要スキル
+・APIを使ってカスタマイズしていくので
+  WEBアプリケーションのシステム構成を理解しておく。
+
+■午後はスクリプト関連
+・クライアント側のブラウザとサーバサイド側でスクリプトがわかれる。
+・クライアント側のデバックするのはブラウザ側のデベロッパーツール。
+  JSのコードなどはサービスナウを経由することで、処理されて、最終的なHTMLパネルになる。
+
+■非同期通信やってる
+なんらかのAPIを使っている、XMLの可能性が高い。
+XMLは拡張性があるデータ構造を持ったやつ、タグのような属性名を決められる、スキーマファイル
+JSONじゃないっぽい。
+
+■クライアント側の話
+スクリプトエディタ
+
+■コミュニティがある。
+・ServiceNow Community(Japan)
+
+■ナウラーニング
+・ITSM、ITOM、HR、CSM
+・利用者用の動画
+・導入部分はタダ
+・チャットGPTで全体掴んでから
+・公式見る感じ
+
+■クライアントスクリプト
+function onChange(control, oldValue, newValue, isLoading, isTemplate)
+control   : 変更されたフィールドのコントロールオブジェクト。これはServiceNowのフォーム内で変更されたフィールドを指します。
+oldValue  : 変更前の値。ユーザーが入力する前の値です。
+newValue  : 変更後の値。ユーザーが新しく入力した値です。※文字列として受け取る。
+isLoading : フォームがロード中かどうかを示すブール値。フォームが読み込み中の場合は true になります。
+isTemplate: このスクリプトがテンプレートで実行されている場合は true になります。
+
+■ビジネスルール
+・特定の条件下でサーバーサイドで実行されるスクリプト。
+  データベーステーブルに関連付けられており
+  データの挿入、更新、削除、または表示時に自動的に実行される。
+  これにより、データの整合性を保つためのルールを簡単に設定できる。
+
+・サーバーサイドスクリプト
+  クライアントではなく、サーバーで実行されます。
+  データがデータベースにコミットされるタイミングで動作。
+
+・イベント駆動型
+  テーブル上の特定のアクション（挿入、更新、削除、表示）に応じて実行。
+
+・種類
+  Before: レコードがデータベースに保存される前に実行。
+  After: レコードがデータベースに保存された後に実行。
+  Async: 非同期で実行（データベース操作に影響しない）。
+  Display: レコードがユーザーに表示される前に実行。
+
+・スコープ
+  特定のテーブルにのみ適用。
+
+・データ操作が可能
+  ビジネスルール内でフィールド値を変更したり、他のスクリプトや機能を呼び出せます。
+
+・ビジネスルールの作成手順
+  ナビゲータから「ビジネスルール」を検索し、新規作成。
+  名前やテーブル、タイミング（Before/Afterなど）を設定。
+  スクリプト欄に必要な処理を記述。
+
+・GlideRecordオブジェクト
+  GlideRecordはServiceNowのサーバースクリプトで
+  データベーステーブルに対してCRUD（作成、読み取り、更新、削除）操作を行うためのオブジェクト
+
+
+■スクリプトインクルード
+----------------------------------------------
+var MyScript = Class.create();
+MyScript.prototype = {
+    initialize: function() {
+    },
+    
+    sayHello: function(name) {
+        return "Hello, " + name + "!";
+    },
+    
+    type: 'MyScript'
+};
+----------------------------------------------
+var script = new MyScript();
+var message = script.sayHello('ユーザー名');
+gs.print(message); // 結果: Hello, ユーザー名!
+----------------------------------------------
+gs は ServiceNow の GlideSystem クラスのインスタンスであり
+サーバーサイドスクリプトで使用されるユーティリティオブジェクト。
+ログの記録、メッセージの表示、日時の操作、システム情報の取得など、便利な操作が可能。
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| 機能                  | メソッド/プロパティ                    | 説明                                         | 使用例                                                   |
+|-----------------------|----------------------------------------|----------------------------------------------|--------------------------------------------------------|
+| ログ出力              | `gs.print(message)`                    | サーバーログにメッセージを出力する           | `gs.print("これはサーバーログです");`                   |
+| デバッグログ          | `gs.debug(message)`                    | デバッグレベルのログを記録する               | `gs.debug("デバッグログの例です");`                     |
+| 現在のユーザーID取得  | `gs.getUserID()`                       | ログイン中のユーザーのSys IDを取得           | `var userId = gs.getUserID();`                         |
+| 現在のユーザー名取得  | `gs.getUserName()`                     | ログイン中のユーザー名を取得                 | `var userName = gs.getUserName();`                     |
+| ユーザー表示名取得    | `gs.getUserDisplayName()`              | ログイン中のユーザーのフルネームを取得       | `var fullName = gs.getUserDisplayName();`              |
+| メッセージの翻訳      | `gs.getMessage(message)`               | システム言語設定に応じたメッセージを取得     | `var msg = gs.getMessage("This is a message");`        |
+| 現在日時の文字列取得  | `gs.now()`                             | 現在の日時を文字列形式で取得                 | `var now = gs.now();`                                  |
+| 現在日時のオブジェクト| `gs.nowDateTime()`                     | 現在の日時をGlideDateTimeオブジェクトで取得  | `var nowObj = gs.nowDateTime();`                       |
+| イベントの発火        | `gs.eventQueue(name, current, ...)`    | システムイベントを発火させる                 | `gs.eventQueue("event_name", current, "param1");`      |
+| ユーザーロール確認    | `gs.hasRole(role)`                     | 指定したロールを持っているかを確認           | `if (gs.hasRole("admin")) { gs.print("管理者です"); }` |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+■メモ
+・配布されていたサンプルアプリ見てみるとか
+
+・g系
+  g_home ログインしている人のフォーム
+  g_user ログインしているユーザ名や権限が取得できるオブジェクト。onloadで取得して自動入力させる。
+
+・インスタンスログイン後のページに表示されるオープンサービスナウスタジオ
+  開発したアプリケーションの状態一覧がエクスプローラーみたいに見える。
+
+・操作しやすそうな画面紹介
+  オープンUIビルダー:画面構築
+  カスタムユーザーエクスペリエンス：
+  ワークフロースタジオ：図とか使える感じ
+  クリエータースタジオ：
+
+
+■振り返り
+クライアントスクリプトの練習
+クライアントスクリプトで出来るようになっておくと良いと思ったこと
+ 
+  1. フィールド入力直後の入力値のバリデーション
+
+  2. 送信時（送信ボタンクリック時）の入力値チェック（相関項目のチェックも含む）
+     不正な場合は警告ダイアログを表示して、送信をキャンセル
+     個別だけじゃなく、複数のフィールドの整合性(送還項目)が取れているようにonsubmit時のチェック。
+
+  3. 他のテーブルからのデータ参照
+     あるフィールドが外部キーになっている場合
+     入力された値から該当するテーブルよりレコードを参照して
+     自動で関連の読み取り専用フィールドに値を入力する仕掛け
+
+  4. 関連フィールドの値により、動的なフィールドの表示／非表示の切り替え
+
+  5.ユーザー（ログインしている）のグループや権限、ロールによるフィールドの表示／非表示の制御
+・g_userでユーザ名とロールは取得出来たので、ロールでフィールドの表示非表示は出来た。
+  g_userではどうしてもグループ名が取得出来なかったので試したこと。
+  タイプを参照にして、sys_user_grmemberを参照しようとしたけどsys IDしか参照出来なかった。
+  スクリプトインクルードにサーバ側スクリプトを書いて、クライアントスクリプトから呼び出そうとしたけど駄目。
+  デベロッパーツールでエラー見るとスクリプトの呼び出しでNOT FOUNDになってる所までは見て封印した。
+
+・インクルードのメモ
+  ---------------------------------------------------------------------------------------------------
+    function onLoad() {
+        var ga = new GlideAjax('MyGroupScript'); // サーバー側のスクリプト名を指定
+        ga.addParam('sysparm_name', 'getMyGroups');
+        ga.getXML(getMyGroupsResponse);
+    }
+
+    function getMyGroupsResponse(responseXML) {
+        var answer = responseXML.responseXML.documentElement.getAttribute("answer");
+        g_form.setValue('group_field', answer); // 取得したグループ名をフォームの"group_field"という名前のフィールドに設定
+    }
+  ---------------------------------------------------------------------------------------------------
+  // サーバー側のスクリプト (Script Include など)
+  var MyGroupScript = Class.create();
+  MyGroupScript.prototype = {
+      getMyGroups: function() {
+          var gr = new GlideRecord('sys_user_grmember');
+          gr.addQuery('user', gs.getUserID());
+          gr.query();
+          var groupNames = [];
+          while (gr.next()) {
+              groupNames.push(gr.group.name);
+          }
+          return groupNames.join(', ');
+      }
+  };
+
+  var myGroupScript = new MyGroupScript();
+  ---------------------------------------------------------------------------------------------------
+
+
+
+■sys_idから取得する方法らしい
+var sys_id = '62826bf03710200044e0bfc8bcbe5df1'; // SysIDを何らかの方法で知っている前提
+var gr = new GlideRecord('sys_user');
+if (gr.get('sys_id', sys_id)) {
+  // 処理 例: gs.info(gr.getValue('user_name'));
+}
+
+■GlideRecord グライド
+addQuery(): 検索条件を追加します。
+query(): 実際にデータベースからクエリを実行します。結果をGlideRecord オブジェクトに格納
+next(): 次のレコードを取得します（結果が無ければ false を返します）。
+setLimit(): 取得するレコードの件数を制限します。
+orderBy() / orderByDesc(): ソート順を設定します。
+insert(): 新しいレコードを挿入します。
+update(): 現在のレコードを更新します。
+--------------------------------------------------------------------------
+var gr = new GlideRecord('x_1606430_shk_hand_x_1606430_shk_hand');
+gr.orderByDesc('sys_created_on');  // 日付で降順ソート
+gr.setLimit(1);  // 直前の1件だけに絞る
+gr.query(); // クエリ実行
+--------------------------------------------------------------------------
+SELECT * 
+FROM x_1606430_shk_hand_x_1606430_shk_hand 
+ORDER BY sys_created_on DESC 
+LIMIT 1;
+--------------------------------------------------------------------------
+
+■貰ったコード
+-------------------------------------------------------------------------------------------------------
+・クライアントスクリプト
+const ga = new GlideAjax("ShkHandsOn");  // "ShkHandsOn"というScript Includeを指定
+ga.addParam("sysparm_name", "getParams");  // Script Include内のメソッド名
+ga.addParam("param1", param1);  // 送信するパラメータ
+ga.addParam("param2", param2);  // 送信するパラメータ
+ga.getXMLAnswer(function(answer){ // ここでgaに蓄積した情報を基にShkHandsOnを実行し非同期で待機後にanswer受取りコールバック実行。
+    const data = JSON.parse(answer);  // レスポンスをJSONとして解析
+    console.log("★★★★★★★★★★★★★★★★ data= "+data);
+    console.log(JSON.stringify(data, null, 2));
+});
+
+-------------------------------------------------------------------------------------------------------
+
+・スクリプトインクルード
+var ShkHandsOn = Class.create();
+ShkHandsOn.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	getParams(){
+		const param1 = this.getParameter("param1");
+		const param2 = this.getParameter("param2");
+
+    // 文字列じゃないと返せないのでJSON文字列に変換して返している。
+    // プロパティ―と値が同じだから省略してparam1だけ書いてる。
+		return JSON.stringify({
+                    param1,
+                    param2
+                });
+	},
+    type: 'ShkHandsOn' // これはデフォルト入力される値っぽい、ヒントとして使われるっぽい。任意の名前に変更可能。
+});
+-------------------------------------------------------------------------------------------------------
+
+■Object.extendsObject(targetObject, sourceObject)
+targetObject は、拡張（継承）を受けるオブジェクト。
+sourceObject は、targetObject に追加したいプロパティやメソッドを持つオブジェクトです。
+このメソッドは、targetObject のプロトタイプに sourceObject のプロパティやメソッドをコピーします。
+
+-----------------------------------------------------------
+global.AbstractAjaxProcessorが下記の拡張を受けている
+
+{
+    getParams() {
+        const param1 = this.getParameter("param1");
+        const param2 = this.getParameter("param2");
+
+        return JSON.stringify({
+            param1,
+            param2
+        });
+    },
+    type: 'ShkHandsOn'
+}
+-----------------------------------------------------------
+
+
+■jQueryの使い方
+const jQuery = globalThis.jQuery
+const &j = globalThis.$j;
+ID指定の時に「.」が使われている場合は
+$j(#element\\.x_159431")
+------------------------------------------------------------------------------------------------------------------
+↓ クライアントスクリプトで参照フィールドから、関連テーブルのレコードを取得するコード
+ 
+```
+function onChange(control, newValue, oldValue, isLoading) {
+   //Type appropriate comment here, and begin script below
+   if(isLoading) return;
+   g_form.getReference("parent", function(record){
+    // console.log(record);
+    // console.log(`承認者のコメント：${record.u_comment}`);
+    g_form.setValue("u_comment", record.u_comment);
+   });
+}
+```
+ 
+↓ クライアントスクリプトで jQuery を使用したコード
+```
+function onLoad() {
+  // Type appropriate comment here, and begin script below
+	// console.log("--------------------------");
+	// console.log(globalThis.jQuery);
+	// console.log(globalThis.$j);
+	// console.log("--------------------------");
+	// const jQuery = globalThis.jQuery;
+	const $j = globalThis.$j;
+	const target = $j("#element\\.x_1594310_shk_hand_sample_table\\.param1").css("background-color", "red");
+	globalThis.setTimeout(()=>{
+		target.hide();
+	},3_000);
+        // target.html("");
+	console.log(target);
+}
+------------------------------------------------------------------------------------------------------------------
+
+
+
+
+■UIアクション
+ボタンなどを追加し、クリックなどで発火させられる。
+処理させたいコードはscriptにそのまま書いちゃう。
+
+■JSONの扱い
+オブジェクト型→JSON文字列型に変換
+--------------------------------------------------
+return JSON.stringify({result}); 
+--------------------------------------------------
+
+オブジェクトの中にresultプロパティがあって
+その値が配列で、配列の1個目がオブジェクトの{ himo: "value" }
+--------------------------------------------------
+var answer = '{"result":[{"himo": "value"}]}';
+var result = JSON.parse(answer);
+console.log(result);
+～～～～～～～～～～～～～～～～
+{
+  result: [{ himo: "value" }]
+}
+--------------------------------------------------
+
+■getReference(1,2)
+第一引数から"クライアントスクリプトだけで参照先テーブルのレコードを非同期で取得"
+取得したレコードはrecordとして、第二引数の無名関数に渡される。
+処理内容は任意。
+-------------------------------------------------------------------------
+	// getReference使用バージョン(成功)
+	g_form.getReference('item', function(record){   // itemから参照値を取得
+       g_form.setValue('himo_name2',record.himo); // 参照先の値を取得
+	});
+-------------------------------------------------------------------------
+var record = g_form.getReference('item'); 
+console.log(record.himo); // これは動かない！（recordは非同期のためすぐ参照出来ない）
+---------------------------------------------------------------------------
+
+
+
+
+■TODO
+・jQuery利用
+・UIアクション利用
+・親テーブルから子テーブルに値がいくビジネスルール。
+----------------------------------------------------
+・DOMAPIが書けないの改善したい
+・Classとプロトタイプ継承の復習
+・GlideAjaxとメソッドまとめる
+・g_userとg_form以外も調べて、メソッドもまとめる
+
+
+■進め方
+①会議室予約システムのワークフロー
+承認者
+担当者 会議予約胃
+メール通知が良く
+--------------------------------------------------------
+こういう一連の流れを図で作成する。
+ワークフローデザイナーorワークフロースタジオを調べてみて。
+--------------------------------------------------------
+
+②外部サービス
+ServiceNowとチームスのログインIDとかカレンダーを連携させることで管理コスト
+ServiceNowからデータを引っ張ってチームス上に会議情報を表示させたり出来る。
+※案件がどこまで求められるかによって勉強範囲が決まる
+
+・REST思想
+HTTPを使う、HTTP上にAPIを構築するために
+この思想を一部使ったのをRESTAPI、完全に思想に乗ったのはRESTFULL
+URLの設計でもREST、リクエストパラメータ。
+URLの送り方(GET/POST/PUT/DELTE)によって動作を返るコントローラ―みたいな事ができる。
+GET
+sh-k.com/resaverrvation/book get
+body-----------
+?room_id=101
+---------------
+POST
+sh-k.com/resaverrvation/book?room_id/101
+
+
+ログインしている場合に下記みたいに
+apikey = fsdflkasjdfl;kasjdflkjsdalf
+
+GET/該当する会議室の予約情報の取得／予約入力フォーム取得
+POST/会議室の新規予約
+PUT/既存の予約情報の更新
+DELTE/予約のキャンセル
+

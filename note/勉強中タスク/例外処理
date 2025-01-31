@@ -1,0 +1,44 @@
+■
+--------------------------------------------------------------
+const TAX_RATE = 10;  // 税率
+function calcTax(price){
+    // ▼ priceに負の値が渡された場合は例外をスローする
+    if(price < 0){
+        // ▼ messageプロパティの値を引数に渡し、
+        //    new演算子で例外オブジェクトを作成してスローする
+        throw new RangeError("価格に負の値を指定できません。");
+    }
+    return price * TAX_RATE / 100;
+}
+
+try{
+    calcTax(-100); // エラー発生: -100は負の値なので、RangeErrorがスローされる
+}catch(error){
+    console.error(error); // 出力: RangeError: 価格に負の値を指定できません。
+}
+～～～～～～～～～～～～～～～～～～～～～～～～
+RangeError: 価格に負の値を指定できません。
+--------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+try {
+    console.log(calculateAverage(1, 2, 3)); // 出力: 2 (平均値: (1+2+3)/3)
+    console.log(calculateAverage(1, 2, 3, 4, 5)); // 出力: 3 (平均値: (1+2+3+4+5)/5)
+    console.log(calculateAverage()); // 出力: NaN (引数なしで、0で割るためNaN)
+    console.log(calculateAverage(1, 2, "a", 4, 5)); // エラー発生: 数値以外の値が含まれているため、TypeErrorが発生
+} catch (err) {
+    console.error(err.message); // 出力: 数値以外の値を指定することはできません。
+}
+
+function calculateAverage(...numbers) {
+    return numbers.length
+        && numbers.reduce(
+            (prev, num) => {
+                if (typeof num !== "number") {
+                    throw new TypeError("数値以外の値を指定することはできません。");
+                }
+                return prev + num;
+            }, 0) / numbers.length;
+}
+
+----------------------------------------------------------------------------------

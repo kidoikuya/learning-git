@@ -1,0 +1,18 @@
+■cssの例
+「id=field_ageの要素が持つclassListにerrorクラスが含まれる」
+この条件が満たされたら、afterで宣言した疑似要素が発火される。
+
+label:has(#field_age[class~="error"])::after{
+    display: inline;
+    content: "1～99の範囲で入力してください。";
+    color: red;
+}
+
+■代表的なインライン要素
+<span>: テキストをグループ化したいときに使用
+<a>: ハイパーリンクを作成
+<strong>: 文字を太字にする
+<em>: 文字を斜体にする
+<img>: 画像を表示する
+<b>: 文字を太字にする（意味的には <strong> と同様だが、意味合いが異なる）
+<i>: 文字を斜体にする（意味的には <em> と同様だが、意味合いが異なる）

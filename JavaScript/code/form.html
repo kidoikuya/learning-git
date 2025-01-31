@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フォームのバリデーションを行うスクリプト</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./form_validate.js" defer></script> <!--deferはHTML解析後に順番保証でスクリプト読み込み-->
+</head>
+<body>
+    <form id="myform" action="#"> <!-- actionはformの送り先、#は現在のページのURL。再読み込みされるだけ -->
+        <div>
+            <label for="field_age"> <!-- 年齢というラベルとinput欄をidで紐づける -->
+                年齢：
+                <input type="text" id="field_age" name="age" size="10">
+            </label> <!-- formに渡される例 age=25 -->
+
+            <br>
+
+            <label for="field_kind">
+                種別：
+                <select name="kind" id="field_kind">
+                <!-- selectタグでoptionが省略されてる = このままだと選択肢が出ない -->
+                <!-- form_validate.jsで動的にoption生成して選択肢を出す-->
+                <!-- <option value="a">a</option> 選択肢に表示されるのはテキスト内容
+                     <option value="b">b</option> 選択されたvalueの値をnameの値とペアにしてform送信する。
+                     <option value="c">c</option> -->
+                </select>
+            </label> <!-- formに渡される例 kind=b -->
+        </div>
+        <button type="submit">送信</button> <!-- 送られる例 age=25&kind=b ※&で繋がれる-->
+    </form>
+</body>
+</html>

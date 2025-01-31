@@ -1,0 +1,5 @@
+label:has(#field_age[class~="error"])::after{
+    display: inline;
+    content: "1～99の範囲で入力してください。";
+    color: red;
+}

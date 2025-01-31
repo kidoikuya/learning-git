@@ -2203,7 +2203,7 @@ public class PathsExample {
   | readAllLines(Path path)           | 指定したパスのファイルを行単位で読み込んでリストとして返す。               
   | size(Path path)                   | 指定したパスのファイルのサイズをバイト単位で返す。                        
   | getLastModifiedTime(Path path)    | ファイルの最終更新日時を取得する。                   
-  | getPosixFilePermissions(Path path)| POSIXファイルパーミッション（権限）を取得するために使用される。
+  | getPosixFilePermissions(Path path)| POSIXファイルパーミッシtw225_snow@yahoo.co.jpョン（権限）を取得するために使用される。
   | isReadable(Path path)             | 指定したパスが読み取り可能かどうかを判定する。                          
   | isWritable(Path path)             | 指定したパスが書き込み可能かどうかを判定する。                          
   | isExecutable(Path path)           | 指定したパスが実行可能かどうかを判定する。                              

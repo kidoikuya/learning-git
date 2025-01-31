@@ -1,0 +1,257 @@
+■並行か並列
+・同期処理と非同期処理は共に基本的にメインスレッド内で"並行処理"される。
+・Web Woker APIなどはメインスレッド以外でJSを実行できるため"並列処理"になる。
+  ただし、メインスレッドとのデータのやり取りはpostMessageメソッドの利用が必要。
+  重たい処理をWokerに移動するメリットもあるが、デメリットとしてデータのやり取りに制限がある。
+  https://developer.mozilla.org/ja/docs/Web/API/Web_Workers_API/Using_web_workers
+
+■例外処理
+・同期処理は今まで通りtry-catchで例外をキャッチできる。
+・非同期処理はコールバック関数のように、tryブロック外での処理があった時に例外をキャッチできない。
+  対策として"Promise・Async Function"を使う方法がある。
+  ※Async FunctionはPromiseの上に成り立っている構文のため、両方とも理解する必要がある。
+ 
+■Promise
+・概要
+  非同期の操作が完了することを「約束」する非同期のビルトインオブジェクト。
+  結果が成功（resolve）か失敗（reject）かによって処理結果を分岐させる。
+  非同期処理がPromiseインスタンスで返した結果に応じて成功（fulfilled）or 失敗（rejected）に遷移。
+  例では、無名関数を利用して処理結果に応じた分岐を定義している。
+  "非同期な関数はPromiseという非同期処理の状態をラップしたオブジェクトで返し
+  その結果が決まったら、予め登録しておいたコールバック関数へ結果を渡すという仕組み"
+
+
+・Promiseのコンストラクタ
+  こいつのコンストラクタはビルトイン関数なので宣言不要。
+  "Promiseがnewされたら瞬間executerを実行"
+  "executerとは引数に指定したアロー関数式のこと"
+  このアロー関数式で非同期の処理内容を受け取る。
+  この非同期処理の結果を待ち、結果が出たら通知する。
+  この通知を受け取るのがPromiseが持つメソッド達(raceやall)
+・Promiseのメソッドを使うためにPromise型のオブジェクトでタスクを走らせる。
+
+  【基本の形】
+  --------------------------------------------
+  const task1 = new Promise((resolve, reject) => {
+   "// 組込みコンストラクタだから見えないんだけど
+    // Promiseがインスタンス化されたら即動き出し
+    // コンストラクタが関数のresolveとrejectを自動生成して
+    // executerを実行 ←こいつは引数のアロー関数式のこと。"
+  });
+  --------------------------------------------
+
+  【基本の形２】
+  -----------------------------------------------------------------
+  const task1 = new Promise((resolve, reject) => {
+    // 1秒後に成功とする非同期処理
+    setTimeout(() => {
+      const success = true; // 成功/失敗を切り替えるフラグ
+      if (success) {
+        resolve("タスク成功！"); //例ではsuccessがtrueなのでresolve関数が実行される。
+      } else {
+        reject("タスク失敗...");
+      }
+    }, 1000);
+  });
+
+  //; thenメソッドは結果結果が出るまで待機している。
+  //; 結果が到達次第、その結果がresolveかrejectかによって処理を分岐。
+  //; resolveならthenが処理され、rejectだったらcatchに伝播される。
+  task1
+    .then(result => {
+      console.log(result); // 上で処理された結果はresolveなので、その "タスク成功！" を出力
+    })
+    .catch(error => {
+      console.error(error); // 今回の処理内容はrejectではないので、この行は処理されない。
+    });
+  -----------------------------------------------------------------
+
+
+  【レベルアップ】
+  ----------------------------------------------------------------
+  //; 1つ目の非同期タスク
+  const task1 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("Task 1 is done!");
+      resolve("Task 1 completed");
+    }, 1000); // 1秒後に完了
+  });
+
+  //; 2つ目の非同期タスク
+  const task2 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("Task 2 is done!");
+      resolve("Task 2 completed");
+    }, 500); // 0.5秒後に完了
+  });
+
+  //; task1とtask2のどちらかの処理結果が来るのを待機中
+  //; 処理結果が初めに届いた方だけ処理する。
+  Promise.race([task1, task2])
+    .then(result => {
+      console.log(`First completed: ${result}`);
+    })
+    .catch(error => {
+      console.error(`Error: ${error}`);
+    });
+  ----------------------------------------------------------------
+
+・Promiseチェーンの注意点
+  then()→then()同士を繋げる場合は新しいPromiseを返すためreturnが必須。
+  then()→catchの場合 "catchはthenの成功結果を受け取らないためthenのreturnは不要"
+  ----------------------------------------------------------------
+  myPromise
+    .then(result => {
+      console.log(result);  // 最初の成功結果
+      return "次の処理";
+    })
+    .then(nextResult => {
+      console.log(nextResult);  // "次の処理"
+      return "最後の処理";
+    })
+    .then(finalResult => {
+      console.log(finalResult);  // "最後の処理"
+    })
+    .catch(error => {
+      console.error(error);  // エラーハンドリング
+    });
+  ----------------------------------------------------------------
+
+・Promise のライフサイクル
+Promise の状態には以下の3つがあり、それぞれの状態を合わせて「Promise のライフサイクル」とも呼ばれます。
+
+Pending（保留中）
+初期状態で、まだ resolve や reject が呼ばれていない状態です。
+非同期処理が進行中で、結果が決まっていません。
+
+Fulfilled（解決済み）履行
+Promise が正常に解決され、resolve が呼ばれた状態です。
+この場合、Promise は「成功」し、結果として値が返されます。
+
+Rejected（拒否済み）拒否
+Promise が失敗し、reject が呼ばれた状態です。
+この場合、エラーが発生し、Promise は「失敗」となります。
+------------------------------------------------------------------------------------
+settled（決定済み）完了
+Settled は、Fulfilled や Rejected の「総称」
+"Pending → Fulfilled または Rejected に遷移した時に完了状態になる。"
+settled 状態になると、その後の then や catch で結果やエラーを処理することができます。
+■■■■■■■■■■■■■■■■■■■■■■■■■
+Pending ── resolve() ─→ Fulfilled (Settled)
+   │
+   └── reject() ─→ Rejected (Settled)
+■■■■■■■■■■■■■■■■■■■■■■■■■
+
+・Promise.all([Promise,Promise,Promise]):
+  配列で受けたPromise全てが成功したタイミングで結果を返す。
+  1つでも失敗すると、即座にエラーが返される。
+  例ではpromise1～3は全て同時起動(非同期なので)されて
+  promise1 と promise2 はそれぞれ1秒と0.5秒後に解決されますが
+  allメソッドで最も時間のかかる処理（この場合は promise3 の2000ms）が終了するのを待っています。
+
+・setTimeout()
+  指定した遅延時間後に関数を一度だけ実行するための非同期ビルトイン関数
+  setTimeout(コールバック関数,指定時間ms,"コールバック関数処理後に解決結果として返される値")
+  指定時間経過後にコールバック関数が呼ばれ、その解決結果として第三引数の値が返される。
+  --------------------------------------------------------------------------------
+  const promise1 = new Promise(resolve => setTimeout(resolve, 1000, "処理1完了"));
+  const promise2 = new Promise(resolve => setTimeout(resolve, 500, "処理2完了"));
+  const promise3 = new Promise(resolve => setTimeout(resolve, 2000, "処理3完了"));
+
+  //; すべてのPromiseが解決するまで待機
+  Promise.all([promise1, promise2, promise3])
+    .then(results => {
+      console.log(results);  // ["処理1完了", "処理2完了", "処理3完了"]
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  --------------------------------------------------------------------------------
+
+
+■asyncとawait
+  Promiseのシンタックスシュガー
+  asyncキーワードを付与された関数は"非同期関数として宣言されPromiseを返す"
+  async内でのみ利用可能なawaitキーワードで"非同期処理が完了するまで(Promiseが到着まで)待機させる"
+  この２つのキーワードを組み合わせる事で"非同期処理を同期的に扱える"
+  ※従来のthenチェーンを使った書き方よりも、ロジックを直感的に記述可能。
+  ---------------------------------------------------------------------------
+  async function main() {
+    console.log("処理を開始します");
+    const result = await new Promise(resolve =>
+      setTimeout(() => resolve("非同期処理が完了しました"), 2000) //2秒後にMSG出力する非同期処理
+    );
+
+    console.log(result); // "非同期処理が完了しました"
+    console.log("処理を終了します");
+  }
+
+  main();
+  ---------------------------------------------------------------------------
+
+
+■イベントループの流れ
+・JavaScriptは、メインスレッドである実行スタック(コールスタック)で
+  同期的なコードが積まれて順番にコードを実行されていき
+  非同期処理はキューに入れて後回しにする。
+
+①実行スタック（Call Stack）
+  LIFO（後入れ先出し） のデータ構造だが、同期処理は１つずつ入って空になったら次の処理が入る。
+  関数などのように内部処理がある場合は、親の上に子がスタックされる、子→親の順で終了する。
+  同期処理から非同期処理が呼び出される場合
+  同期処理がコールスタックで非同期処理を呼び出しキューに待機させたら、さっさと同期処理は終了する。
+
+②キュー（Queue）
+  非同期処理（例:setTimeout、APIリクエスト、イベントリスナーなど）は一旦キューに入れられる。
+  これらの処理はコールスタックが空になったタイミングで１つずつ取り出され実行されます。
+
+③イベントループ
+  コールスタックが空になったタイミングで、キューで待機中の非同期タスクがFIFOで1つずつ実行される。
+  ※先入れ先出し（FIFO: First In, First Out） でキューからコールスタックに積まれます。
+
+-----------------------------
+console.log("Start");     //; 1番目にコールスタック積まれ、処理後に次へ進む。
+setTimeout(() => {        //; 2番目にsetTimeoutがコールスタックに積まれるが即終了し、非同期処理のみキューで待機
+  console.log("Timeout"); //; 4番目にコールスタックが空になったタイミングでキューから非同期処理が積まれて処理される。
+}, 0);
+console.log("End");       //; 3番目にコールスタックに積まれ、処理終了。
+-----------------------------
+
+
+
+
+
+
+■要復習
+const zipcodes = [
+  "2430014",
+  "2430015",
+  "2430016",
+  "2430017"
+];
+const baseURL = "https://zipcloud.ibsnet.co.jp/api/search";
+(async () => {
+  const addressMap = new Map();
+  for(const zipcode of zipcodes){
+      const url = `${baseURL}?zipcode=${zipcode}`;
+      try{
+          const res = await fetch(url);
+          if (res.ok) {
+              const { results:
+                  [
+                      {
+                          address1,
+                          address2,
+                          address3
+                      }
+                  ]
+              } = await res.json();
+              addressMap.set(zipcode ,`${address1}${address2}${address3}`);
+          }
+      } catch (err) {
+          console.log(err);
+      }
+  }
+  console.log(addressMap);
+})();
+-------------------------------------------------------------

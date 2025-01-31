@@ -1,0 +1,54 @@
+■コールバック関数
+・他の関数に引数として渡され、その関数内で実行されます。
+・非同期処理（例えば、setTimeoutやfetchなど）の終了後、コールバック関数が実行されます。
+・実行した関数の結果を処理するために使用されることが多い。
+
+■高階関数
+・コールバック関数を受けたり渡したりコントロールする関数
+  高階関数の特徴＝引数として関数を取る、関数そのものを他の関数の引数として渡すことができる。
+
+【コード例】
+---------------------------------------------------
+// ▼ 高階関数
+function repeat(callbackFunc, repeatNum){
+  for(let i = 0; i < repeatNum; i++){
+    callbackFunc();
+  }
+}
+// ▼ コールバック関数
+function printAsterisk(){
+  console.log("*");
+}
+// ▼ 高階関数の呼び出し
+repeat(printAsterisk, 5);  // * が 5回出力される
+---------------------------------------------------
+
+【一時利用ならアロー関数式を利用するとスマート】
+---------------------------------------------------
+function repeat(callbackFunc, repeatNum){
+    for(let i = 0; i < repeatNum; i++){
+      callbackFunc();
+    }
+  }
+  repeat(()=>{
+    console.log("*");
+  }, 5);  // 上と同様に * が 5回出力される
+---------------------------------------------------
+
+
+■見直す
+---------------------------
+const myArr = {
+  elements: [1, 2, 3, 4],
+  myMap(callback){
+    const newArr = [];
+    for(const e of this.elements){
+      newArr.push(callback(e));
+    }
+    return newArr;
+  }
+}
+
+const newArr = myArr.myMap(e => e * 2);
+console.log(newArr); // [2,4,6,8]
+------------------------------------------

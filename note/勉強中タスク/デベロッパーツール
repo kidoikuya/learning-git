@@ -5,3 +5,9 @@
 テキストボックスが表示されるので、監視したい変数名や式を入力します。
 例:myVariableや、myArray.length、x + yなど
 Enterキーを押すと、監視リストに追加されます。
+
+■translated-ltrとは
+・テキストが左から右に書かれる LTR（Left To Right）モードを使用していることを示す。
+・Chromeの翻訳機能を使用するとhtmlタグに「translated-ltr」のclassが付与される？
+
+■

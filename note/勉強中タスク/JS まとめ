@@ -46,6 +46,52 @@ console.log(person.birthplace?.country);
 ・他の関数オブジェクトに引数として渡せる(コールバック関数)
 ・メソッドはプロパティに紐づく関数オブジェクト。
 
+■new or オブジェクトリテラル
+・newはコンストラクタ関数を使ってオブジェクトを生成する。
+-------------------------------------------------------------------------
+function abc() {
+  this.name = "田中";
+}
+
+const newobj = new abc(); // コンストラクタ関数を使ってオブジェクトを生成
+console.log(newobj.name);  // "田中"
+-------------------------------------------------------------------------
+const newobj = {
+  name: "田中"
+};
+
+console.log(newobj.name);  // "田中"
+-------------------------------------------------------------------------
+
+・newを使わない場合どうなるのか
+
+-new使用時------------------------------------------------------------------------
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const person1 = new Person("田中", 30);  // コンストラクタ関数の戻り値は新しく生成されたオブジェクト
+console.log(person1.name);  // "田中"
+console.log(person1.age);   // 30
+
+-new不使用------------------------------------------------------------------------
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const person1 = Person("田中", 30);  // new不使用なのでthisはグローバルオブジェクトを指す
+console.log(person1);       // undefined（戻り値がないため）
+console.log(person1.name);  // TypeError: Cannot read properties of undefined (reading 'name')
+console.log(globalThis.name); //グローバルオブジェクトを利用して出力
+-------------------------------------------------------------------------
+
+
+
+
+
+
 ■関数の呼び出し型
 ・関数定義＝thisを持っている。
 function abc(){
@@ -86,7 +132,9 @@ Pythonのデコレータと同じ考え、@が出てきたら思い出そう。
 関数が別の関数を返すことができる。
 
 ■グローバルオブジェクト
-ブラウザで上げるか、node.jsで上げるかでも変わってくる。
+実行環境: ブラウザ = window
+実行環境: node.js  = global
+EC2020からはglobalThisを使えば実行環境問わずに参照可能。
 
 ■thisについて
 ・前提としてJSはthisを省略できない。
@@ -166,9 +214,9 @@ package.json に記述されたパッケージを再度インストールする�
 堅牢な開発が出来るので、大規模開発でよく利用される。
 例: Spring、Django、Ruby on Rails など。
 
-
-
-
+■非同期通信
+varを使ってるかも。
+フェッチが出てきてる、
 
 
 

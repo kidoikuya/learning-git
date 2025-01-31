@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非同期リクエストと自動入力の練習</title>
+    <script src="./script.js" defer></script>
+</head>
+<body>
+    <form id="myform" action="#" method="post">
+        <div>
+            <label for="field_postcode">
+                郵便番号：
+                <input type="text" id="field_postcode" name="postcode" size="7">
+            </label>
+        </div>
+        
+        <div>
+            <label for="field_address">
+                住所：
+                <input type="text" id="field_address" name="address" size="50">
+            </label>
+        </div>
+        <button type="submit">送信</button>
+    </form>
+</body>
+</html>

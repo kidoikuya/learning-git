@@ -1,0 +1,125 @@
+■form内のinputタグで入力した値を取得する方法
+    <form id="myform" action="#" method="post">
+        <div>
+            <label for="field_postcode">
+                郵便番号：
+                <input type="text" id="field_postcode" name="postcode" size="7">
+            </label>
+        </div>
+--------------------------------------------------------------------------------
+const elm = document.querySelector("#field_postcode");
+const name = elm.name;    // "postcode"
+const value = elm.value;  // 入力された郵便番号（例: "123-4567"）
+console.log(name, value);  // 出力: "postcode 123-4567"
+
+
+
+■textContent を使ったテキストの取得・変更
+<div id="example">Hello, World!</div>
+<script>
+  const element = document.getElementById("example");
+  
+  // テキストの取得
+  console.log(element.textContent); // 出力: Hello, World!
+
+  // テキストの変更
+  element.textContent = "New Text!";
+  console.log(element.textContent); // 出力: New Text!
+</script>
+
+
+
+■innerHTML を使ったHTML内容の取得・変更
+<div id="example"><strong>Bold Text</strong></div>
+～～～～～～～～～～～～～～～～～～～～～～～～～～～
+<script>
+  const element = document.getElementById("example");
+
+  // HTMLの取得
+  console.log(element); //出力: <div id="example"><strong>Bold Text</strong></div>
+
+  // innerHTMLの取得
+  console.log(element.innerHTML); // 出力: <strong>Bold Text</strong>
+
+  // HTMLの変更
+  element.innerHTML = "<em>Italic Text</em>";
+
+  // 結果確認
+  console.log(element); 出力:<div id="example"><em>Italic Text</em></div>
+  console.log(element.innerHTML); // 出力: <em>Italic Text</em>
+</script>
+
+
+■style操作
+<div id="example" style="color: blue;">Hello, World!</div>
+<script>
+  const element = document.getElementById("example");
+
+  // スタイルの取得
+  console.log(element.style.color); // 出力: blue
+
+  // スタイルの変更
+  element.style.color = "red";
+  element.style.fontSize = "20px"; // フォントサイズを変更
+</script>
+
+
+
+■属性（getAttribute / setAttribute）の操作
+<a id="example" href="https://example.com" target="_blank">Link</a>
+<script>
+  const element = document.getElementById("example");
+
+  // 属性の取得
+  console.log(element.getAttribute("href")); // 出力: https://example.com
+
+  // 属性の変更
+  element.setAttribute("href", "https://newsite.com");
+  console.log(element.getAttribute("href")); // 出力: https://newsite.com
+</script>
+
+
+
+■クラス名の操作
+<div id="example" class="box">Hello, World!</div>
+<script>
+  const element = document.getElementById("example");
+
+  // クラスリストを「文字列」として取得
+  console.log(element.className); // 出力: box
+
+  // クラスの変更１
+  element.className = "new-class"; class="new-class" 
+
+  // クラスの変更２
+  element.classList.replace("new-class", "new-class2");
+
+  // クラスを追加
+  element.classList.add("highlight"); //class="new-class2 highlight" 
+
+  // クラスを削除
+  element.classList.remove("new-class2"); //class="highlight" 
+
+  // クラスをトグル（クラスをON/OFF切替）
+  // 表示、非表示を切り替える際などに使われる。
+  // hiddenクラスに予め非表示用のcssをセットしておく感じ。
+  element.classList.toggle("hidden"); // class="highlight hidden" 存在しない→追加
+  element.classList.toggle("hidden"); // class="highlight"        存在する  →削除
+
+  // クラスが存在するか確認
+  console.log(element.classList.contains("hidden")); // true または false
+</script>
+
+
+
+■DOMに要素を作成・追加
+createElement()メソッドで指定したタグの要素を新規作成する。
+※append()で既存の要素の最後に新しい要素やテキストを追加する。
+<script>
+    setTimeout(()=>{
+        // ▼ p タグの要素オブジェクトを作成
+        const element = document.createElement("p");
+        element.textContent = "追加された文章";  // 要素内のテキストを設定
+        document.body.append(element);  // <body> タグ内の最後に作成した要素を追加
+    }, 5_000);
+</script>

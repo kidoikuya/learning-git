@@ -1,54 +1,9 @@
-■サイトの作り
-マルチ：読み込みが発生する
-
-CSS：読み込みが発生しない
-#page1、#page2という感じでURLが変化している。
-これはページ内ジャンプしている。
-
-JS：同じURLでページが切り替わる
-HTMLタグをJSプログラムによって生成している。
-つまり、JSの範囲内であればサーバとのやり取りはするが
-URLが同じままでページの切り替えが出来る。
-ちゃんと作りこまないとブラウザバックができない。
-
-React：
-JSは同じURLのままでページ切り替えが出来る反面
-同じURLのままではブラウザバックが出来なくて不便。
-その作りこみが大変だから簡単に作れるようにしようというのがReact Router。
-
-■演習時の注意点
-・ブラウザのデバッグ機能を使用すること。
-  console.logの結果は、コンソールパネルに表示される。
-  DOMAPI演習＞その他＞ブラウザの開発支援ツールの使い方。
-
-■DOM APIとは
-ブラウザに備わっている Web API のひとつ
-HTML または XML で書かれた文書を操作するためのインターフェースです。
-プレーンテキストを解析→DOMツリー作成→ツリーを基に画面表示作成
-DOMツリーをJS、DOMAPIを使って修正していく。
-
-■DOMツリー
-ドキュメントノード（HTML文書全体を指す）
-要素ノード（HTMLのタグ）
-テキストノード（タグの内側のテキスト）
-
 ■DOMを利用してJSから文書を操作する。
 ブラウザを起動すると、グローバルオブジェクト(Windowsオブジェクト)が最上位に定義される。
 その下に、documentやconsole等のオブジェクトのプロパティが用意される。
-window.console.log()という呼び出し方でなく、console.log()のみで呼び出す。
-Windowとwindowは違う、windowはWindow自身の参照を指すイメージ。
-
-■HTML文書内の要素を取得する方法
-Documentのメソッド、getElementById()メソッドでid属性を指定すると取得できる。
-※タグ名で取得したい場合はgetElementsByTagName()を使う。
-<body>
-    <h1 id="title">湘南ハイテク企画</h1>
-    <script>
-        // ▼ id 属性の値が "title" の要素を取得
-        const element = document.getElementById("title");
-        console.log(element.textContent);  // 湘南ハイテク企画
-    </script>
-</body>
+window.console.log()という呼び出し方でも使えるが
+console.log()という感じでプロパティを呼び出した方がスマート。※結果はどっちも同じ
+ちなみにWindowとwindowは違う、windowはWindow自身の参照を指すイメージ。
 
 ■オブジェクト作成→Domツリー追加
 ①アンカータグ作成aタグ相当するオブジェクトを作る
@@ -131,7 +86,7 @@ HTML内の全要素を解析を終えた後までscriptの実行を遅らせる�
 </head>
 
 ■モジュールとして外部ファイルを読み込む方法
-最新のブラウザは ECMAScript Modules に対応しています。 
+最新のブラウザは ECMAScript Modules に対応しています。エクマスクリプト 
 <script>タグ内にtype="module"属性を付与する事が必須。
 モジュールとしてこのファイルを読み込むことができます。
 <script type="module" src="外部のJavaScriptファイルへのパス" ></script>
@@ -164,6 +119,7 @@ innerWidth：現在のウィンドウのビューポートの幅（ピクセル�
 innerHeight：現在のウィンドウのビューポートの高さ（ピクセル単位）。
 localStorage  ：ブラウザにデータを永続的に保存するためのストレージ。mapみたい
 sessionStorage：セッションが続く間だけデータを保持するストレージ。mapみたい
+
 ※localStorage と sessionStorage が参照するオブジェクトは、
 どちらも同じウェブストレージAPIである Storage を継承しているため、
 共通のメソッドでデータを管理することができます。
@@ -171,6 +127,7 @@ getItem(key)
 setItem(key, value)
 removeItem(key)
 clear()
+
 ※Local Storage や Session Storage はドメイン単位でストレージが管理されている
 同一ドメインからこれらのストレージを利用するアプリケーションを複数配信する場合は、
 キーの衝突を避けたり、 clear() メソッドの実行による一斉削除を行わないなどの考慮が必要。

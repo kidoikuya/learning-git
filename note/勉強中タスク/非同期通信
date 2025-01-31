@@ -1,0 +1,159 @@
+■同期通信
+→MVCモデルでコントローラ―で捌いてたやつ。
+HTTPリクエストに対して、HTMLが返される場合、静的にページが遷移してしまう。
+
+■非同期通信
+講義中にHTML要素クリックした際にURLが変化するかどうかやってたやつ。
+URLはそのままでHTMLに動的にスクリプトの結果が書き込まれる。
+主にメール、Ajax、イベント駆動処理が"非同期処理になりえる"
+XMLHttpRequestオブジェクトやfetch APIが使用されて、
+ECサイトの検索とかイイねとかみたいに動的に変更できる。
+DBを利用している場合はサーバーへの処理が発生するから 非同期通信が必要になる。
+
+■同期処理にも非同期通信にもなりえる理由
+イベント駆動処理の場合
+同期処理：ダークモードなどの一時的な処理はJSとCSSだけで完結
+非同期処理：イイね等の表示変更に加え、DBといったサーバ処理が入る時
+
+
+■前提
+XMLデータをHTMLに反映させるためには、まずXMLを取得してDOMに変換し
+その後、HTML要素を動的に生成してページに挿入します。
+これを実現するために、XMLHttpRequestやfetchを使った非同期通信を利用します。
+
+■XMLHttpRequestを使った非同期処理（入門編）
+①非同期バージョン
+XMLHttpRequest（XHR）を使用して、サーバーからXMLデータを非同期で取得し
+レスポンスが返ってきたときにそのデータを処理する例です。順を追って説明します。
+-------------------------------------------------------------------
+// XMLHttpRequestのインスタンスを作成
+var xhr = new XMLHttpRequest();
+
+// リクエストの設定 (第三引数で非同期(true)でXMLを取得する準備、戻り値はundefined)
+xhr.open('GET', 'https://example.com/data.xml', true);
+
+// onload: リクエストが成功し、レスポンスが返ってきたときに実行されるコールバック関数
+// status: HTTPレスポンスのステータスコードを取得
+// responseXML: 文字列をXML形式のデータにパース(変換)、responseXMLプロパティにパース済みのXML DOMが格納され、HTMLに反映できる形になる。
+xhr.onload = function () {
+  if (xhr.status >= 200 && xhr.status < 300) {
+    // コードが200～299なら正常としてレスポンスをXMLとしてパース
+    var xmlDoc = xhr.responseXML;
+    // XMLの処理
+    console.log(xmlDoc);
+  } else {
+    console.error('Request failed with status:', xhr.status);
+  }
+};
+
+// 通信中にエラーが発生した場合に実行されるコールバック関数。
+xhr.onerror = function () {
+  console.error('Request failed');
+};
+
+// リクエストを非同期でサーバへ送信、このレスポンスをonloadで拾う。
+xhr.send();
+-----------------------------------------------------------------------------------------
+
+
+
+■XMLHttpRequestを使った非同期処理（実践編）
+--------------------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XML to HTML</title>
+</head>
+<body>
+  <h1>XML Data</h1>
+  <div id="data-container"></div> <!-- ここにXMLデータを反映 -->
+
+  <script>
+    // XMLHttpRequestを使ってXMLを取得
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://example.com/data.xml', true);
+
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        // レスポンスがXMLの場合、パースしてXML DOMを取得
+        var xmlDoc = xhr.responseXML;
+
+        // ここでXMLの内容をHTMLに反映
+        var items = xmlDoc.getElementsByTagName('item'); // XMLの要素を取得
+
+        var container = document.getElementById('data-container'); // 反映先のHTML要素
+
+        // 各item要素を処理してHTMLに挿入
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var title = item.getElementsByTagName('title')[0].textContent; // <title>要素を取得
+          var description = item.getElementsByTagName('description')[0].textContent; // <description>要素を取得
+
+          // 新しいHTML要素を作成
+          var div = document.createElement('div');
+          div.classList.add('item');
+          div.innerHTML = '<h2>' + title + '</h2><p>' + description + '</p>';
+
+          // 作成したdivをHTMLに挿入
+          container.appendChild(div);
+        }
+      } else {
+        console.error('Request failed with status:', xhr.status);
+      }
+    };
+
+    xhr.onerror = function () {
+      console.error('Request failed');
+    };
+
+    // リクエスト送信
+    xhr.send();
+  </script>
+</body>
+</html>
+--------------------------------------------------------------------------------------
+
+
+■fetchを利用したXML取得の非同期通信
+----------------------------------------------------------------------------------
+fetch('https://example.com/data.xml')
+  .then(response => {
+    // レスポンスが正常かを確認
+    if (response.ok) {
+      return response.text();  // テキスト形式でレスポンスを取得
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  })
+  .then(str => {
+    // レスポンスをXMLとしてパース(文字列をXML形式のデータに変換)
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(str, 'application/xml');
+    
+    // XMLの処理
+    console.log(xmlDoc);
+  })
+  .catch(error => {
+    console.error('There has been a problem with your fetch operation:', error);
+  });
+----------------------------------------------------------------------------------
+
+
+
+■演習
+
+https://zipcloud.ibsnet.co.jp/api/search?zipcode=2430014
+
+パラメータ名→ zipcloud
+
+
+
+
+function onChange(control,oldValue, newValue, isLoading, isTemplate){
+  if (isLoading || newValue === ``){
+    return;
+  }
+  //Type appropriate comment here,and begin script below
+}

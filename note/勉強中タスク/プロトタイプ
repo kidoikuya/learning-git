@@ -1,0 +1,303 @@
+■プロトタイプ継承（prototype inheritance）
+・プロトタイプとは
+  JSでは全オブジェクトがプロトタイプ（親オブジェクト）を持っており
+  プロトタイプを通じて継承関係が形成される。
+  ほぼ全てのオブジェクトはXXXXX.prototypeに定義されたprototypeオブジェクトを継承している。
+  プロトタイプチェーンでプロトタイプを遡っていくと最終的にObject.prototypeにたどり着く。
+  "クラスベースの継承とは異なりオブジェクトが他のオブジェクトを基にしてメソッドやプロパティを共有する形式"
+ 
+■処理色々
+ ・__proto__ プロパティ
+  プロトタイプの値が格納されている[[Prototype]]にアクセスするための参照が格納されている。
+  ※[[Prototype]]はJavaScriptエンジン内部の抽象的な内部プロパティのため直接見る事が出来ない。
+  ※ES6以降は「__proto__」ではなく「Object.getPrototypeOf()」の仕様が推奨されてる。
+  -------------------------------------------------------------
+  const obj = { name: "田中" };
+  const arr = [1, 2, 3];
+
+  //; __proto__ を使う方法
+  console.log(obj.__proto__);  // Object.prototype
+  console.log(arr.__proto__);  // Array.prototype
+  console.log(arr.__proto__.__proto__);  // Object.prototype
+  console.log(arr.__proto__.__proto__.__proto__);  // null
+  -------------------------------------------------------------
+
+・Object.getPrototypeOf(オブジェクト名)
+  __proto__プロパティに格納されている[[Prototype]]への参照値を取得する
+  -------------------------------------------------------------
+  const obj = { name: "田中" };
+  const arr = [1, 2, 3];
+
+  //; Object.getPrototypeOf() を使う方法
+  console.log(Object.getPrototypeOf(obj));  // Object.prototype
+  console.log(Object.getPrototypeOf(arr));  // Array.prototype
+  console.log(Object.getPrototypeOf(Object.getPrototypeOf(arr)));  // Object.prototype
+  console.log(Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(arr))));  // null  
+  -------------------------------------------------------------
+
+・Object.create(プロトタイプにしたいオブジェクト名) メソッド
+  新しいオブジェクトを作成し、そのオブジェクトに指定したプロトタイプオブジェクトを設定するためのメソッド。
+  このメソッドは、作成したオブジェクトが、指定されたオブジェクトを「プロトタイプ」として継承するようにします。
+  ---------------------------------------------------------------
+  const obj = { name: "田中" };
+  const person = Object.create(obj); //personのプロトタイプをobjに指定して生成している。
+  person.age = 20;
+
+  console.log(person.name); // "田中" → プロトタイプobjのnameプロパティを使用。
+  console.log(person.age);  // 20     → personに定義済のageプロパティを使用。
+  ---------------------------------------------------------------
+
+・Object.hasOwn(探索対象のオブジェクト,探索したいプロパティ名)
+  プロパティがオブジェクトに含まれているかチェックする静的メソッド
+  "チェック対象は対象オブジェクトのみ"
+  -------------------------------------------------------------------
+  const obj = { name: "田中", age: 25 };
+  console.log(Object.hasOwn(obj, "name")); // true
+  console.log(Object.hasOwn(obj, "age"));  // true
+  console.log(Object.hasOwn(obj, "gender")); // false
+  -------------------------------------------------------------------
+
+・in演算子
+  プロパティがオブジェクトに含まれているかチェックする演算子。
+  "チェック対象はオブジェクト or プロトタイプのオブジェクト"
+  -------------------------------------------------------------------
+  const obj = { name: "田中" };
+  const person = Object.create(obj); // 新しく生成したオブジェクトのプロトタイプにobjを指定
+  person.age = 20;
+
+  // in演算子を使用してプロパティの存在を確認
+  console.log('age' in person);  // true  → personにageプロパティが存在する
+  console.log('name' in person); // true  → nameプロパティはobjから継承されているためtrue
+  console.log('address' in person); // false → addressプロパティは存在しない
+  -------------------------------------------------------------------
+
+・Object.setPrototypeOf(変更対象オブジェクトA,変更先のオブジェクトB)
+  プロトタイプの内部リンクを変更する静的メソッド
+  第一引数のAオブジェクトのプロトタイプの内部リンク[[Prototype]]を
+  第二引数のオブジェクトに変更する。
+
+  ※探索順番
+  "プロトタイプ自体は変更されない"で"内部リンクが変更される"ため
+  最初にAのプロトタイプが探索されるのは変わらない。
+  自分 → プロトタイプ → プロトタイプのプロトタイプ・・・
+  "Aが生成したオブジェクトa内→Aのプロトタイプの内部リンク→Bのオブジェクトのプロトタイプ→ Object.prototype"
+  ----------------------------------------------------------------------------------------------------------
+  //; 祖先オブジェクト
+  const ancestorObj = { greeting: "Hello" };
+
+  //; 子オブジェクト
+  const childObj = {}; //オブジェクトリテラル利用時のプロトタイプはデフォルトのObject.prototype
+
+  //; 親オブジェクトのプロトタイプの内部リンクをObject.prototype→ancestorObjに変更
+  Object.setPrototypeOf(childObj, ancestorObj);
+
+  console.log(childObj.greeting);      // "Hello" → 祖先オブジェクトから継承されたプロパティ
+  console.log('greeting' in childObj); // true → greetingプロパティはchildObjに存在しないが、プロトタイプから継承されている
+  console.log('name' in childObj);     // false → nameプロパティはchildObjにもプロトタイプにも存在しない
+  ----------------------------------------------------------------------------------------------------------
+  {
+    //;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //; ▼ 祖先オブジェクト
+    const ancestorObj = {
+      sayGoodbye: () => { console.log("Goodbye. (ancestorObj)") },
+      sayGreat: () => { console.log("Great. (ancestorObj)") }
+    }
+
+    //; ▼ 親オブジェクト
+    const parentObj = {
+      sayHello: () => { console.log("Hello. (parentObj)") },
+      sayGreat: () => { console.log("Great. (parentObj)") }
+    }
+
+    //; ▼ 子オブジェクト
+    const childObj = {};
+
+    //;■■■■■■ まだ各オブジェクトのプロトタイプはObject.prototype ■■■■■■■
+
+    //; ▼ 子のObject.prototype→親のparentObjに変更（プロトタイプ継承）
+    Object.setPrototypeOf(childObj, parentObj);
+
+    //; ▼ 親→祖先に変更（プロトタイプ継承）
+    Object.setPrototypeOf(parentObj, ancestorObj);
+
+    childObj.sayHello();   // 親オブジェクトのメソッドが呼び出される
+    childObj.sayGoodbye(); // 祖先オブジェクトのメソッドが呼び出される
+    childObj.sayGreat();   // 親オブジェクトのメソッドが呼び出される (近い方優先)
+  }
+  ----------------------------------------------------------------------------------------------------------
+
+
+
+■検証１ 正常な結果
+-------------------------------------------------------------------------------------
+//;コンストラクタ関数
+function Person(firstName, lastName, age){
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+}
+
+//;preson1目線で考えて！！！！！！！！！！！！！！！！
+//;preson1から見たプロトタイプはPerson.prototype
+//;だから、Personにintroduceメソッドを追加したい場合は
+//;子インスタンスが参照できるようにPerson.prototypeに追記しなくてはいけない。
+Person.prototype.introduce = function() {
+  console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+};
+
+//;コンストラクタ関数で生成されたオブジェクトperson1のプロトタイプは
+//;コンストラクタ関数名.prototypeになる。例:Person.prototype
+const person1 = new Person('太郎', '田中', 25);
+
+//;どのコンストラクタで生成されたか調べる方法
+console.log(person1.constructor);  // [Function: Person]
+
+//;Person.prototypeの中身はintroduceプロパティに無名関数Function(anonymous)が入ってる。
+//;なんで無名関数なのかはintroduceを追加した行を見ればわかる。
+console.log(Person.prototype);     // { introduce: [Function(anonymous)] } 
+console.log(person1.__proto__);    // { introduce: [Function(anonymous)] } 
+console.log(person1.__proto__ === Person.prototype);  // true
+
+//;プロトタイプチェーンで遡ってみるとこうなる
+//;Objectプロパティのタイプがnull prototypeなので、最上位だという事がわかる。
+console.log(person1.__proto__.__proto__ ); // [Object: null prototype] {}
+console.log(Object.prototype);             // [Object: null prototype] {}
+console.log(person1.__proto__.__proto__ === Object.prototype);  // true
+-------------------------------------------------------------------------------------
+
+■検証２ 失敗
+introduce = function()
+これだと"introduceがグローバルオブジェクト直下に定義されてしまう"
+----------------------------------------------------------------------------------------
+function Person(firstName, lastName, age){
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+}
+introduce = function() { 
+  console.log(名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。);
+};
+----------------------------------------------------------------------------------------
+
+■検証３ 失敗
+だったら、window.Person.introduce = function()だったら？
+これは、window.Person.introduceには追加は出来ているが
+そもそも"子インスタンスが参照する先はPerson.prototype.introduceなので意味が無い"
+----------------------------------------------------------------------------------------
+function Person(firstName, lastName, age) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+}
+window.Person.introduce = function() { 
+  console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+};
+const person1 = new Person("太郎", "田中", 25);
+person1.introduce(); // これはエラーになる！ Person.prototype で定義されていないから
+----------------------------------------------------------------------------------------
+
+■検証４ 成功
+クラスを使う場合、プロトタイプ不要になる。
+現場によってはこっちになることもある。
+---------------------------------------------------------------------------------------------
+class Person {
+    constructor(firstName, lastName, age) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.age = age;
+    }
+    // Personクラスブロック内でメソッドを追加
+    introduce() {
+      console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+    }
+  }
+  const person1 = new Person('太郎', '田中', 25);
+  person1.introduce();  // "名前は太郎 田中です。年齢は25です。"
+
+  //;※クラスの定義でintroduceメソッドを定義したタイミングで
+  //;インスタンスのプロトタイプPerson.prototypeに自動的に追加されるが
+  //;非列挙プロパティとして扱われるため、console.log(Person.prototype)で表示されない。
+  console.log(Person.prototype);
+
+  //;非列挙プロパティの表示はgetOwnPropertyNamesを使う。
+  //;["constructor", "introduce"]とはPerson.prototypeが持つ全プロパティを示してる。
+  console.log(Object.getOwnPropertyNames(Person.prototype));  // ["constructor", "introduce"]
+---------------------------------------------------------------------------------------------
+
+
+
+
+■XXX.prototypeの中身って？
+・XXXのコンストラクタやビルトインメソッドが格納されている。
+  これらのメソッドの実装はJSエンジンのネイティブコード(C++)で
+  ブラウザNode.jsなどの実行環境に組み込まれているため、JSのコードとしては閲覧出来ない。
+  ------------------------------------------------------------------------------------------------
+  Array.prototype {
+    constructor: ƒ Array(),
+    concat: ƒ concat(),
+    copyWithin: ƒ copyWithin(),
+    entries: ƒ entries(),
+    every: ƒ every(),
+    fill: ƒ fill(),
+    filter: ƒ filter(),
+    find: ƒ find(),
+    ～～～～～～～～～～～～～～～～～～～～～～～～～～～
+    toString: ƒ toString(),
+    unshift: ƒ unshift(),
+    [Symbol.iterator]: ƒ values()
+  }
+  ------------------------------------------------------------------------------------------------
+
+
+
+■コンストラクタ関数の継承 基本文法３－３
+--------------------------------------------------------------
+//; ▼ Personコンストラクタ関数
+function Person(firstName, lastName, age){
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+}
+
+//; ▼ Personコンストラクタ関数にメソッドを追記
+// "重要ポイント：メソッドが追記されるタイミングは定義した瞬間"
+Person.prototype.introduce = function(){
+  console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+};
+
+//; ▼ Employee関数を継承するコンストラクタ関数
+function Employee(firstName, lastName, age, position){
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+  this.position = position;
+}
+
+//; ▼ Employeeコンストラクタ関数にメソッドを追記
+// "重要ポイント：メソッドが追記されるタイミングは定義した瞬間"
+Employee.prototype.getPosition = function(){
+  console.log(`役職は${this.position}です。`);
+}
+
+//; ▼ 継承関係を設定
+// "この時点で既にintroduceとgetPositionは各コンストラクタ関数に追加済"
+Object.setPrototypeOf(Employee.prototype, Person.prototype);
+
+//; ▼ Employee 関数から new 演算子でオブジェクトを作成
+employee = new Employee("太郎", "田中", 20, "マネージャ");
+
+//; ▼ プロトタイプチェーン
+employee.introduce();   // employeeに無いがPerson.prototypeを継承してるのでintroduceを呼べる。
+employee.getPosition(); // employeeにgetPosition()は追記済なので問題無く呼び出せる。
+--------------------------------------------------------------
+
+・探索される順番
+employee.__proto__ (=== Employee.prototype)
+  |
+  └──> Employee.prototype.__proto__ (=== Person.prototype)
+         |
+         └──> Person.prototype.__proto__ (=== Object.prototype)
+                |
+                └──> null
+
+employee → Employee.prototype → Person.prototype → Object.prototype
