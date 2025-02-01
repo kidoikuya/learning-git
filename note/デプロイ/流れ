@@ -1,5 +1,0 @@
-Linux上にDockerを入れる。
-Docker化: アプリケーションとMySQLをDockerコンテナ化。
-AWS EC2にデプロイ: DockerコンテナをEC2インスタンスにデプロイ。
-MySQL接続設定: Spring BootアプリケーションにMySQLの接続設定。
-公開: AWSのElastic Load BalancerやRoute 53を使用して公開。
