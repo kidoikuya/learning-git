@@ -1,0 +1,96 @@
+■スクリプトインクルード
+----------------------------------------------
+var MyScript = Class.create();
+MyScript.prototype = {
+    initialize: function() {
+    },
+    
+    sayHello: function(name) {
+        return "Hello, " + name + "!";
+    },
+    
+    type: 'MyScript'
+};
+----------------------------------------------
+var script = new MyScript();
+var message = script.sayHello('ユーザー名');
+gs.print(message); // 結果: Hello, ユーザー名!
+----------------------------------------------
+gs は ServiceNow の GlideSystem クラスのインスタンスであり
+サーバーサイドスクリプトで使用されるユーティリティオブジェクト。
+ログの記録、メッセージの表示、日時の操作、システム情報の取得など、便利な操作が可能。
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| 機能                  | メソッド/プロパティ                    | 説明                                         | 使用例                                                   |
+|-----------------------|----------------------------------------|----------------------------------------------|--------------------------------------------------------|
+| ログ出力              | `gs.print(message)`                    | サーバーログにメッセージを出力する           | `gs.print("これはサーバーログです");`                   |
+| デバッグログ          | `gs.debug(message)`                    | デバッグレベルのログを記録する               | `gs.debug("デバッグログの例です");`                     |
+| 現在のユーザーID取得  | `gs.getUserID()`                       | ログイン中のユーザーのSys IDを取得           | `var userId = gs.getUserID();`                         |
+| 現在のユーザー名取得  | `gs.getUserName()`                     | ログイン中のユーザー名を取得                 | `var userName = gs.getUserName();`                     |
+| ユーザー表示名取得    | `gs.getUserDisplayName()`              | ログイン中のユーザーのフルネームを取得       | `var fullName = gs.getUserDisplayName();`              |
+| メッセージの翻訳      | `gs.getMessage(message)`               | システム言語設定に応じたメッセージを取得     | `var msg = gs.getMessage("This is a message");`        |
+| 現在日時の文字列取得  | `gs.now()`                             | 現在の日時を文字列形式で取得                 | `var now = gs.now();`                                  |
+| 現在日時のオブジェクト| `gs.nowDateTime()`                     | 現在の日時をGlideDateTimeオブジェクトで取得  | `var nowObj = gs.nowDateTime();`                       |
+| イベントの発火        | `gs.eventQueue(name, current, ...)`    | システムイベントを発火させる                 | `gs.eventQueue("event_name", current, "param1");`      |
+| ユーザーロール確認    | `gs.hasRole(role)`                     | 指定したロールを持っているかを確認           | `if (gs.hasRole("admin")) { gs.print("管理者です"); }` |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+・インクルードのメモ
+  ---------------------------------------------------------------------------------------------------
+    function onLoad() {
+        var ga = new GlideAjax('MyGroupScript'); // サーバー側のスクリプト名を指定
+        ga.addParam('sysparm_name', 'getMyGroups');
+        ga.getXML(getMyGroupsResponse);
+    }
+
+    function getMyGroupsResponse(responseXML) {
+        var answer = responseXML.responseXML.documentElement.getAttribute("answer");
+        g_form.setValue('group_field', answer); // 取得したグループ名をフォームの"group_field"という名前のフィールドに設定
+    }
+  ---------------------------------------------------------------------------------------------------
+  // サーバー側のスクリプト (Script Include など)
+  var MyGroupScript = Class.create();
+  MyGroupScript.prototype = {
+      getMyGroups: function() {
+          var gr = new GlideRecord('sys_user_grmember');
+          gr.addQuery('user', gs.getUserID());
+          gr.query();
+          var groupNames = [];
+          while (gr.next()) {
+              groupNames.push(gr.group.name);
+          }
+          return groupNames.join(', ');
+      }
+  };
+
+  var myGroupScript = new MyGroupScript();
+  ---------------------------------------------------------------------------------------------------
+
+
+
+
+
+■GlideRecord グライド
+ServiceNowのサーバースクリプトで
+データベーステーブルに対してCRUD（作成、読み取り、更新、削除）操作を行うためのオブジェクト
+----------------------------------------------------------------------------------------
+addQuery(): 検索条件を追加します。
+query(): 実際にデータベースからクエリを実行します。結果をGlideRecord オブジェクトに格納
+next(): 次のレコードを取得します（結果が無ければ false を返します）。
+setLimit(): 取得するレコードの件数を制限します。
+orderBy() / orderByDesc(): ソート順を設定します。
+insert(): 新しいレコードを挿入します。
+update(): 現在のレコードを更新します。
+--------------------------------------------------------------------------
+var gr = new GlideRecord('x_1606430_shk_hand_x_1606430_shk_hand');
+gr.orderByDesc('sys_created_on');  // 日付で降順ソート
+gr.setLimit(1);  // 直前の1件だけに絞る
+gr.query(); // クエリ実行
+--------------------------------------------------------------------------
+SELECT * 
+FROM x_1606430_shk_hand_x_1606430_shk_hand 
+ORDER BY sys_created_on DESC 
+LIMIT 1;
+--------------------------------------------------------------------------

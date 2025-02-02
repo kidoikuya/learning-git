@@ -1,0 +1,112 @@
+■ServiceNowのAJAX
+プロトタイプ無しのクラスを作り、そのprototypeに
+extendsObjectでglobal.AbstractAjaxProcessorを任意の処理内容で拡張して代入。
+クライアント側からGlideAjaxの引数でクラスを渡すと
+サーバ側にリクエストを送れるようになる。
+--------------------------------------------------------------------------------------------------------------
+・スクリプトインクルード
+var test = Class.create();
+test.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	getParams(){
+		const param1 = this.getParameter("param1");
+		const param2 = this.getParameter("param2");
+
+    // 文字列じゃないと返せないのでJSON文字列に変換して返している。
+    // プロパティ―と値が同じだから省略してparam1だけ書いてる。
+		return JSON.stringify({
+                    param1,
+                    param2
+                });
+	},
+    type: 'test' // これはデフォルト入力される値っぽい、ヒントとして使われるっぽい。任意の名前に変更可能。
+});
+--------------------------------------------------------------------------------------------------------------
+・クライアントスクリプト
+const ga = new GlideAjax("test");  // "test"というScript Includeを指定
+ga.addParam("sysparm_name", "getParams");  // sysparm_nameは固定、第二に呼び出すメソッド名
+ga.addParam("param1", param1);  // 送信するパラメータ
+ga.addParam("param2", param2);  // 送信するパラメータ
+ga.getXMLAnswer(function(answer){ //; ここでgaに蓄積した情報を基に非同期でanswer受取りコールバック実行。
+    const data = JSON.parse(answer);  // レスポンスをJSONとして解析
+    console.log(JSON.stringify(data, null, 2));
+});
+-------------------------------------------------------------------------------------------------------
+
+
+
+
+■AJAX（Asynchronous JavaScript And XML）
+1. AJAXの特徴
+ページをリロードせずにデータを取得・送信できる
+→ 例: Googleマップ、チャットアプリ、検索のオートコンプリートなど
+非同期通信が可能（バックグラウンドで処理）
+→ ユーザーの操作を妨げずにデータを送受信できる
+XML以外のデータも使える（JSON, HTML, プレーンテキストなど）
+→ JSONが主流になり、XMLはあまり使われなくなった
+
+2. AJAXの基本的な仕組み
+JavaScriptのXMLHttpRequestオブジェクト（またはfetch APIやAxios）を使ってリクエストを送る
+サーバーがリクエストを受け取り、データを返す（通常はJSON形式）
+JavaScriptが受け取ったデータを処理し、ページの一部を更新
+
+3. AJAXの実装方法
+------------------------------------------------------------------------------
+(1) XMLHttpRequest を使う（古いやり方
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "https://api.example.com/data", true); // 非同期通信
+xhr.onreadystatechange = function() {
+  if (xhr.readyState === 4 && xhr.status === 200) {
+    console.log(xhr.responseText); // サーバーからのレスポンスを表示
+  }
+};
+xhr.send();
+------------------------------------------------------------------------------
+(2) fetch API を使う（モダンなやり方）
+fetch("https://api.example.com/data")
+  .then(response => response.json())  // JSONとしてパース
+  .then(data => console.log(data))    // データを表示
+  .catch(error => console.error("Error:", error));
+------------------------------------------------------------------------------
+(3) jQueryの$.ajax()（jQueryを使う場合）
+$.ajax({
+  url: "https://api.example.com/data",
+  method: "GET",
+  success: function(data) {
+    console.log(data);
+  },
+  error: function(error) {
+    console.error("Error:", error);
+  }
+});
+------------------------------------------------------------------------------
+
+
+
+■Prototype.js と jQuery の比較
+Prototype.js
+・ネイティブオブジェクトを拡張するため標準のJS動作を変更することがあった。
+-------------------------------------------
+// Prototype.js を使った Ajax リクエスト
+new Ajax.Request('/data', {
+  method: 'get',
+  onSuccess: function(response) {
+    console.log(response.responseText);
+  }
+});
+-------------------------------------------
+
+jQuery
+・$() を使って簡単に書ける。
+・ネイティブオブジェクトを汚染しない=他ライブラリと共存しやすい
+・Prototype.js はIEとの互換性に問題があったが、jQueryはより幅広いブラウザで動作
+・豊富なプラグイン → UI関連の拡張が容易
+-------------------------------------------
+// jQuery を使った Ajax リクエスト
+$.get('/data', function(data) {
+    console.log(data);
+  });
+-------------------------------------------
+  
+今新しく開発するなら、どちらも使わずに下記がオススメ。
+・ネイティブのJavaScript (Vanilla JS)
+・モダンフレームワーク（React, Vue, Angular）

@@ -99,3 +99,63 @@ jQueryオブジェクトでラップして取得する
     alert("click!");
   });
   --------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+
+
+
+
+
+■jQueryの使い方
+const jQuery = globalThis.jQuery
+const &j = globalThis.$j;
+ID指定の時に「.」が使われている場合は
+$j(#element\\.x_159431")
+------------------------------------------------------------------------------------------------------------------
+↓ クライアントスクリプトで参照フィールドから、関連テーブルのレコードを取得するコード
+ 
+```
+function onChange(control, newValue, oldValue, isLoading) {
+   //Type appropriate comment here, and begin script below
+   if(isLoading) return;
+   g_form.getReference("parent", function(record){
+    // console.log(record);
+    // console.log(`承認者のコメント：${record.u_comment}`);
+    g_form.setValue("u_comment", record.u_comment);
+   });
+}
+```
+ 
+↓ クライアントスクリプトで jQuery を使用したコード
+```
+function onLoad() {
+  // Type appropriate comment here, and begin script below
+	// console.log("--------------------------");
+	// console.log(globalThis.jQuery);
+	// console.log(globalThis.$j);
+	// console.log("--------------------------");
+	// const jQuery = globalThis.jQuery;
+	const $j = globalThis.$j;
+	const target = $j("#element\\.x_1594310_shk_hand_sample_table\\.param1").css("background-color", "red");
+	globalThis.setTimeout(()=>{
+		target.hide();
+	},3_000);
+        // target.html("");
+	console.log(target);
+}
+------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,105 @@
+■Prototype.jsとプロトタイプ継承
+Prototype.js は、プロトタイプ継承の仕組みを活用している部分もあるが
+目的はDOM操作やAjaxを簡単にすることであり、継承そのものを拡張するものではない。
+プロトタイプ継承 はJavaScriptの言語仕様そのものであり、Prototype.jsとは別の概念。
+つまり、名前は似ているけど、全く別物の技術ということ
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| 特徴             | `prototype.js`（外部ライブラリ）              | ServiceNow（独自のクラス作成）                          
+|------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------------
+| 目的             | プロトタイプベースのオブジェクト指向をサポート| ServiceNowスクリプト内でクラスやAjax処理を行うための独自の方法  
+| クラス作成方法   | `Class.create()` メソッドを使用               | `Class.create()` を使用し、`Object.extendsObject()` で拡張   
+| 継承             | `Class.create()` で基底クラスを拡張           | `Object.extendsObject()` で既存のクラスを拡張 
+| 継承元のクラス   | `Class.create()` で直接継承するクラスを指定   | `global.AbstractAjaxProcessor` など、ServiceNow特有のクラスを拡張  
+| メソッド定義     | メソッドをオブジェクトの中で定義              | メソッドは `XXXXXXXX.prototype` に定義                
+| インスタンス作成 | `new` キーワードを使ってインスタンスを作成    | ServiceNowのスクリプト内でインスタンスは自動的に生成され、Ajaxリクエストに応じて呼び出される 
+| 使用例           | JavaScriptアプリケーション（例えばブラウザ内）| ServiceNowのビジネスルールやAjaxスクリプト内              
+| UIとの連携       | UIとは直接連携しない（ブラウザのフロント）    | Ajax処理に使用され、UIと連携して非同期のデータ処理を行う    
+| 典型的な用途     | クライアントサイドでオブジェクト指向          | サーバーサイドのServiceNowスクリプトでデータ処理やAJAXリクエストの処理 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+■prototype.jsとは
+特にAjaxやDOM操作を簡素化するために開発されたライブラリ。
+2005年リリースだが、2010年以降にjQueryが主流になってレガシー扱いされている。
+
+
+■プロトタイプ継承
+Prototype.jsはプロトタイプ継承を簡素化するために
+"Class.create"の引数に親クラスを指定して子クラスを定義できるため
+オブジェクト指向のクラスを簡単に作成できて管理がしやすくなる。
+
+prototype.jsはそのままクラスを定義して継承しますが
+ServiceNowはglobal.AbstractAjaxProcessorなど、独自の基底クラスを使って拡張します。
+
+
+■サンプルコード１
+
+// 親クラスの定義
+var Animal = Class.create({
+  initialize: function(name) {
+    this.name = name;
+  },
+  speak: function() {
+    return this.name + " makes a noise.";
+  }
+});
+
+// 子クラスの定義（親クラスを継承）
+var Dog = Class.create(Animal, {
+  speak: function() {
+    return this.name + " barks.";
+  }
+});
+
+// インスタンス作成と使用
+var myDog = new Dog("Buddy");
+console.log(myDog.speak()); // "Buddy barks."
+
+
+■サンプルコード２
+-------------------------------------------------------
+// 親クラス
+var Animal = Class.create({
+  initialize: function(name) {
+    this.name = name;
+  },
+  
+  speak: function() {
+    console.log(this.name + " makes a noise.");
+  }
+});
+
+// 子クラス
+var Dog = Class.create(Animal, {
+  initialize: function($super, name) {
+    $super(name); // 親クラスのinitializeを呼び出し、親フィールドnameに値を代入。
+  },
+
+  speak: function() {
+    console.log(this.name + " barks."); //このthisは親このthisは子クラスだが、子クラスにはnameフィールドが存在しないからプロトタイプチェーンで親クラスのフィールドを参照しにいく？
+  }
+});
+
+// インスタンス作成
+var dog = new Dog("Rex");
+dog.speak(); // "Rex barks."
+-------------------------------------------------------
+
+$super(name)で親クラスのinitializeメソッドを呼び出すが
+子クラスはthis.nameのnameフィールドを持っていない。
+この時、プロトタイプ継承で内部的に親クラスの
+そのため、親クラスのフィールド（例えばname）が子クラスのインスタンスからも参照可能となる。
+
+
+■要素取得と表示制御
+・$(IDかDOMオブジェクト)
+$( 'div1', 'div2', 'div3' ).invoke( 'hide' );  // $( 'div1' ).hide(); は可能
+<div>による画面表示を隠す
+<div>タグの例(id属性の値が'div1', 'div2', 'div3'のもの)
+※invoke('hide') を使うと、配列の要素に対して一括で hide() を適用
+
+・$$(`CSSセレクタ`)
+上と同じ処理を別の書き方で書くとこうなる。
+$$( 'div[id^="div"]' ).invoke( 'hide' );  // $$( 'div[id^="div"]' ).hide()は不可
+idがdivで始まる<div>の画面表示を隠す

@@ -1,77 +1,20 @@
-■教材URL
-URL=https://shk-education-javascript.netlify.app/
-URL=https://shk-education-domapi.netlify.app/
-URL=https://shk-education-react.netlify.app/
-
-■AltJS言語＝TypeScriptやCoffeeScriptのこと。
-JSとは違う言語だが、最終的にはJSにコンパイルする。
-
-■TypeScript
-TypeScriptは、JavaScriptのスーパーセットであり
-静的型付けを追加したプログラミング言語です。
-JavaScriptのコードは有効なTypeScriptのコードでもありますが
-TypeScriptは型情報を持つため、開発時にエラーを早期に発見しやすくなります。
-型システム: TypeScriptは、変数や関数の引数、戻り値に型を指定できるため、
-コードの可読性や保守性が向上します。
-型情報により、IDE（統合開発環境）での補完機能が強化されます。
-トランスパイラ: TypeScriptは、JavaScriptにコンパイルされるため、
-ブラウザやNode.jsで動作することができます。
-TypeScriptのコードはまずトランスパイルされ、
-最終的にJavaScriptのコードになります。
-主な用途: TypeScriptは、特に大規模なアプリケーションやチーム開発において、
-型安全性を確保するために使用されます。
-コードの予測可能性が高まり、リファクタリングが容易になります。
-
-■Next.js＝フルスタック開発用のフレームワーク
-React包括している。
-
-■AltJS言語＝TypeScriptやCoffeeScriptのこと。
-
 ■データ型について
 プリミティブ型: string、number、boolean、undefined、bigint、symbol
 オブジェクト型: オブジェクト、配列、関数、null（ただし、nullは特別な意味を持つ）
 
 ■オプショナルチェインニング演算子（?.）
-存在しない可能性のあるプロパティに?.を付けておけば
-その先のプロパティにアクセスすることができる。
-// ▼ 条件演算子を使用する場合
+//;条件演算子を使用する場合
 console.log(person.birthplace ? person.birthplace.country : undefined);
-// ▼ オプショナルチェインニング演算子を使用する場合
+//;オプショナルチェインニング演算子を使用する場合
 console.log(person.birthplace?.country);
 
-■JSとは
-・基本全部オブジェクト
-・変数に代入出来る
-・オブジェクトのプロパティに紐づけ可
-・他の関数オブジェクトに引数として渡せる(コールバック関数)
-・メソッドはプロパティに紐づく関数オブジェクト。
-
-■new or オブジェクトリテラル
-・newはコンストラクタ関数を使ってオブジェクトを生成する。
--------------------------------------------------------------------------
-function abc() {
-  this.name = "田中";
-}
-
-const newobj = new abc(); // コンストラクタ関数を使ってオブジェクトを生成
-console.log(newobj.name);  // "田中"
--------------------------------------------------------------------------
-const newobj = {
-  name: "田中"
-};
-
-console.log(newobj.name);  // "田中"
--------------------------------------------------------------------------
-
-・newを使わない場合どうなるのか
-
+■new
 -new使用時------------------------------------------------------------------------
 function Person(name, age) {
   this.name = name;
   this.age = age;
 }
-
-const person1 = new Person("田中", 30);  // コンストラクタ関数の戻り値は新しく生成されたオブジェクト
+const person1 = new Person("田中", 30); // コンストラクタ関数の戻り値は生成されたオブジェクト
 console.log(person1.name);  // "田中"
 console.log(person1.age);   // 30
 
@@ -80,11 +23,10 @@ function Person(name, age) {
   this.name = name;
   this.age = age;
 }
-
-const person1 = Person("田中", 30);  // new不使用なのでthisはグローバルオブジェクトを指す
-console.log(person1);       // undefined（戻り値がないため）
-console.log(person1.name);  // TypeError: Cannot read properties of undefined (reading 'name')
-console.log(globalThis.name); //グローバルオブジェクトを利用して出力
+const person1 = Person("田中", 30);  // new不使用だとthisはグローバルオブジェクトを指す
+console.log(person1);         // undefined: 戻り値がないため）
+console.log(person1.name);    // TypeError: Cannot read properties of undefined (reading 'name')
+console.log(globalThis.name); // 田中: グローバルオブジェクトを利用して出力可
 -------------------------------------------------------------------------
 
 

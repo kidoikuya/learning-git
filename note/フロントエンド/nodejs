@@ -1,3 +1,7 @@
+Node.js v22.13.0	https://nodejs.org/en
+.NET 9.0.102	https://dotnet.microsoft.com/en-us/download
+
+■node.jsインストール
 Get-ExecutionPolicy
 "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 "
@@ -9,22 +13,7 @@ Set-ExecutionPolicy Undefined -Scope CurrentUser
 "
 Get-ExecutionPolicy -list"
 
-Vscodeの拡張機能
-polyglot notebook
-jupyter
-Japanese Language Pack for Visual Studio Code
-Live Server
-
-Thunderbird	https://www.thunderbird.net/ja/
-Microsoft Teams	https://www.microsoft.com/ja-jp/microsoft-teams/group-chat-software
-Visual Studio Code	https://visualstudio.microsoft.com/ja/downloads/
-Google Chrome	https://www.google.com
-Node.js v22.13.0	https://nodejs.org/en
-.NET 9.0.102	https://dotnet.microsoft.com/en-us/download
-
 ------------------------------------------------------------------------------------------
-
-
 | コマンド                               | 説明                                      |
 |----------------------------------------|-------------------------------------------|
 | node -v                                | インストールされている Node.js のバージョンを表示 |
@@ -43,3 +32,4 @@ Node.js v22.13.0	https://nodejs.org/en
 | npm list -g --depth=0                  | インストールされているグローバルパッケージをリスト表示 |
 | npm update                             | プロジェクトの依存パッケージを最新バージョンにアップデート |
 | npm uninstall <パッケージ名>           | `node_modules` フォルダから指定したパッケージをアンインストール |
+------------------------------------------------------------------------------------------

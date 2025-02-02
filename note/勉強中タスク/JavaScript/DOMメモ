@@ -1,27 +1,24 @@
-■DOMを利用してJSから文書を操作する。
-ブラウザを起動すると、グローバルオブジェクト(Windowsオブジェクト)が最上位に定義される。
-その下に、documentやconsole等のオブジェクトのプロパティが用意される。
-window.console.log()という呼び出し方でも使えるが
-console.log()という感じでプロパティを呼び出した方がスマート。※結果はどっちも同じ
-ちなみにWindowとwindowは違う、windowはWindow自身の参照を指すイメージ。
+■オブジェクト作成→Domツリーに追加
+①タグの要素を新規作成する
+  const element = document.createElement("p");
 
-■オブジェクト作成→Domツリー追加
-①アンカータグ作成aタグ相当するオブジェクトを作る
-②そのオブジェクトに属性とテキストを追加
-③Domツリーに追加(結び付ける)
-createElement()メソッドで指定したタグの要素を新規作成する。
-※append()で既存の要素の最後に新しい要素やテキストを追加する。
-    <script>
-        setTimeout(()=>{
-            // ▼ p タグの要素オブジェクトを作成
-            const element = document.createElement("p");
-            element.textContent = "追加された文章";  // 要素内のテキストを設定
-            document.body.append(element);  // <body> タグ内の最後に作成した要素を追加
-        }, 5_000);
-    </script>
-追加されたか確認するにはDevelopperToolsの要素タグを監視してみると
-処理の進行に伴い随時追加される。(5秒後に処理する内容なら５秒後に追記される)
-※属性名とプロパティ名は基本１対１で対応しているがclassはclassNameなので注意。
+②テキストを追加
+  element.textContent = "追加された文章";
+
+③属性を追加
+element.setAttribute("class", "highlight");    // クラス属性を追加
+element.setAttribute("id", "new-id");          // ID属性を追加
+element.setAttribute("data-info", "サンプル"); // data属性追加
+
+④Domツリーに追加(結び付ける)
+document.body.append(element); ※既存の要素の最後に新しい要素やテキストを追加
+
+⑤結果
+HTMLの<body>の最後に以下のp要素が追加される。
+console.log(element);
+<p class="highlight" id="new-id" data-info="サンプル">追加された文章</p>
+
+
 
 ■addEventListener() イベント処理を登録する
 キー入力やマウスクリックや画面タッチ等を起点としたイベントに対する処理を紐づける。

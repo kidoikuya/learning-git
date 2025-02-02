@@ -1,3 +1,8 @@
+■歴史
+JavaScriptはもともとクラスベースの継承を持たず、プロトタイプ継承という仕組みを採用している。
+クラスのような構造を作るために function をコンストラクタとして使い
+そのprototypeプロパティを変更することで、オブジェクトの継承を実現する。
+
 ■プロトタイプ継承（prototype inheritance）
 ・プロトタイプとは
   JSでは全オブジェクトがプロトタイプ（親オブジェクト）を持っており
@@ -301,3 +306,108 @@ employee.__proto__ (=== Employee.prototype)
                 └──> null
 
 employee → Employee.prototype → Person.prototype → Object.prototype
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+■Object.extendsObject(targetObject, sourceObject)
+  targetObject は、拡張（継承）を受けるオブジェクト。
+  sourceObject は、targetObject に追加したいプロパティやメソッドを持つオブジェクトです。
+  このメソッドは、targetObject のプロトタイプに sourceObject のプロパティやメソッドをコピーします。
+
+■prototype.jsとの見分け方
+・独自クラス作成
+・Object.extendsObject() を使っていたらServiceNow同時のプロトタイプ継承と判断していいっぽい。
+・global.AbstractAjaxProcessor など、ServiceNow特有のクラスを拡張
+・メソッドはXXXXXX.prototypeに定義する
+・ServiceNowのスクリプト内でインスタンスは自動的に生成され、Ajaxリクエストに応じて呼び出される
+・Ajax処理に使用され、UIと連携して非同期のデータ処理を行う
+・サーバーサイドのServiceNowスクリプトでデータ処理やAJAXリクエストの処理
+
+・スクリプトインクルード
+var ShkHandsOn = Class.create();
+ShkHandsOn.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	getParams(){
+		const param1 = this.getParameter("param1");
+		const param2 = this.getParameter("param2");
+
+    // 文字列じゃないと返せないのでJSON文字列に変換して返している。
+    // プロパティ―と値が同じだから省略してparam1だけ書いてる。
+		return JSON.stringify({
+                    param1,
+                    param2
+                });
+	},
+    type: 'ShkHandsOn' // これはデフォルト入力される値っぽい、ヒントとして使われるっぽい。任意の名前に変更可能。
+});
+-------------------------------------------------------------------------------------------------------
+
+global.AbstractAjaxProcessorが下記の拡張を受けている
+
+{
+    getParams() {
+        const param1 = this.getParameter("param1");
+        const param2 = this.getParameter("param2");
+
+        return JSON.stringify({
+            param1,
+            param2
+        });
+    },
+    type: 'ShkHandsOn'
+}
+-----------------------------------------------------------
+
+
+
+
+はい、ShkHandsOnクラスはプロトタイプ継承を使用しています。
+
+このコードでは、ShkHandsOnが**global.AbstractAjaxProcessor**を継承しています。具体的に見てみましょう：
+
+javascript
+コピーする
+編集する
+var ShkHandsOn = Class.create();
+ShkHandsOn.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+    getParams() {
+        const param1 = this.getParameter("param1");
+        const param2 = this.getParameter("param2");
+
+        return JSON.stringify({
+            param1,
+            param2
+        });
+    },
+    type: 'ShkHandsOn'
+});
+
+
+プロトタイプ継承の仕組み
+Class.create()
+Class.create()は、ServiceNowのJavaScriptライブラリで、オブジェクト指向のクラスを作成するためのメソッドです。このメソッドを使用して新しいクラス（ShkHandsOn）を作成します。
+
+Object.extendsObject()
+Object.extendsObject()は、指定したオブジェクト（この場合、global.AbstractAjaxProcessor）を拡張して、ShkHandsOn.prototypeにその機能を追加します。これにより、ShkHandsOnはAbstractAjaxProcessorを継承し、その機能を使えるようになります。
+
+getParamsメソッド
+このメソッドはShkHandsOnクラスに追加されたインスタンスメソッドで、リクエストからパラメータを取得し、それをJSON形式で返します。
+
+typeプロパティ
+typeプロパティは、クラスに関連付けられた名前を示しており、ServiceNowの内部処理においてヒントや識別子として使われます。
+
+まとめ
+ShkHandsOnはglobal.AbstractAjaxProcessorを継承し、そのプロトタイプを拡張して、新しいメソッド（getParams）とプロパティ（type）を定義しています。これがプロトタイプ継承の一例です。
