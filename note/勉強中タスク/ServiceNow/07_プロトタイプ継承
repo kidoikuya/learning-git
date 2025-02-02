@@ -1,15 +1,7 @@
-■歴史
-JavaScriptはもともとクラスベースの継承を持たず、プロトタイプ継承という仕組みを採用している。
-クラスのような構造を作るために function をコンストラクタとして使い
-そのprototypeプロパティを変更することで、オブジェクトの継承を実現する。
-
 ■プロトタイプ継承（prototype inheritance）
-・プロトタイプとは
-  JSでは全オブジェクトがプロトタイプ（親オブジェクト）を持っており
-  プロトタイプを通じて継承関係が形成される。
-  ほぼ全てのオブジェクトはXXXXX.prototypeに定義されたprototypeオブジェクトを継承している。
-  プロトタイプチェーンでプロトタイプを遡っていくと最終的にObject.prototypeにたどり着く。
-  "クラスベースの継承とは異なりオブジェクトが他のオブジェクトを基にしてメソッドやプロパティを共有する形式"
+ほぼ全てのオブジェクトはXXXXX.prototypeに定義されたprototypeオブジェクトを継承している。
+プロトタイプチェーンでプロトタイプを遡っていくと最終的にObject.prototypeにたどり着く。
+"クラスベースの継承とは異なりオブジェクトが他のオブジェクトを基にしてメソッドやプロパティを共有する形式"
  
 ■処理色々
  ・__proto__ プロパティ
@@ -17,24 +9,22 @@ JavaScriptはもともとクラスベースの継承を持たず、プロトタ�
   ※[[Prototype]]はJavaScriptエンジン内部の抽象的な内部プロパティのため直接見る事が出来ない。
   ※ES6以降は「__proto__」ではなく「Object.getPrototypeOf()」の仕様が推奨されてる。
   -------------------------------------------------------------
-  const obj = { name: "田中" };
-  const arr = [1, 2, 3];
-
   //; __proto__ を使う方法
+  const obj = { name: "田中" };
   console.log(obj.__proto__);  // Object.prototype
+  const arr = [1, 2, 3];
   console.log(arr.__proto__);  // Array.prototype
   console.log(arr.__proto__.__proto__);  // Object.prototype
   console.log(arr.__proto__.__proto__.__proto__);  // null
   -------------------------------------------------------------
 
-・Object.getPrototypeOf(オブジェクト名)
+・Object.getPrototypeOf(オブジェクト名) メソッド
   __proto__プロパティに格納されている[[Prototype]]への参照値を取得する
   -------------------------------------------------------------
-  const obj = { name: "田中" };
-  const arr = [1, 2, 3];
-
   //; Object.getPrototypeOf() を使う方法
+  const obj = { name: "田中" };
   console.log(Object.getPrototypeOf(obj));  // Object.prototype
+  const arr = [1, 2, 3];
   console.log(Object.getPrototypeOf(arr));  // Array.prototype
   console.log(Object.getPrototypeOf(Object.getPrototypeOf(arr)));  // Object.prototype
   console.log(Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(arr))));  // null  
@@ -80,7 +70,6 @@ JavaScriptはもともとクラスベースの継承を持たず、プロトタ�
   プロトタイプの内部リンクを変更する静的メソッド
   第一引数のAオブジェクトのプロトタイプの内部リンク[[Prototype]]を
   第二引数のオブジェクトに変更する。
-
   ※探索順番
   "プロトタイプ自体は変更されない"で"内部リンクが変更される"ため
   最初にAのプロトタイプが探索されるのは変わらない。
@@ -170,37 +159,6 @@ console.log(Object.prototype);             // [Object: null prototype] {}
 console.log(person1.__proto__.__proto__ === Object.prototype);  // true
 -------------------------------------------------------------------------------------
 
-■検証２ 失敗
-introduce = function()
-これだと"introduceがグローバルオブジェクト直下に定義されてしまう"
-----------------------------------------------------------------------------------------
-function Person(firstName, lastName, age){
-  this.firstName = firstName;
-  this.lastName = lastName;
-  this.age = age;
-}
-introduce = function() { 
-  console.log(名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。);
-};
-----------------------------------------------------------------------------------------
-
-■検証３ 失敗
-だったら、window.Person.introduce = function()だったら？
-これは、window.Person.introduceには追加は出来ているが
-そもそも"子インスタンスが参照する先はPerson.prototype.introduceなので意味が無い"
-----------------------------------------------------------------------------------------
-function Person(firstName, lastName, age) {
-  this.firstName = firstName;
-  this.lastName = lastName;
-  this.age = age;
-}
-window.Person.introduce = function() { 
-  console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
-};
-const person1 = new Person("太郎", "田中", 25);
-person1.introduce(); // これはエラーになる！ Person.prototype で定義されていないから
-----------------------------------------------------------------------------------------
-
 ■検証４ 成功
 クラスを使う場合、プロトタイプ不要になる。
 現場によってはこっちになることもある。
@@ -211,11 +169,12 @@ class Person {
       this.lastName = lastName;
       this.age = age;
     }
+
     // Personクラスブロック内でメソッドを追加
     introduce() {
       console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
     }
-  }
+}
   const person1 = new Person('太郎', '田中', 25);
   person1.introduce();  // "名前は太郎 田中です。年齢は25です。"
 
@@ -328,7 +287,7 @@ employee → Employee.prototype → Person.prototype → Object.prototype
   sourceObject は、targetObject に追加したいプロパティやメソッドを持つオブジェクトです。
   このメソッドは、targetObject のプロトタイプに sourceObject のプロパティやメソッドをコピーします。
 
-■prototype.jsとの見分け方
+■ServiceNow
 ・独自クラス作成
 ・Object.extendsObject() を使っていたらServiceNow同時のプロトタイプ継承と判断していいっぽい。
 ・global.AbstractAjaxProcessor など、ServiceNow特有のクラスを拡張
@@ -354,57 +313,6 @@ ShkHandsOn.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
     type: 'ShkHandsOn' // これはデフォルト入力される値っぽい、ヒントとして使われるっぽい。任意の名前に変更可能。
 });
 -------------------------------------------------------------------------------------------------------
-
-global.AbstractAjaxProcessorが下記の拡張を受けている
-
-{
-    getParams() {
-        const param1 = this.getParameter("param1");
-        const param2 = this.getParameter("param2");
-
-        return JSON.stringify({
-            param1,
-            param2
-        });
-    },
-    type: 'ShkHandsOn'
-}
------------------------------------------------------------
-
-
-
-
-はい、ShkHandsOnクラスはプロトタイプ継承を使用しています。
-
-このコードでは、ShkHandsOnが**global.AbstractAjaxProcessor**を継承しています。具体的に見てみましょう：
-
-javascript
-コピーする
-編集する
-var ShkHandsOn = Class.create();
-ShkHandsOn.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
-    getParams() {
-        const param1 = this.getParameter("param1");
-        const param2 = this.getParameter("param2");
-
-        return JSON.stringify({
-            param1,
-            param2
-        });
-    },
-    type: 'ShkHandsOn'
-});
-
-
-プロトタイプ継承の仕組み
-Class.create()
-Class.create()は、ServiceNowのJavaScriptライブラリで、オブジェクト指向のクラスを作成するためのメソッドです。このメソッドを使用して新しいクラス（ShkHandsOn）を作成します。
-
-Object.extendsObject()
-Object.extendsObject()は、指定したオブジェクト（この場合、global.AbstractAjaxProcessor）を拡張して、ShkHandsOn.prototypeにその機能を追加します。これにより、ShkHandsOnはAbstractAjaxProcessorを継承し、その機能を使えるようになります。
-
-getParamsメソッド
-このメソッドはShkHandsOnクラスに追加されたインスタンスメソッドで、リクエストからパラメータを取得し、それをJSON形式で返します。
 
 typeプロパティ
 typeプロパティは、クラスに関連付けられた名前を示しており、ServiceNowの内部処理においてヒントや識別子として使われます。

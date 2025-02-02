@@ -6,18 +6,16 @@
   element.textContent = "追加された文章";
 
 ③属性を追加
-element.setAttribute("class", "highlight");    // クラス属性を追加
-element.setAttribute("id", "new-id");          // ID属性を追加
-element.setAttribute("data-info", "サンプル"); // data属性追加
+  element.setAttribute("class", "highlight");    // クラス属性を追加
+  element.setAttribute("id", "new-id");          // ID属性を追加
+  element.setAttribute("data-info", "サンプル"); // data属性追加
 
-④Domツリーに追加(結び付ける)
-document.body.append(element); ※既存の要素の最後に新しい要素やテキストを追加
+④Domツリーbodyの最後に追加(結び付ける)
+  document.body.append(element); ※既存の要素の最後に新しい要素やテキストを追加
 
 ⑤結果
-HTMLの<body>の最後に以下のp要素が追加される。
-console.log(element);
-<p class="highlight" id="new-id" data-info="サンプル">追加された文章</p>
-
+  console.log(element);
+  <p class="highlight" id="new-id" data-info="サンプル">追加された文章</p>
 
 
 ■addEventListener() イベント処理を登録する
