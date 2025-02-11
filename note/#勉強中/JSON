@@ -1,0 +1,82 @@
+■JSON基本ルール
+----------------------------------------------------------------------------------------------------------------------------
+| データ型     |  説明                                                                 
+-------------- | ------------------------------------------------------------------------------------------------------------ 
+| 文字列       |  "" で囲まれた文字の並びは文字列として扱われます。                             
+| 数値         |  "" で囲まれていない数字の並びは数値として扱われます。※ 数字を "" で囲むと文字列として扱われます。 
+| null         |  null と書くとそのキーは値が空であることを表します。  ※ "" で囲む必要はありません。 
+| 論理値       |  true または false で論理値を表します。※ "" で囲む必要はありません。    
+| オブジェクト |  { "キー": 値 } でオブジェクトを表します。複数のキー : 値 のセットを記述するときはカンマ（,）で区切ります。 
+| 配列         |  [] で囲まれた部分は配列として扱われます。要素間はカンマ（,）で区切ります。 
+----------------------------------------------------------------------------------------------------------------------------
+
+{
+    "number": 1,
+    "string": "aaa",
+    "null": null,
+    "bool": true,
+    "object": {
+        "key": "value"
+    },
+    "array": [1, "a", null, true, {"key": "value"}]
+}
+
+■JSONの扱い
+オブジェクトや配列→JSON文字列型に変換
+--------------------------------------------------
+
+■スクリプトインクルード側
+result = [1, 2, 3]
+return JSON.stringify("result":{result}); 
+
+■クライアントスクリプト側
+var answer = '{"result":[1,2,3]}';
+var result = JSON.parse(answer); // JSON型オブジェクトに変換
+console.log(result);
+～～～～～～～～～～～～～～～～
+{
+  result : [1,2,3]
+}
+↑この形に戻してから扱う。
+
+--------------------------------------------------
+
+■stringify(オブジェクト)
+const obj = { name: "Alice", age: 25, city: "Tokyo" };
+const jsonString = JSON.stringify(obj);
+console.log(jsonString); 
+// 出力: '{"name":"Alice","age":25,"city":"Tokyo"}' ←JSON文字列
+
+※オブジェクト型の中にオブジェクト型が入っていたら？
+const obj = { 
+    name: "Alice", 
+    age: 25, 
+    address: { city: "Tokyo", country: "Japan" }
+};
+const jsonString = JSON.stringify(obj);
+console.log(jsonString);
+{"name":"Alice","age":25,"address":{"city":"Tokyo","country":"Japan"}}
+
+
+■オブジェクトの中のオブジェクトにアクセスする方法
+const obj = { 
+    name: "Alice", 
+    age: 25, 
+    address: { 
+        city: "Tokyo", 
+        country: "Japan"
+    }
+};
+
+"階層を使う"
+console.log(obj.address);       // { city: 'Tokyo', country: 'Japan' }
+console.log(obj.address.city);  // 'Tokyo'
+console.log(obj.address.country);  // 'Japan'
+
+"ブラケット記法"
+console.log(obj["address"]);         // { city: 'Tokyo', country: 'Japan' }
+console.log(obj["address"]["city"]); // 'Tokyo'
+
+"オプショナルチェーン (?.) "
+console.log(obj.address?.city); // 'Tokyo'
+console.log(obj.location?.city); // undefined（エラーにならない）

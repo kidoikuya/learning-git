@@ -1,0 +1,83 @@
+■配列の分割代入
+const arr = ["Taro", 20];
+;//  配列の分割代入は要素順に代入先の変数を [] 内に宣言
+;//    各要素を代入する変数はカンマ（,）で区切る
+const [name, age] = arr;
+console.log(name, age);
+
+
+■配列のスキップ
+const arr = ["Taro", 20];
+;// 省略するのは変数名のみでカンマは必要な点に注意
+const [, age] = arr;
+console.log(age);
+
+
+■配列の入れ子
+const arr = ["Taro", 20, ["Kanagawa", "Yokohama"]];
+;//  配列と同じ構造で記述する
+const [name, age, [pref, city]] = arr;
+console.log(name, age, pref, city);
+
+
+■オブジェクトの分割代入
+const person = {
+    firstName: "太郎",
+    lastName: "田中",
+    age: 20,
+    birthday: "2003-01-01",
+    birthplace: "Yokohama"
+}
+;//   「プロパティ名: 代入先の変数名」の形式で指定する
+;//    変数へ代入しないプロパティは省略できる
+;//    配列と異なり、プロパティを記述する順序にきまりはない
+const {
+    firstName: firstName,
+    age: age,
+    birthday: birthday
+} = person;
+console.log(firstName, age, birthday); // 太郎 20 2003-01-01
+console.log(lastName, birthplace); // ReferenceError: lastName is not defined
+
+
+■オブジェクトの入れ子
+const person = {
+    name: {
+        firstName: "太郎",
+        lastName: "田中"
+    },
+    age: 20,
+    birthday: "2003-01-01",
+    birthplace: "Yokohama"
+}
+;// ▼ オブジェクトと同じ構造で記述する
+const {
+    name: {
+        firstName
+    },
+    age,
+    birthday
+} = person;
+console.log(firstName, age, birthday); // 太郎 20 2003-01-01
+--------------------------------------------------------------
+"nameではなくfirstNameで出力出来る理由"
+name: { firstName } でnameから「firstName」を取り出している。
+取り出した「firstName」は変数として扱われる。
+グローバルコンテキストに配置されている変数なので、firstNameで直接アクセス可能。
+
+
+■関数の引数にオブジェクトを分割代入
+;// 引数で渡されたオブジェクトのプロパティを分割代入する
+function sayHello({firstName, lastName}){
+    console.log(`こんにちは、${lastName} ${firstName}さん。`);
+}
+const person = {
+    firstName: "太郎",
+    lastName: "田中",
+    age: 20
+};
+sayHello(person);
+
+
+
+

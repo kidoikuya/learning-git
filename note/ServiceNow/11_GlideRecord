@@ -1,0 +1,40 @@
+■GlideRecordSecure
+・セキュアACL:アクセス制御ユーザが該当テーブルに対してServiceNow上で設定できる
+  ※ACLとは読み書き、参照権限、書込み、デリーと権限を考慮して扱えること。
+
+■getValue() と getDisplayValue()
+普通のフィールドに使うなら、getValue() も getDisplayValue()もラベル名を取得する
+ただし、getValueのみ"参照フィールドの場合は参照先のsys_idを取得する"
+--------------------------------------------------------------------------------------------
+var gr = new GlideRecord('incident');
+gr.get('sys_id', 'abcdef1234567890abcdef1234567890'); // インシデントレコードを取得
+gs.info(gr.getValue('caller_id'));        // 🟡 "e5cd17d00a0a0b1500b3ffbcf2b3b8f6" (sys_id)
+gs.info(gr.getDisplayValue('caller_id')); // 🟢 "Taro Yamada" (表示値)
+--------------------------------------------------------------------------------------------
+
+■get
+sys_idが1つの場合はgetがスマート
+var gr = new GlideRecord('incident');
+gr.get('sys_id_1, sys_id_2'); // これ出来ない（getでは複数の sys_id を指定不可）
+
+■addQuery + addOrCondition
+sys_idが2つ以上ある場合
+①正規のアプローチ
+GlideQueryConditionクラスのaddOrCondition()を使う。
+addQueryの戻り値型がGlideQueryCondition型オブジェクトなので
+下記の様にメソッドチェーンが可能。
+---------------------------------------------------------------------------------
+var gr = new GlideRecord(table);
+gr.addQuery('sys_id' , sys_id).addOrCondition('sys_id' , sys_id2);
+gr.query();
+---------------------------------------------------------------------------------
+https://www.servicenow.com/docs/ja-JP/bundle/washingtondc-api-reference/page/app-store/dev_portal/API_reference/GlideQueryCondition/concept/c_GlideQueryConditionAPI.html
+
+
+②我流？
+---------------------------------------------------------------------------------
+var gr = new GlideRecord(table);
+gr.orderByDesc('sys_id');  // 降順ソートで実験用「家賃」が最後尾に配置
+gr.addQuery('sys_id', 'IN', sys_id + ',' + sys_id2); INの引数はカンマ区切りの文字列
+gr.query(); // クライアント側は0,1だけ出力。2,3はデべ確認。
+---------------------------------------------------------------------------------

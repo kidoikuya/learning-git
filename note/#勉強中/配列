@@ -1,3 +1,36 @@
+■splice(開始インデックス, 削除する要素の数, 追加する要素...)
+・"要素削除"
+let numbers = [1, 2, 3, 4, 5];
+numbers.splice(1, 2); // インデックス 1 から 2個削除
+console.log(numbers); // [1, 4, 5] // 破壊
+
+・"要素追加"
+let numbers = [1, 2, 3, 4, 5];
+numbers.splice(2, 0, 99, 100); // インデックス 2 に 99, 100 を追加
+console.log(numbers); // [1, 2, 99, 100, 3, 4, 5]
+
+・"要素置換"
+let numbers = [1, 2, 3, 4, 5];
+numbers.splice(1, 2, 99, 100); // インデックス 1 から 2 つ削除し 99, 100 に置き換え
+console.log(numbers); // [1, 99, 100, 4, 5]
+
+
+
+■slice(開始インデックス, 終了インデックス＋１)
+・"配列の一部取得"
+let numbers = [1, 2, 3, 4, 5];
+let newNumbers = numbers.slice(1, 4); // インデックス 1 から 3 まで取得
+console.log(newNumbers); // [2, 3, 4]
+console.log(numbers); // [1, 2, 3, 4, 5] 非破壊（元の配列は変更なし）
+
+・"開始インデックス以降を全取得"
+let numbers = [1, 2, 3, 4, 5];
+let newNumbers = numbers.slice(2); // インデックス 2 以降を取得
+console.log(newNumbers); // [3, 4, 5]
+
+
+■高階関数メソッド
+
 ・forEach
   配列の要素を順番に引数として渡して、与えられた関数を一度ずつ実行する。
   ------------------------------------------------------------
@@ -60,9 +93,13 @@
   与えられた関数に前の要素に対する計算結果と次の要素の値を引数として渡して実行し、最終的な計算結果を返す。
   ------------------------------------------------------------
   const numbers = [1, 2, 3, 4];
-  const sum = numbers.reduce((acc, num) => acc + num, 0);
+  const sum = numbers.reduce((prev, num) => prev + num, 0);
   console.log(sum); // 出力: 10
   ------------------------------------------------------------
+  prev: 前回の累積結果。※初回時の値はreduceの第二引数で設定される。
+  num : 現在処理している配列の要素。
+  0   : 2番目の引数は累積値（初期値）を設定します。0を指定→prevは0から始まる。
+  この関数は、prev + num という形で前回の結果に現在の要素を加算します。
 
 ・every
   配列の要素をテストし、すべての要素が評価結果がtrueの場合はtrueを返す。
@@ -79,3 +116,31 @@
   const hasOdd = numbers.some((num) => num % 2 !== 0);
   console.log(hasOdd); // 出力: true
   ------------------------------------------------------------
+
+
+
+■mapと同じmymapメソッドを作る(演習)
+const myArr = {
+  elements: [1, 2, 3, 4],
+  myMap(callback){
+    /* ここにコードを追加 */
+  }
+}
+
+const newArr = myArr.myMap(e => e * 2);
+console.log(newArr)  // [2,4,6,8]
+-----------------------------------------
+const myArr = {
+  elements: [1, 2, 3, 4],
+  myMap(callback){
+    const newArr = [];
+    for(const e of this.elements){
+      newArr.push(callback(e));
+    }
+    return newArr;
+  }
+}
+
+const newArr = myArr.myMap(e => e * 2);
+console.log(newArr);
+------------------------------------------

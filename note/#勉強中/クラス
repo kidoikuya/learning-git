@@ -1,0 +1,187 @@
+■クラスの基本構文
+----------------------------------------------------------------------------------
+class Person{
+  constructor(firstName, lastName, age){
+    this.firstName = firstName; // 「:」ではなく「=」になっている。
+    this.lastName = lastName;
+    this.age = age;
+  } ;// オブジェクトリテラルのようなカンマ区切りがない
+  introduce(){
+    console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+  }
+}
+const person = new Person("太郎", "田中", 20);
+person.introduce();
+----------------------------------------------------------------------------------
+
+
+
+■static
+----------------------------------------------------------------------------------
+class Person{
+  ;// 静的なプロパティ「docs」を追加
+  static docs = "人を表すクラスです。";
+  birthplace = "出身地情報はありません";
+  constructor(firstName, lastName, age, birthplace){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+    if(birthplace){
+      this.birthplace = birthplace;
+    }  
+  }
+  ;// 静的なメソッド「describes」を追加
+  static describes(){
+    console.log(this.docs);
+  }
+  introduce(){
+    console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+    console.log(`出身地は${this.birthplace}です。`);
+  }
+}
+const person = new Person("太郎", "田中", 20);
+Person.describes();  // staticメソッドなのでインスタンス不要、クラス経由で実行。
+;// person.describes();  // 静的メソッドはクラスオブジェクト以外からは呼び出せない
+person.introduce();  // インスタンスメソッドなのでインスタンス経由で実行。
+;// Person.introduce();  // クラスオブジェクトから静的メソッド以外は呼び出せない 
+----------------------------------------------------------------------------------
+
+
+
+■クラス継承
+-----------------------------------------------------------------
+;// 親クラスに引数を必要とするコンストラクタがあるならsuper()は必須。
+class 親クラス名{
+  constructor(arg1, arg2){
+    this.プロパティ名 = arg1;
+    this.プロパティ名 = arg2;
+  }
+}
+class 子クラス名 extends 親クラス名{ ;// extendsで親クラスを継承（単一継承のみ可）
+  constructor(arg1, arg2, arg3){
+    super(arg1, arg2); // super()で親クラスのコンストラクタを呼び出す
+    this.プロパティ名 = arg3;
+  }
+}
+-----------------------------------------------------------------
+;// 親コンストラクタが引数なし(デフォルトコンストラクタの意)ならsuper()は省略可。
+class Animal {
+  "明示的にconstructorが定義されていない = デフォルトコンストラクタが提供される"
+}
+class Dog extends Animal {
+  constructor(name) {
+    "親クラスにデフォルトコンストラクタが提供されてるのでsuper()は省略可"
+    this.name = name;
+  }
+}
+const dog = new Dog("ポチ");
+console.log(dog.name);  // 出力: ポチ
+-----------------------------------------------------------------
+
+
+
+■thisどうなるか問題
+・基本的に"親と子で別々のthisを使う"のがポイント。
+  ※super()で引数を親に渡す場合は親側が使われるので注意。
+-----------------------------------------------------------------
+class Parent {
+  constructor(arg1, arg2) {
+    this.prop1 = arg1;  // 親クラスのプロパティ
+    this.prop2 = arg2;  // 親クラスのプロパティ
+  }
+}
+class Child extends Parent {
+  constructor(arg1, arg2, arg3) {
+    super(arg1, arg2);  // 親クラスのコンストラクタを呼び出しarg1とarg2を渡す=親のthis利用
+    this.prop3 = arg3;  // 子クラスのプロパティ=子のthisを利用
+  }
+}
+const childInstance = new Child('value1', 'value2', 'value3');
+console.log(childInstance);  // 出力: Child { prop1: 'value1', prop2: 'value2', prop3: 'value3' }
+-----------------------------------------------------------------
+
+
+
+■連鎖的な継承
+"親からメソッドとプロパティが継承される"
+"thisはメソッドを定義しているオブジェクト"
+-----------------------------------------------------------------
+class Hero {
+  constructor(name) {
+    this.name = name;
+  };
+  attack() {
+    console.log(`${this.name}は敵に10のダメージを与えた`);
+  };
+}
+class SuperHero extends Hero {
+  constructor(name) {
+    super(name); // Heroクラスのコンストラクタの呼び出し
+  };
+  superAttack() {
+    console.log(`${this.name}は敵に20のダメージを与えた`);
+  };
+}
+class UltraHero extends SuperHero {
+  constructor(name) {
+    super(name); // SuperHeroクラスのコンストラクタの呼び出し
+  };
+  ultraAttack() {
+    console.log(`${this.name}は敵に30のダメージを与えた`);
+  };
+}
+const hero = new UltraHero("Taro");
+hero.attack();       // Heroから継承したメソッド実行      Taroは敵に10のダメージを与えた
+hero.superAttack();  // superHeroから継承したメソッド実行 Taroは敵に20のダメージを与えた
+hero.ultraAttack();  // UltraHeroのメソッド実行           Taroは敵に30のダメージを与えた
+-----------------------------------------------------------------
+
+
+
+
+
+
+■プライベート 「#」 ES2020からだからServiceNowでは使えないっぽい
+----------------------------------------------------------------------------------
+class Person{
+  ;// プライベートなフィールドを追加
+  static #objectID = "0001";
+  static docs = "人を表すクラスです。";
+  birthplace = "出身地情報はありません";
+  constructor(firstName, lastName, age, birthplace){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+    if(birthplace){
+      this.birthplace = birthplace;
+    } 
+  }
+  static describes(){
+    console.log(this.docs);
+  }
+  ;// プライベートなフィールドへプライベートでないメソッドから
+  ;// 取得できる手段を提供する
+  static getObjectID(){
+    return this.#objectID;  // ◀ #を付けることに注意
+  }
+  ;// プライベートなメソッドを追加
+  #makeText(){
+    return `名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`
+  }
+  introduce(){
+    ;// 追加したメソッドに置き換える
+    ;// console.log(`名前は${this.firstName} ${this.lastName}です。年齢は${this.age}です。`);
+    console.log(this.#makeText());  // ◀ #を付けることに注意
+    console.log(`出身地は${this.birthplace}です。`);
+  }
+}
+const person = new Person("太郎", "田中", 20);
+person.introduce();
+Person.describes();
+;// person.describes();
+;// Person.introcude();
+console.log(Person.getObjectID());
+;// 以下のコードをコメントを解除して実行するとエラーになる
+;// console.log(Person.#objectID);
+;// console.log(person.#makeText());
+----------------------------------------------------------------------------------

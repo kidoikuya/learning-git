@@ -1,0 +1,37 @@
+■関連リスト
+1対1は使えない。親1 対 子N
+自分に対して参照を持っているリストが関連リストの選択肢に自動で入ってくる(ビルダー画面)
+参照されている側のヘッダー＞構成＞関連リスト＞"参照している側の参照テーブル"を関連レコードに表示。
+
+■関係性リレーションシップ
+テーブルに適用：親テーブル（本）
+テーブルからのクエリ：子テーブル（利用者）
+parent  → "全ての親レコード" GlideRecord
+current → "全での子レコード" GlideRecord 最終的にaddQueryで絞ってGlideQueryConditionで返す。
+--------------------------------------------------------------------------------------------
+(function refineQuery(current, parent) {
+
+    //; 関連リスト(降順)を作成
+    var gr = new GlideRecord('x_1606430_shk_hand_x_1606430_shk_hand'); // 子テーブル
+    gr.addQuery('item', parent.getUniqueValue()); // 親レコードに関連する子レコード作成(関連リスト)
+    gr.orderByDesc('sys_created_on');
+    gr.query();
+    
+    //; 関連リストの重複チェック
+    var uniqueRecords = {}; // 重複チェック用
+    while (gr.next()) {
+        var uniqueKey = gr.memo.toString(); //  フィールド取得
+        if (uniqueRecords[uniqueKey] === undefined) {
+            uniqueRecords[uniqueKey] = gr.getUniqueValue();
+        }
+    }
+    
+    // 上記オブジェクトからsys_idを配列で取得
+    var sysIds = Object.values(uniqueRecords);
+    if (sysIds.length > 0) {
+        current.addQuery('sys_id', 'IN', sysIds); // ユニークなsysIds(sys_id)で絞る、後はrefineQueryで表示。
+    } else {
+        current.addQuery('sys_id', 'DOES NOT EXIST'); // データがない場合の処理
+    }
+})(current, parent);
+--------------------------------------------------------------------------------------------

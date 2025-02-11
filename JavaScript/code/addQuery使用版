@@ -1,0 +1,81 @@
+//スクリプトインクルード
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+    getItemDetails: function() {
+        var result = [];
+		var sys_id = this.getParameter('sys_id');
+		var table  = this.getParameter('table_name');
+
+        var gr = new GlideRecord(table);
+        gr.addQuery("sys_id" , sys_id);
+		gr.query();
+		
+		while(gr.next()){
+           result.push("" + gr.himo);            // OK:濱田さん式
+        //    result.push(gr.getValue("himo"));  // OK:これ推奨		
+		//    result.push(String(gr.himo));      // OK
+		//    result.push(`${gr.himo}`);         // OK
+		//    result.push(gr.himo.toString());   // OK
+
+		}
+
+		return JSON.stringify({result}); // レスポンスは返せてる
+    },
+    type: 'ItemFetcher'
+});
+
+
+
+//クライアントスクリプト
+function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+    if (isLoading || newValue === '') { return; }
+
+	// sys_id取得・表示
+    var itemId = newValue; 
+	g_form.setValue('sys_id_in',itemId);
+
+	// getReference使用バージョン(成功)
+	g_form.getReference('item', function(record){ // itemから参照値を取得
+       g_form.setValue('himo_name2',record.himo); // 参照先の値を取得
+	});
+
+	// sys_idからGlideAjax を使ってサーバースクリプトを呼び出し（苦戦中）
+    var tableName = 'x_1606430_shk_hand_x_1606430_shk_hand2';
+
+    var ga = new GlideAjax('ItemFetcher');
+	ga.addParam('sysparm_name','getItemDetails');
+    ga.addParam('sys_id', itemId);
+    ga.addParam('table_name', tableName);
+    ga.getXMLAnswer(function(answer){
+	console.log('★answer★'+answer);
+
+        // レスポンス結果→  {"result":[{}]}
+        var result = JSON.parse(answer);
+        console.log('★result★' + JSON.stringify(result));
+        if (result.result[0]) {
+            g_form.setValue('himo_name', result.result[0]);
+        } else {
+            console.log('一致するレコードが見つからない'); // ←イマココ
+        }
+    });
+}
+
+
+
+
+オマケ
+ 
+■sys_idが1つの場合はgetがスマート
+var gr = new GlideRecord('incident');
+gr.get('sys_id_1, sys_id_2'); // これ出来ない（getでは複数の sys_id を指定不可）
+ 
+■sys_idが複数の場合や詳細な検索条件を付けたい場合はaddQuery使う
+var gr = new GlideRecord('incident');
+gr.addQuery('sys_id', 'sys_id_1');
+gr.addOrCondition('sys_id', 'sys_id_2');
+gr.query();
+ 
+※
+addQuery() は AND 条件
+addOrCondition()は OR 条件

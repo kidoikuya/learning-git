@@ -2,7 +2,7 @@
 プリミティブ型: string、number、boolean、undefined、bigint、symbol
 オブジェクト型: オブジェクト、配列、関数、null（ただし、nullは特別な意味を持つ）
 
-■オプショナルチェインニング演算子（?.）
+■オプショナルチェインニング演算子（?.） 新し目
 ;条件演算子を使用する場合
 console.log(person.birthplace ? person.birthplace.country : undefined);
 ;オプショナルチェインニング演算子を使用する場合
@@ -71,7 +71,31 @@ $ npm install
 varを使ってるかも。
 フェッチが出てきてる、
 
+■Object.values(obj)
+オブジェクトのすべての値を配列として取得する関数。
+var uniqueRecords = {
+    "Note1": "abc123",
+    "Note2": "def456",
+    "Note3": "jkl012"
+};
 
+var sysIds = Object.values(uniqueRecords); //["abc123", "def456", "jkl012"]
+
+
+■for-in
+オブジェクトがもつプロパティをひとつずつ繰り返し取得したい場合はfor-in
+取得できるのはプロパティ名を表す文字列のため、プロパティの値を取得するにはブラケット記法を用いる。
+-------------------------------------------------------------------------------------------
+const person = {
+  firstName: "太郎",
+  lastName: "田中",
+  age: 20
+};
+for(const prop in person){
+  console.log(prop);  // firstName, lastName, age と出力される
+  console.log(person[prop])  // 値を取得したい場合はブラケット記法を使う
+}
+-------------------------------------------------------------------------------------------
 
 
 

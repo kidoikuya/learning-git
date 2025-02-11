@@ -28,6 +28,27 @@ var record = g_form.getReference('item');
 console.log(record.himo); // これは動かない！（recordは非同期のためすぐ参照出来ない）
 ---------------------------------------------------------------------------
 
+■onCellEdit
+リストビューでセルが編集されたときに実行されるもの
+---------------------------------------------------------------------------
+sysIds	  : 編集されたレコードの sys_id
+table	    : 対象のテーブル名
+oldValues : 変更前の値
+newValues :	変更後の値
+callback  : 更新完了時に呼び出す関数(これはServiceNowシステムが渡してくる)
+---------------------------------------------------------------------------
+saveAndCloseをtrueに設定=変更保存
+callback(saveAndClose); trueなら変更確定してテーブル登録
+---------------------------------------------------------------------------
+function onCellEdit(sysIDs, table, oldValues, newValue, callback) {
+  var saveAndClose = true;
+  if (newValue === "test") {
+    saveAndClose = false; // "test" なら変更をキャンセル
+    alert("この値は設定できません！");
+  }
+  callback(saveAndClose);
+}
+---------------------------------------------------------------------------
 
 
 

@@ -1,0 +1,109 @@
+■完成品
+function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+    if (isLoading || newValue === '') { return; }
+
+	// sys_id取得と表示
+	g_form.setValue('sys_id_in',newValue);
+
+	// getReference使用バージョン
+	g_form.getReference('item', function(record){ // itemから参照値を取得
+       g_form.setValue('himo_name2',record.himo); // 参照先の値を取得
+	});
+
+	// sys_idからGlideAjax を使ってスクリプトインクルードを呼び出し
+    var ga = new GlideAjax('ItemFetcher');
+	ga.addParam('sysparm_name','getItemDetails');
+    ga.addParam('sys_id', newValue);
+    ga.getXMLAnswer(function(answer){
+        var result = JSON.parse(answer);
+        if (result && result.himo) {
+			console.log(result); // {himo: '家賃', status: 'OK'}
+            g_form.setValue('himo_name',result["himo"]);
+        } else {
+            console.log('一致するレコードが見つからない');
+        }
+    });
+}
+-------------------------------------------------------------------------
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+getItemDetails(){
+		const sys_id = this.getParameter("sys_id");//渡されてきた引数をキーで取得
+		const gr = new GlideRecordSecure("x_1606430_shk_hand_x_1606430_shk_hand2");
+		if(gr.get(sys_id)){
+			return JSON.stringify({    //; 以下は自分で連想配列作って返している
+                "himo": "" + gr.himo,  //; ""でGlideRecordをオブジェクト型→文字列に変換
+				"status": "OK"
+			});
+		}
+		return JSON.stringify({
+			"status": "error"
+		}); 
+	}, 
+    type: 'ItemFetcher'
+});
+-------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+■変更前のクライアントスクリプト
+function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+    if (isLoading || newValue === '') { return; }
+
+	// sys_id取得・表示
+    var itemId = newValue; 
+	g_form.setValue('sys_id_in',itemId);
+
+	// getReference使用バージョン(成功)
+	g_form.getReference('item', function(record){ // itemから参照値を取得
+       g_form.setValue('himo_name2',record.himo); // 参照先の値を取得
+	});
+
+	// sys_idからGlideAjax を使ってサーバースクリプトを呼び出し（苦戦中）
+    var tableName = 'x_1606430_shk_hand_x_1606430_shk_hand2';
+
+    var ga = new GlideAjax('ItemFetcher');
+	ga.addParam('sysparm_name','getItemDetails');
+    ga.addParam('sys_id', itemId);
+    ga.addParam('table_name', tableName);
+    ga.getXMLAnswer(function(answer){
+	console.log('★answer★'+answer);
+
+        // レスポンス結果→  {"result":[{}]}
+        var result = JSON.parse(answer);
+        console.log('★result★' + JSON.stringify(result));
+        if (result && result.himo) {
+            g_form.setValue('himo_name', result.himo);
+        } else {
+            console.log('一致するレコードが見つからない'); // ←イマココ
+        }
+    });
+}
+
+■変更前のスクリプトインクルード
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+    getItemDetails: function() {
+        var result = [];
+		var sys_id = this.getParameter('sys_id');
+		var table  = this.getParameter('table_name');
+
+        var gr = new GlideRecord(table);
+        gr.addQuery("sys_id" , sys_id);
+		gr.query();
+		
+		while(gr.next()){
+           result.push(gr.himo); // この処理はちゃんと流れてるが取得出来てないっぽい
+		}
+
+		return JSON.stringify({result}); // レスポンスは返せてる
+    },
+    type: 'ItemFetcher'
+});

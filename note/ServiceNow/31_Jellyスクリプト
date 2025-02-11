@@ -1,0 +1,54 @@
+■基本構文
+1. 基本的なタグ構造
+<j:jelly>
+    <!-- ここにJellyコードを記述 -->
+</j:jelly>
+
+2. タグの属性
+<j:jelly trim="false">
+    <!-- trim属性を使って空白のトリミングを無効化 -->
+</j:jelly>
+
+3. Jellyの変数とスクリプト
+<g:evaluate>
+    var message = "Hello, Jelly!";
+    gs.info(message);  <!-- これはServiceNowのログにメッセージを出力します -->
+</g:evaluate>
+
+4. 条件分岐（if文）
+<j:if test="${someCondition}">
+    <p>条件が真の場合、この部分が表示されます。</p>
+</j:if>
+
+5. 繰り返し処理（forEach文）
+<j:forEach var="item" items="${itemList}">
+    <p>${item}</p> <!-- itemListの各アイテムを表示 -->
+</j:forEach>
+
+6. 出力の表示（${}）
+<j:jelly>
+    <p>ユーザー名: ${username}</p>
+</j:jelly>
+
+7. 関数の呼び出し
+<g:evaluate>
+    var result = gs.getMessage("Hello World");
+    gs.info(result);  <!-- 結果をServiceNowのログに出力 -->
+</g:evaluate>
+
+8. サービスメッセージの取得（gs.getMessage()）
+<g:evaluate>
+    var greeting = gs.getMessage("Welcome to ServiceNow!");
+    gs.info(greeting);
+</g:evaluate>
+
+9. 変数の設定（<g:set>）
+<g:set var="userName" value="John Doe" />
+<p>こんにちは、${userName}さん！</p>
+
+10. コメント
+<j:comment>
+    これはコメントです。Jellyのコードには影響を与えません。
+</j:comment>
+
+

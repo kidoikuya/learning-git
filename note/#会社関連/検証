@@ -1,0 +1,16 @@
+getName: function(){
+        gs.info('サーバー呼び出し');
+        const sys_id = this.getParameter("param1");//渡されてきた引数をキーで取得
+        const gr = new GlideRecordSecure("x_1606466_shk_hand_x_1606466_shk_hand_u_user");
+        gs.info('サーバー呼び出し２');
+        if(gr.get(sys_id)){
+            gs.info('サーバー呼び出し３'+ gr.username);
+            const name =gr.username.toString();
+            gs.info('typeof'+ typeof name);
+            gs.info('サーバー呼び出し5'+ name);
+            const obj = {"username": name,"status": "OK"};
+            return JSON.stringify(obj);
+        }
+        return JSON.stringify({
+            "status": "error"
+        });

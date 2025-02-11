@@ -1,3 +1,113 @@
+■忘却時用
+-クライアントスクリプト------------------------------------------------------------------------------------------------------------------
+function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+    if (isLoading || newValue === '') { return; }
+
+	// 費目名を再選択時の入力値リセット
+    g_form.setValue('deposit', '');   // 入金額のフォーム
+    g_form.setValue('withdraw' , ''); // 出金額のフォーム
+    g_form.setValue('memo', '');      // 入金額のフォーム
+    g_form.setValue('memo2' , '');    // 出金額のフォーム
+
+	// 費目名を再選択時の表示制御
+    g_form.setDisplay('deposit', false);  // 入金額のフォーム
+    g_form.setDisplay('withdraw', false); // 出金額のフォーム
+    g_form.setDisplay('memo', false);     // 入金理由のフォーム
+    g_form.setDisplay('memo2', false);    // 出金理由のフォーム
+
+	// sys_id取得・表示
+  	g_form.setValue('sys_id_in',newValue);
+
+	// getReference使用バージョン
+	  g_form.getReference('item', function(record){ // item(参照用フォーム) ← newValueは駄目だった
+    g_form.setValue('himo_name2',record.himo);    // 参照先から取得した値をセット。
+    });
+
+	// GlideAjaxでGlideRecord利用
+    var ga = new GlideAjax('ItemFetcher');
+	  ga.addParam('sysparm_name','getItemDetails');
+    ga.addParam('sysparm_sys_id', newValue); // addParamに渡す第一引数は全て「sysparm_」を付けること。
+	  ga.addParam('sysparm_table_name', 'x_1606430_shk_hand_x_1606430_shk_hand2');
+    ga.getXMLAnswer(function(answer){
+
+        // レスポンスを処理
+        var res = JSON.parse(answer);
+        console.log('★res★' + JSON.stringify(res));      // 例→ ★res★{"result":["消耗品費","c_withdrawal"]}
+        if (res.result[0] && res.result[1]) {              //; レスポンスの有無を確認
+            g_form.setValue('himo_name', res.result[0]);   // 費目名をセット
+                if(res.result[1] === 'c_deposit'){         //; 入金or出金の判定
+                    g_form.setValue('category' , "入金");  // 入金をカテゴリのフォームにセット
+                    g_form.setDisplay('deposit' , true);   // 入金額のフォームを表示
+                }else{
+                    g_form.setValue('category' , "出金");  // 出金をカテゴリのフォームにセット
+                    g_form.setDisplay('withdraw' , true);  // 出金額のフォームを表示
+                }
+        } else {
+            console.log('一致するレコードが見つからない');
+        }
+    });
+}
+
+-getバージョン-------------------------------------------------------------------------------------------------------------
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+ 
+    getItemDetails: function() {
+        var result = [];
+        var sys_id = this.getParameter('sysparm_sys_id');
+        var table  = this.getParameter('sysparm_table_name');
+ 
+        // sys_idでレコードの絞り込み
+        var gr = new GlideRecord(table);
+        if (gr.get(sys_id)) {
+            result.push(gr.himo.toString()); //ドットウォーク検証
+            result.push(gr.getValue("category"));
+        return JSON.stringify({'result' : result});
+        }
+    },
+    type: 'ItemFetcher'
+});
+
+-addQueryバージョン-------------------------------------------------------------------------------------------------------------
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+    getItemDetails: function() {
+        var result = [];
+		var sys_id = this.getParameter('sysparm_sys_id');
+		var sys_id2 = '6d6cec8b835b52106b58c8efeeaad384'; // 実験用で固定sys_id(家賃)
+		var table  = this.getParameter('sysparm_table_name');
+
+		// sys_idでレコードの絞り込み
+        var gr = new GlideRecord(table);
+        gr.orderByDesc('sys_id');  // 降順ソートで実験用「家賃」が最後尾に配置
+        gr.addQuery('sys_id' , sys_id).addOrCondition('sys_id' , sys_id2);
+		gr.query(); // クライアント側は0,1だけ出力。2,3はデべ確認。
+
+		// INの実験(力技っぽい)
+    // gr.orderByDesc('sys_id');  // 降順ソートで実験用「家賃」が最後尾に配置
+		// gr.addQuery('sys_id', 'IN', sys_id + ',' + sys_id2);
+		// gr.query(); // クライアント側は0,1だけ出力。2,3はデべ確認。
+
+		while(gr.next()){
+			result.push(gr.himo.toString());
+			result.push(gr.getValue("category"));
+		}
+		return JSON.stringify({'result' : result}); 
+    },
+    type: 'ItemFetcher'
+});
+--------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 ■ServiceNowのAJAX
 プロトタイプ無しのクラスを作り、そのprototypeに
 extendsObjectでglobal.AbstractAjaxProcessorを任意の処理内容で拡張して代入。

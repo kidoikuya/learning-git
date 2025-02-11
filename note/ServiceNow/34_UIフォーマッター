@@ -1,0 +1,28 @@
+■概要
+フォーマッターとは
+フィールドの表示方法や見た目や振る舞いをカスタムする。
+
+レコード内のフィールドではない情報を表示するために使用されるフォーム要素。
+フォームを構成して、フォーマッターをフォームに追加します。
+https://www.servicenow.com/docs/ja-JP/bundle/xanadu-platform-administration/page/administer/form-administration/concept/c_Formatters.html
+
+ServiceNow のフォームビューで、フィールドの表示方法をカスタマイズする機能。
+Jelly スクリプト を使って、特定のフィールドの見た目や振る舞いを変更する。
+グリッド表示や特定のフォーマットを適用するのに使われる。
+
+
+■UIフォーマッターを作成してフォーム追加
+UIマクロを配置した状態で、それを参照するフォーマッターを作成してフォームに追加。
+https://www.servicenow.com/docs/ja-JP/bundle/xanadu-platform-administration/page/administer/form-administration/task/t_CreateAFormatter.html
+
+手順
+[すべて] > [システム UI] > [フォーマッター]に移動します。
+[新規] をクリックします。
+[名前] フィールドに、フォーマッターのわかりやすい名前を入力します。
+[フォーマッター] フィールドに、 .xml を付けて UI マクロの名前を入力します。
+[テーブル] フィールドで、フォーマッターを使用するテーブルを選択します。
+[タイプ] フィールドで、[フォーマッター] を選択します。
+[Submit] をクリックします。
+フォーマッターをフォームに追加するには、フォームデザインを構成してフォーマッターを追加します。
+フォーマッターは、選択した内容に従ってフォームに表示されます。
+

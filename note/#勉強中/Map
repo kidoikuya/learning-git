@@ -1,0 +1,89 @@
+■Map
+ES6（ECMAScript 2015）で導入された組み込みオブジェクト(クラス)
+キーと値のペアを保持するコレクションでキーにあらゆるデータ型を使用可能
+Objectのキーは基本的に文字列（またはSymbol）だが
+"Mapではキーに数値・オブジェクト・関数などを使用できる"
+Mapは挿入されたペアが挿入順で保持され、反復（forEachやfor...of）されます。
+map.sizeで要素の数を取得可能（Objectにはこの機能がない）
+Mapは要素の追加・検索・削除が高速に行えます。
+
+
+
+■使用例
+-----------------------------------------------------------------------------------------------------------
+const map = new Map();
+
+// 値を設定
+map.set("key1", "value1");
+map.set(42, "value2");
+map.set({ objKey: "test" }, "value3"); // この方法だと値を直接操作出来なくなる(ループなら取得可能)
+map.set(objKey = { objKey: "test" }, "value4");
+
+// 値を直接取得
+console.log(map.get("key1")); // "value1"
+console.log(map.get(42));     // "value2"
+console.log(map.get({ objKey: "test" })); // undefined（同じキーに見えても異なるオブジェクトなので取得不可）
+console.log(map.get(objKey)); // "Value4"
+
+// キーの存在確認
+console.log(map.has("key1")); // true
+console.log(map.has("unknownKey")); // false
+console.log(map.has({ objKey: "test" })); // false（異なるオブジェクトなので存在しない）
+console.log(map.has(objKey)); // true
+
+// 要素の削除
+map.delete(42);
+console.log(map.has(42)); // false
+map.delete(objKey);
+console.log(map.has(objKey)); // false（削除されたので false）
+
+// サイズを取得
+console.log(map.size); // 2（削除後のサイズ）
+
+// すべての要素を削除
+map.clear();
+console.log(map.size); // 0
+-----------------------------------------------------------------------------------------------------------
+
+
+
+■ループ
+-----------------------------------------------------------------------------------------------------------
+const map = new Map([ //; Map初期化時の引数は二次元配列を使う。
+  ["name", "Alice"],
+  ["age", 25],
+  ["city", "Tokyo"]
+]);
+
+console.log(map);
+Map(3) {
+  "name" => "Alice",
+  "age" => 25,
+  "city" => "Tokyo"
+}
+
+// ループ処理 アロー関数式
+map.forEach((value, key) => {
+  console.log(key, value);
+});
+■出力結果■■■■■■■■■■■■■
+// name Alice
+// age 25
+// city Tokyo
+■■■■■■■■■■■■■■■■■■
+
+// for...of ループ 分割代入
+for (const [key, value] of map) {
+  console.log(key, value);
+}
+■出力結果■■■■■■■■■■■■■
+// name Alice
+// age 25
+// city Tokyo
+■■■■■■■■■■■■■■■■■■
+
+// keys(), values(), entries() の利用
+console.log([...map.keys()]);   // ["name", "age", "city"]  ← 全キーを配列で取得
+console.log([...map.values()]); // ["Alice", 25, "Tokyo"]   ← 全値を配列で取得
+console.log([...map.entries()]); // [["name", "Alice"], ["age", 25], ["city", "Tokyo"]] ← [キー, 値] の配列
+-----------------------------------------------------------------------------------------------------------

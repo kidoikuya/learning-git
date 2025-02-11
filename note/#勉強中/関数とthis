@@ -10,6 +10,7 @@
 "ただし、関数のスコープ内に更に関数を宣言した場合は、その関数スコープに属する"
 
 
+
 ■関数宣言と関数式
   this は関数の呼び出し元のオブジェクトのスコープから動的に探索される。
   つまり、"実行コンテキストに依存"するということ。
@@ -21,11 +22,11 @@
       console.log(this.name);
     }
   };
-
   obj.sayName(); // taro ←オブジェクトのメソッドとして呼ぶ時は呼び出し元オブジェクトのthisを探索
   const sayName = obj.sayName; // 関数のみを別の変数に代入
   sayName();     // undefined ←関数単体で呼ぶ時はグローバルスコープでthisを探索
   -------------------------------------------------------------------
+
 
 
 ■アロー関数式
@@ -54,10 +55,11 @@
 })(1, 2); // 作成した関数を即座に呼び出して実行する
 内部の変数を関数スコープ内でのみ有効にでき外部との間で変数名の衝突を避けることができる
 
-■bind() メソッド
-引数に渡されたオブジェクトでthisを固定した自分自身と同じ内容の関数オブジェクトを返す。
-bind() メソッドを呼び出しただけでは、関数は実行されない点に注意。
 
+
+■bind() メソッド
+引数に渡されたオブジェクトでthisを固定or上書き。
+------------------------------------------------------------------
 const add = function(){
   console.log( this.num1 + this.num2 );
 };
@@ -65,7 +67,6 @@ const obj1 = {
   num1: 1,
   num2: 2
 };
-
 // ▼ add関数内のthisをobj1に固定した関数オブジェクトを返す
 const add2 = add.bind(obj1);
 const obj2 = {
@@ -74,14 +75,17 @@ const obj2 = {
   add: add2
 }
 obj2.add();  // 3: add関数内のthisはobj1を参照
+------------------------------------------------------------------
 
 
 
 ■call() メソッド
-第１引数にこの関数内でthis が参照するオブジェクトを渡し、第２引数以降はこの関数へ渡す引数を指定します。bind() メソッドと違い、こちらは関数を実行します。
-
-const add = function(num3, num4, num5){
-  const sum = this.num1 + this.num2 + num3 + num4 + num5;
+"第1引数にこの関数内でthisが参照するオブジェクト"
+第2引数以降はこの関数へ渡す引数を指定します。
+bind() メソッドと違い、こちらは関数を実行します。
+------------------------------------------------------------------
+const add = function(num3, num4, num5){ //; 関数の引数には、callの第二引数以降を渡す。
+  const sum = this.num1 + this.num2 + num3 + num4 + num5; // thisはcallの第一引数から参照。
   console.log(sum);
 };
 const obj = {
@@ -89,12 +93,14 @@ const obj = {
   num2: 2
 };
 add.call(obj, 3, 4, 5);  // 15: callメソッドは引数をそのまま羅列して渡す
+------------------------------------------------------------------
 
 
 
 ■apply() メソッド
-ほとんど call() メソッドと同じです。違うのは引数を配列として渡すところだけです。
-
+ほとんど call() メソッドと同じ。
+違うのは引数を配列として渡すところだけ。
+------------------------------------------------------------------
 const add = function(num3, num4, num5){
   const sum = this.num1 + this.num2 + num3 + num4 + num5;
   console.log(sum);
@@ -104,32 +110,25 @@ const obj = {
   num2: 2
 };
 add.apply(obj, [3, 4, 5]);  // applyメソッドは引数を配列で渡す
-
-
-
-
-一方で、アロー関数式で作成した関数は作成時のスコープで this の参照先を保持する性質があります。
-そのため、アロー関数式では bind メソッドや call 、 apply メソッドで this の参照先を変更することはできません。
-
+------------------------------------------------------------------
+一方でアロー関数式で作成した関数は作成時のスコープでthisの参照先を保持する性質。
+そのため、アロー関数式ではbindメソッドやcall、applyメソッドでthisの参照先を変更不可。
 function createAddFunc(){
     return ()=>{
         // ▼ createAddFunc関数の実行時のスコープでthisは固定される
         console.log(this.num1 + this.num2);
     }
 }
-
 const obj1 = {
     num1: 1,
     num2: 2,
     createAddFunc: createAddFunc   //; 定義済のcreateAddFunc関数をobj1のメソッドとして定義。
                                    //; プロパティ名と関数名が同じ場合は「createAddFunc」だけでも動く。
 };
-
 const obj2 = {
     num1: 3,
     num2: 4
 }
-
 const add = obj1.createAddFunc();  // この時点でthisがobj1で固定される
 add(); // 3
 (add.bind(obj2))(); // 3 : 後からthisの参照先を変更できない
@@ -137,7 +136,8 @@ add.call(obj2); // 3 : 後からthisの参照先を変更できない
 add.apply(obj2); // 3 : 後からthisの参照先を変更できない
 
 
-■関数の引数は省略してもエラーにならないよ
+
+■デフォルト引数
 【undefinedを許容するならこれでOK】
 -----------------------------------------------------------
 function add(num1, num2){
@@ -146,7 +146,6 @@ function add(num1, num2){
 }
 add(1); // num1:1, num2:undefined
 -----------------------------------------------------------
-
 【undefinedをケアする やぼったい例】
 -----------------------------------------------------------
 // ▼ べき乗を返す関数
@@ -158,7 +157,6 @@ function power(base, exponent){
 console.log(power(2, 3)); // 8
 console.log(power(3));    // 9: exponentは2で初期化される
 -----------------------------------------------------------
-
 【undefinedをケアする スマートな例】
 -----------------------------------------------------------
 // ▼ べき乗を返す関数
@@ -169,6 +167,7 @@ function power(base, exponent=2){ //;デフォルト値を2で設定
 console.log(power(2, 3)); // 8
 console.log(power(3));    // 9: exponentは2で初期化される
 -----------------------------------------------------------
+
 
 
 ■クロージャ
@@ -191,3 +190,37 @@ const hello = createGreet("こんにちは");
 goodMorning("田中");  // 田中さん、おはようございます。
 hello("佐藤");  // 佐藤さん、こんにちは。
 -------------------------------------------------------------
+
+
+
+■戻り値がオブジェクトリテラル
+①()で括る。
+{} をそのまま書くとブロック文と解釈されるので () で囲む。
+メソッドを定義するために 関数をプロパティとして持つ 形にする。
+---------------------------------------------------------------
+const getStringMethods = str => ({
+  lowerCase: () => str.toLowerCase(),
+  upperCase: () => str.toUpperCase(),
+  length: () => str.length
+});
+const obj = getStringMethods("Hello");
+console.log(obj.lowerCase()); // "hello"
+console.log(obj.upperCase()); // "HELLO"
+console.log(obj.length());    // 5
+---------------------------------------------------------------
+②明示的にreturnを使う。
+---------------------------------------------------------------
+const getStringMethods = str => {
+  return {
+    lowerCase: () => str.toLowerCase(),
+    upperCase: () => str.toUpperCase(),
+    length: () => str.length
+  };
+};
+const obj = getStringMethods("Hello");
+console.log(obj.lowerCase()); // "hello"
+console.log(obj.upperCase()); // "HELLO"
+console.log(obj.length());    // 5
+～～～～～～～～～～～～～～～～～～～～～～～～～～～
+console.log(getStringMethods("Hello").lowerCase()); // "hello"
+---------------------------------------------------------------

@@ -1,0 +1,7 @@
+■2/7
+クライアントサイドで価格タイプのフィールドに値を設定する場合は
+g_form.setValue()の値を文字列に変換するだけでよい、"UDP;"とか付けなくて良い。
+g_form.setValue("xxxx", 123);
+g_form.setValue("xxxx", "123");
+var a = 123;
+g_form.setValue("xxxx",a+"")

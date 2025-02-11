@@ -1,0 +1,31 @@
+■プロパティに直接書けない文字を入れる方法
+const age = Symbol("age");
+const person = {
+    "name-ja": "田中太郎",  // プロパティ名を直接書く場合はハイフン（‐）は使えない
+    [age]: 20  // 文字列以外にもシンボル型のデータが指定できる
+};
+console.log(person["name-ja"]);
+console.log(person[age]);
+
+■hasOwnPropety()の注意点
+対象オブジェクト内で定義したプロパティにしか反応しない。
+つまり、親クラスでプロパティを定義して
+それを継承した子クラスでhasOwnPropety()を使用するとfalseになる。
+環境に左右されるメソッドなので、IN演算子を使う方が安定する。
+in 演算子は "キーがオブジェクト内に存在するか"を判断する。
+-----------------------------------------------------
+if (!(uniqueKey in uniqueRecords)){
+    uniqueRecords[uniqueKey] = gr.getUniqueValue();			
+}
+-----------------------------------------------------
+■IN演算子
+const car = { make: 'Honda', model: 'Accord', year: 1998 };
+console.log('make' in car);
+// Expected output: true
+delete car.make;
+if ('make' in car === false) {
+  car.make = 'Suzuki';
+}
+console.log(car.make);
+// Expected output: "Suzuki"
+-----------------------------------------------------

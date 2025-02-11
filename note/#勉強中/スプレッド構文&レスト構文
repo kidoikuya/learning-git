@@ -1,0 +1,87 @@
+■スプレッド構文
+・オブジェクトのマージでは重複時は後が優先される。
+--------------------------------------------------------------------
+const nameInfo = {
+    firstName: "太郎",
+    lastName: "湘南"
+};
+const addressInfo = {
+    firstName: "次郎",  // 同じプロパティ名が重複
+    postcode: "243-0014",
+    prefecture: "神奈川県",
+    city: "厚木市",
+    town: "旭町",
+    line1: "1-27-6",
+    line2: "本厚木マイビル2F"
+};
+;// nameInfo と addressInfo の両方のプロパティを持つ新しいオブジェクト personInfo を作成
+const personInfo = { ...nameInfo, ...addressInfo };
+console.log(personInfo);
+{
+  firstName: "次郎",  // プロパティ重複時は後優先、addressInfoのfirstNameが優先される
+  lastName: "湘南",
+  postcode: "243-0014",
+  prefecture: "神奈川県",
+  city: "厚木市",
+  town: "旭町",
+  line1: "1-27-6",
+  line2: "本厚木マイビル2F"
+}
+--------------------------------------------------------------------
+
+
+
+■レスト構文
+・分割代入時に残った配列の要素を集約、可変長引数を持った関数を定義する時などに利用。
+・レスト構文は必ず引数の最後に指定する。
+・元データによるが、レスト構文の中身は配列かオブジェクト側で扱われる。
+・function test(...numbers) のように引数を1つにまとめて受けることも出来る。
+--------------------------------------------------------------------
+;// 配列の余りを処理
+const arr = [1,2,3,4,5,6];
+const [num1, num2, ...restNumArr] = arr;  // レスト構文は引数の最後
+console.log(num1, num2, restNumArr);		  // 1 2 [3,4,5,6]
+--------------------------------------------------------------------
+;// 関数での利用例
+function add(num1, num2, ...restNumArr){
+    console.log(num1, num2, restNumArr) // 1 2 [3,4,5]
+    let sum = num1 + num2;
+    for(const num of restNumArr){
+      sum += num;
+    }
+    return sum;
+}
+console.log(add(1,2,3,4,5));	// 15
+--------------------------------------------------------------------
+;// オブジェクト型をレスト構文で受ける例
+const person = {
+    name: "太郎",
+    age: 20,
+    birthplace: "横浜",
+    hobby: "サッカー"
+};
+const { name, age, ...otherInfo } = person;
+console.log(name);      // "太郎"
+console.log(age);       // 20
+console.log(otherInfo); // { birthplace: "横浜", hobby: "サッカー" }
+--------------------------------------------------------------------
+;// for-ofとの利用例
+const nameList = [
+    { firstName: "太郎", lastName: "湘南", occupation: "システムエンジニア" },
+    { firstName: "ジロウ", lastName: "ハイテク", occupation: "テストエンジニア" },
+    { firstName: "三郎", lastName: "厚木", occupation: "インフラエンジニア" },
+    { firstName: "Shirou", lastName: "Shk", occupation: "セールスエンジニア" }
+];
+for(const {firstName, lastName, occupation} of nameList){
+    console.log(`${lastName} ${firstName} さんの職種は ${occupation} です。`);
+}
+--------------------------------------------------------------------
+;// 引数にレスト構文
+function calculateAverage(...numbers){
+    return numbers.length ;// lengthが0ならショートサーキットで0が出力される。
+     && numbers.reduce((prev, num)=> prev + num, 0) / numbers.length;
+}
+console.log(calculateAverage(1, 2, 3));
+console.log(calculateAverage(1, 2, 3, 4, 5));
+console.log(calculateAverage());
+--------------------------------------------------------------------

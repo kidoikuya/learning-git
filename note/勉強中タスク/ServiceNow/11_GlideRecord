@@ -1,6 +1,0 @@
-■GlideRecord
-var sys_id = '62826bf03710200044e0bfc8bcbe5df1'; // SysIDを何らかの方法で知っている前提
-var gr = new GlideRecord('テーブル名');
-if (gr.get('sys_id', sys_id)) {
-  // 処理例: gs.info(gr.getValue('user_name'));
-}

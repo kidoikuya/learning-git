@@ -1,0 +1,95 @@
+■2/3 みなとみらい
+入社日、手続きで色々。
+
+
+■2/4 在宅
+①sys_idからAJAXとGliderecordで任意のレコードの列の値を取得する
+JSON.stringifyの中身でGliderecordのオブジェクトがネストしていた事が原因で苦労した。
+""+で暗黙的に文字列型に変換することで解消できた。
+→ルールとして、getValueかドットウォーク（Dot Walking）で取得すること
+
+
+■2/5 在宅
+①重複制御
+②onCellEditで関連リストの値変更を制御
+-----------------------------------------------------------------------
+function onCellEdit(sysIDs, table, oldValues, newValue, callback) {
+  var saveAndClose = true; // 変更制御用(true=変更OK,false=変更NG)
+  
+  if (newValue === "test") {
+    saveAndClose = false; // "test" なら変更キャンセル
+    alert("この値は設定できません！");
+  }
+
+  callback(saveAndClose);
+}
+-----------------------------------------------------------------------
+③家計簿テーブル完成
+
+
+■2/6 在宅
+・コードレビューで指摘を受けたポイントの修正、情報共有
+・リレーションシップのコード解読
+  テーブルに適用：親テーブル（本）
+  テーブルからのクエリ：子テーブル（利用者）
+  parent  → "全ての親レコード" GlideRecord
+  current → "全ての親レコードの子レコード" GlideRecord 最終的にaddQueryで絞ってGlideQueryConditionで返す。
+--------------------------------------------------------------------------------------------
+(function refineQuery(current, parent) {
+
+    gs.info(current+"■■■■■■■■■■"+parent);
+
+    //; 関連リスト(降順)を作成
+    var gr = new GlideRecord('x_1606430_shk_hand_x_1606430_shk_hand'); // 子テーブル
+    gr.addQuery('item', parent.getUniqueValue()); // 親レコードに関連する子レコード作成(関連リスト)
+    gr.orderByDesc('sys_created_on');
+    gr.query();
+    
+    //; 関連リストの重複チェック
+    var uniqueRecords = {}; // 重複チェック用
+    while (gr.next()) {
+        var uniqueKey = gr.memo.toString(); //  フィールド取得
+        if (!uniqueRecords[uniqueKey]) {    //; 対象フィールドのプロパティ名の値が存在しなければtrue
+            uniqueRecords[uniqueKey] = gr.getUniqueValue(); // プロパティを作成し、レコードのsys_idを値に代入
+        }
+    }
+    
+    //; 上記オブジェクトからsys_idを配列で取得
+    var sysIds = Object.values(uniqueRecords);
+    if (sysIds.length > 0) {
+        current.addQuery('sys_id', 'IN', sysIds); // ユニークなsysIds(sys_id)で絞る、後はrefineQueryで表示。
+    } else {
+        current.addQuery('sys_id', 'DOES NOT EXIST'); // データがない場合の処理
+    }
+})(current, parent);
+--------------------------------------------------------------------------------------------
+
+
+■2/7 在宅
+質問
+・リレーションシップのif文直した。
+
+・アップデートセット確認してみたらSHK hands-onが自動作成されていて
+  1/27からの履歴が残っていたんですが、これはデフォルトの挙動？
+
+・Jellyスクリプト or サービスポータル(JavaScript・AngularJS)どっち使う？
+
+・スケジュール済みジョブはバッチみたいなもの？
+
+・イベント＞イベントログとレジストリがあった。
+  Globalアプリケーションばっかりだし
+  作成者と更新者は殆どsystemだったので、何か設定が必要？
+
+・ロールが評価された後に、ACLが評価される。
+  ロールはユーザーやグループやアプリケーションレベルの制御
+  ACLはCRUDみたいな詳細なレベルの制御
+
+TODO
+・重要キーワードを中心に調べごと。
+DONE
+・夕会の復習
+  複数sys_idを扱うためGlideQueryConditionクラスのaddOrCondition()をメソッドチェーンで使った。
+  あと、実験的に、IN演算子でも確認してみた。
+・更新セット作成＆システムが自動作成してるのも確認した、更新数とか履歴が見れた。
+・UIマクロ作成
+・gs.infoでログ調べてみた

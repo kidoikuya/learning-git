@@ -1,0 +1,45 @@
+//クライアントスクリプト
+function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+    if (isLoading || newValue === '') { return; }
+
+	// sys_id取得と表示
+	g_form.setValue('sys_id_in',newValue);
+
+	// getReference使用バージョン
+	g_form.getReference('item', function(record){ // itemから参照値を取得
+       g_form.setValue('himo_name2',record.himo); // 参照先の値を取得
+	});
+
+	// sys_idからGlideAjax を使ってスクリプトインクルードを呼び出し
+    var ga = new GlideAjax('ItemFetcher');
+	ga.addParam('sysparm_name','getItemDetails');
+    ga.addParam('sys_id', newValue);
+    ga.getXMLAnswer(function(answer){
+        var result = JSON.parse(answer);
+        if (result && result.himo) {
+			console.log(result); // {himo: '家賃', status: 'OK'}
+            g_form.setValue('himo_name',result["himo"]);
+        } else {
+            console.log('一致するレコードが見つからない');
+        }
+    });
+}
+
+//スクリプトインクルード
+var ItemFetcher = Class.create();
+ItemFetcher.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+getItemDetails(){
+		const sys_id = this.getParameter("sys_id");//渡されてきた引数をキーで取得
+		const gr = new GlideRecordSecure("x_1606430_shk_hand_x_1606430_shk_hand2");
+		if(gr.get(sys_id)){
+			return JSON.stringify({    //以下は自分で連想配列作って返している
+                "himo": "" + gr.himo,  //ほしい値自体はgr.フィールド名で取得。gr.フィールド名はGlidElementオブジェクトであり、フィールド値そのもの（文字列）ではない。
+				"status": "OK"
+			});
+		}
+		return JSON.stringify({
+			"status": "error"
+		}); 
+	}, 
+    type: 'ItemFetcher'
+});

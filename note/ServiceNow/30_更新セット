@@ -1,0 +1,106 @@
+■更新セットとは
+開発資源を「CustomerUpdate」として移送するための方法
+※Application Repositoryという方法もあるが
+これを用いた移送は同じ企業に紐づくインスタンス間でしか行えないため
+ServiceNow社が提供する開発者PDIを利用する場合等は更新セットを使う必要がある。
+
+■更新セット作成 ダッシュボード利用
+ファイルナビゲータ＞システムアップデートセット＞ローカル更新セット
+新規＞名前を入力したら「送信して選択」をクリック。
+ファイルナビゲータ＞pa_dashboards.list で全ダッシュボードのリスト表示。
+
+
+■デプロイ
+ソース: https://servicenow-lab.com/develop-transfer/#toc1
+本番側で開発側情報（URLや管理者権限を持つアカウントのID/PASS）を設定、Retrieve（取り込み）を行う
+開発側からUpdateSetをXMLファイルとしてエクスポートし、本番側にアップロード
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+下記はドキュメントやchatGPTから引いた情報
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+https://www.servicenow.com/docs/ja-JP/bundle/xanadu-application-development/page/build/system-update-sets/concept/system-update-sets.html
+
+■概要
+・インスタンス間で設定変更やカスタマイズを移行するためのツール
+  「アップデートセット」XMLファイルをエクスポート→別のインスタンスにインポート適用。
+
+・アップデートセットを作成する下記のような項目＋関連項目の変更が自動的に追跡→記憶される。
+  フォームレイアウト変更
+  ビジネスルール
+  クライアントスクリプト
+  UIポリシー
+  カスタムテーブルやカラムの追加
+  フロー（Flow Designer）
+  ACL（Access Control List） など
+  "※データ（レコード自体）は移行不可、マスターデータを移行したい場合は「データ移行（Data Migration）」の手法が必要。"
+
+・更新セットのテーブルの場所(ナビゲーターからローカル更新セット)
+  テーブル＞名前＞sys_update_set で検索すると下記が表示される。
+  ・更新セット	sys_update_set	(空)	false	2024-12-03 10:23:12	
+	・リモートインスタンス	sys_update_set_source	(空)	false	2024-12-03 10:28:24	
+	・更新セットログ	sys_update_set_log	(空)	false	2024-12-03 10:28:24
+
+■手順
+① アップデートセットを作成
+ ナビゲーターからローカル更新セット
+ 「New」ボタンをクリック
+ 「Name」 に適当な名前を入力（例: Customizations_Q1_2025）
+ 「State」 が「In Progress」になっていることを確認
+ 「Submit」 をクリック
+
+②変更を記録
+  変更を加えると、自動的にアップデートセットに記録される（デフォルトでは、現在のアクティブなアップデートセットに変更が保存される）。
+
+③アップデートセットを完了
+  変更が完了したら、アップデートセットを「Complete（完了）」にする。
+ 「State」 を「Complete」に変更すると、それ以上の変更は記録されなくなる。
+
+④アップデートセットをエクスポート
+ 「System Update Sets」 → 「Retrieved Update Sets」 に移動
+ 作成したアップデートセットを選択
+ 「Export to XML」 をクリック
+ ダウンロードしたXMLファイルを保存
+
+⑤他のインスタンスにインポート
+ 対象のインスタンス（テスト環境・本番環境）にログイン
+ 「System Update Sets」 → 「Retrieved Update Sets」
+ 「Import Update Set from XML」 をクリックし、エクスポートしたXMLファイルをアップロード
+ インポート後、「Preview Update Set」 をクリックし、エラーがないか確認
+ 問題がなければ「Commit Update Set」をクリックして適用

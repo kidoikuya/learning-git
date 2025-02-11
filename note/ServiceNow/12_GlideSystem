@@ -1,0 +1,35 @@
+■gs=GlideSystemクラスのオブジェクト
+"サーバースクリプト内で利用できるユーティリティオブジェクト"
+gs.info()で、ServiceNowのシステムログ（System Log） にメッセージが出力される。
+ナビゲーションメニューで 「System Logs → All」 を開く。
+ログレベル Information のメッセージとして記録される。
+Script Debugger（スクリプトデバッガー）
+
+「System Diagnostics → Script Debugger」 でリアルタイム確認ができる。
+gs.info() を実行したスクリプトの出力を確認可能。
+Background Scripts（バックグラウンドスクリプト実行時）
+
+「System Definition → Scripts - Background」 でスクリプトを実行すると、下部の結果欄に表示される。
+
+
+
+
+var gr = new GlideRecord('incident');
+gr.get('sys_id', 'abcdef1234567890abcdef1234567890'); // レコード取得
+gs.info('Incident Number: ' + gr.getValue('number'));
+gs.info('Caller ID: ' + gr.getValue('caller_id'));        
+gs.info('Caller Name: ' + gr.getDisplayValue('caller_id')); 
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+*** Script: Incident Number: INC0012345
+*** Script: Caller ID: e5cd17d00a0a0b1500b3ffbcf2b3b8f6
+*** Script: Caller Name: Taro Yamada
+
+
+gs.log() との違い
+メソッド	出力先	用途
+gs.info("メッセージ")	System Log（情報ログ）	通常のログ出力
+gs.log("メッセージ")	System Log（一般ログ）	gs.info() とほぼ同じ
+gs.warn("メッセージ")	System Log（警告ログ）	警告レベルのログ
+gs.error("メッセージ")	System Log（エラーログ）	エラーメッセージ出力
+✅ gs.info() はデバッグ時の情報出力に便利！
+✅ エラー時は gs.error() を使うと問題を発見しやすい！
